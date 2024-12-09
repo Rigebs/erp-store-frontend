@@ -1,0 +1,40 @@
+<div class="sidebar" [class.open]="isOpen">
+  <ul>
+    <li
+      *ngFor="let item of sidebarData.items"
+      [ngClass]="{
+        'no-dropdown': !item.hasDropdown,
+        'dropdown': item.hasDropdown,
+      }"
+      [class.opening]="dropdownStates[item.route]"
+    >
+      <div
+        class="dropdown"
+        *ngIf="item.hasDropdown"
+        [class.open]="dropdownStates[item.route]"
+        (click)="toggleDropdown(item.route)"
+      >
+        <div class="item">
+          {{ item.label }}
+          <span class="arrow">
+            <img
+              src="https://www.svgrepo.com/show/500841/dropdown.svg"
+              alt="dropdown arrow"
+            />
+          </span>
+        </div>
+        <ul class="dropdown-menu">
+          <li *ngFor="let subItem of item.dropdownItems">
+            <a class="dropdown-link" [routerLink]="subItem.route">{{
+              subItem.label
+            }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="!item.hasDropdown" class="item">
+        <a class="dropdown-link" [routerLink]="item.route">{{ item.label }}</a>
+      </div>
+    </li>
+  </ul>
+</div>
