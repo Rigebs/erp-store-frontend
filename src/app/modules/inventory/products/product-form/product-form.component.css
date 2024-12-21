@@ -1,0 +1,26 @@
+.form-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.input-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.input-column {
+  flex: 1;
+  min-width: 280px;
+}
+
+@media (max-width: 600px) {
+  .input-group {
+    flex-direction: column;
+  }
+}

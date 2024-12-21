@@ -1,0 +1,133 @@
+<div class="module">
+  <div class="container">
+    <div class="form-container">
+      <button mat-button>
+        <mat-icon color="primary">arrow_back</mat-icon>Volver
+      </button>
+
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+        <div class="input-group">
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <input
+                id="name"
+                matInput
+                formControlName="name"
+                placeholder="Product Name"
+              />
+              <mat-error
+                *ngIf="
+                  productForm.get('name')?.invalid &&
+                  productForm.get('name')?.touched
+                "
+              >
+                Name is required.
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <input
+                id="category"
+                matInput
+                formControlName="category"
+                type="text"
+                placeholder="Category"
+              />
+              <mat-error
+                *ngIf="
+                  productForm.get('category')?.invalid &&
+                  productForm.get('category')?.touched
+                "
+              >
+                Category is required.
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <input
+                id="purchasePrice"
+                matInput
+                formControlName="purchasePrice"
+                type="number"
+                placeholder="Purchase Price"
+              />
+              <mat-error
+                *ngIf="
+                  productForm.get('purchasePrice')?.invalid &&
+                  productForm.get('purchasePrice')?.touched
+                "
+              >
+                Price must be a positive number.
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <input
+                id="salePrice"
+                matInput
+                formControlName="salePrice"
+                type="number"
+                placeholder="Sale Price"
+              />
+              <mat-error
+                *ngIf="
+                  productForm.get('salePrice')?.invalid &&
+                  productForm.get('salePrice')?.touched
+                "
+              >
+                Price must be a positive number.
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div>
+          <mat-form-field appearance="fill">
+            <textarea
+              id="description"
+              matInput
+              formControlName="description"
+              placeholder="Description"
+            ></textarea>
+            <mat-error
+              *ngIf="
+                productForm.get('description')?.invalid &&
+                productForm.get('description')?.touched
+              "
+            >
+              Description is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div>
+          <mat-form-field appearance="fill">
+            <mat-select formControlName="status">
+              <mat-option value="A">Active</mat-option>
+              <mat-option value="I">Inactive</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="productForm.invalid"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

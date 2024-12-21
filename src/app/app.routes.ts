@@ -1,9 +1,8 @@
 import { Routes } from '@angular/router';
-import { NavbarComponent } from './components/navbar/navbar.component';
+import { ProductsComponent } from './modules/inventory/products/products.component';
+import { ProductFormComponent } from './modules/inventory/products/product-form/product-form.component';
 
 export const routes: Routes = [
-  {
-    path: 'navbar',
-    component: NavbarComponent,
-  },
+  { path: 'products', component: ProductsComponent },
+  { path: 'products/new', component: ProductFormComponent },
 ];
