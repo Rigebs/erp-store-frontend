@@ -1,0 +1,41 @@
+<mat-toolbar class="mat-elevation-z3">
+  <button mat-icon-button (click)="toggleSidenav()">
+    <mat-icon>menu</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-sidenav-container>
+  <mat-sidenav
+    [opened]="isOpen"
+    [mode]="getSidenavMode()"
+    (closed)="onSidenavClosed()"
+  >
+    <mat-nav-list>
+      <!-- Opción de Ventas -->
+      <a mat-list-item (click)="navigateTo('sales')">
+        <mat-icon matListItemIcon>shopping_cart</mat-icon>
+        <span matListItemTitle>Ventas</span>
+      </a>
+
+      <!-- Opción de Productos -->
+      <a mat-list-item (click)="navigateTo('management/products')">
+        <mat-icon matListItemIcon>storefront</mat-icon>
+        <span matListItemTitle>Productos</span>
+      </a>
+
+      <!-- Opción de Categorías -->
+      <a mat-list-item (click)="navigateTo('management/categories')">
+        <mat-icon matListItemIcon>category</mat-icon>
+        <span matListItemTitle>Categorías</span>
+      </a>
+
+      <!-- Opción de Reportes -->
+      <a mat-list-item (click)="navigateTo('management/reports')">
+        <mat-icon matListItemIcon>assessment</mat-icon>
+        <span matListItemTitle>Reportes</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content class="content">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

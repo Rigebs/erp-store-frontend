@@ -1,4 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
@@ -7,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -19,6 +27,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatButtonModule,
     MatCheckboxModule,
     MatMenuModule,
+    MatChipsModule,
   ],
   templateUrl: './dynamic-table.component.html',
   styleUrl: './dynamic-table.component.css',
@@ -27,19 +36,46 @@ export class DynamicTableComponent implements OnInit {
   @Input() columns: { field: string; header: string; hidden?: boolean }[] = [];
   @Input() data: any[] = [];
 
-  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
+  @Output() edit = new EventEmitter<any>();
+  @Output() delete = new EventEmitter<any>();
+  @Output() toggleStatus = new EventEmitter<any>();
+
   displayedColumns: string[] = [];
+  dataSource: MatTableDataSource<any>;
+
+  constructor() {
+    this.dataSource = new MatTableDataSource<any>(this.data);
+  }
 
   ngOnInit(): void {
     this.updateDisplayedColumns();
-    this.dataSource = new MatTableDataSource(this.data);
+    this.dataSource.data = this.data;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Detectar cambios en los datos.
+    if (changes['data'] && !changes['data'].firstChange) {
+      this.dataSource.data = this.data;
+    }
+    if (changes['columns'] && !changes['columns'].firstChange) {
+      this.updateDisplayedColumns();
+    }
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   updateDisplayedColumns(): void {
     this.displayedColumns = [
-      'index', // Mantén la columna fija de índice
+      'index',
       ...this.columns.filter((col) => !col.hidden).map((col) => col.field),
-      'actions', // Mantén la columna fija de acciones
+      'actions',
     ];
   }
 
@@ -49,21 +85,14 @@ export class DynamicTableComponent implements OnInit {
   }
 
   onEdit(element: any): void {
-    console.log('Editar:', element);
+    this.edit.emit(element);
   }
 
   onDelete(element: any): void {
-    console.log('Eliminar:', element);
+    this.delete.emit(element);
   }
 
   onToggleStatus(element: any): void {
-    if (element.status === 'A') {
-      element.status = 'I';
-      console.log('Elemento desactivado:', element);
-    } else {
-      element.status = 'A';
-      console.log('Elemento activado:', element);
-    }
-    this.dataSource.data = [...this.dataSource.data];
+    this.toggleStatus.emit(element);
   }
 }

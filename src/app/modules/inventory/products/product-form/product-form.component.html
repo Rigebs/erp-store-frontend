@@ -1,11 +1,16 @@
-<div class="module">
+<div>
   <div class="container">
     <div class="form-container">
-      <button mat-button>
+      <button mat-button class="arrow-back" (click)="goBack()">
         <mat-icon color="primary">arrow_back</mat-icon>Volver
       </button>
 
+      <h2 class="form-title">
+        {{ isEditMode ? "Editando producto" : "Registra un nuevo producto" }}
+      </h2>
+
       <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+        <!-- Campo de nombre -->
         <div class="input-group">
           <div class="input-column">
             <mat-form-field appearance="fill">
@@ -25,28 +30,9 @@
               </mat-error>
             </mat-form-field>
           </div>
-
-          <div class="input-column">
-            <mat-form-field appearance="fill">
-              <input
-                id="category"
-                matInput
-                formControlName="category"
-                type="text"
-                placeholder="Category"
-              />
-              <mat-error
-                *ngIf="
-                  productForm.get('category')?.invalid &&
-                  productForm.get('category')?.touched
-                "
-              >
-                Category is required.
-              </mat-error>
-            </mat-form-field>
-          </div>
         </div>
 
+        <!-- Campo de precio de compra y precio de venta -->
         <div class="input-group">
           <div class="input-column">
             <mat-form-field appearance="fill">
@@ -89,7 +75,7 @@
           </div>
         </div>
 
-        <div>
+        <div class="textarea">
           <mat-form-field appearance="fill">
             <textarea
               id="description"
@@ -108,13 +94,79 @@
           </mat-form-field>
         </div>
 
-        <div>
-          <mat-form-field appearance="fill">
-            <mat-select formControlName="status">
-              <mat-option value="A">Active</mat-option>
-              <mat-option value="I">Inactive</mat-option>
-            </mat-select>
-          </mat-form-field>
+        <div class="input-group">
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <mat-select
+                formControlName="categoryId"
+                placeholder="Selecciona una categoría"
+              >
+                <mat-option
+                  *ngFor="let category of categories"
+                  [value]="category.id"
+                >
+                  {{ category.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <mat-select
+                formControlName="brandId"
+                placeholder="Selecciona una marca"
+              >
+                <mat-option *ngFor="let brand of brands" [value]="brand.id">
+                  {{ brand.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <mat-select
+                formControlName="lineId"
+                placeholder="Selecciona una línea"
+              >
+                <mat-option *ngFor="let line of lines" [value]="line.id">
+                  {{ line.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <mat-select
+                formControlName="supplierId"
+                placeholder="Selecciona un proveedor"
+              >
+                <mat-option
+                  *ngFor="let supplier of suppliers"
+                  [value]="supplier.id"
+                >
+                  {{ supplier.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <mat-select
+                formControlName="unitMeasureId"
+                placeholder="Selecciona una unidad de medida"
+              >
+                <mat-option *ngFor="let unit of unitsMeasure" [value]="unit.id">
+                  {{ unit.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
 
         <div>

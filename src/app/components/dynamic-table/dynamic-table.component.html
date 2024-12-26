@@ -1,6 +1,6 @@
 <div class="column-visibility-controls">
   <button mat-button [matMenuTriggerFor]="menu">
-    <mat-icon>toggle_on</mat-icon> Configurar columnas
+    <mat-icon>toggle_on</mat-icon> Config. columnas
   </button>
   <mat-menu #menu="matMenu">
     <button
@@ -14,22 +14,33 @@
     </button>
   </mat-menu>
 </div>
-
+<mat-form-field>
+  <mat-label>Filtrar productos</mat-label>
+  <input matInput (keyup)="applyFilter($event)" #input />
+</mat-form-field>
 <div class="table-container">
-  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-    <!-- Índice -->
+  <table mat-table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="index">
       <th mat-header-cell *matHeaderCellDef>#</th>
       <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
     </ng-container>
 
-    <!-- Columnas dinámicas -->
     <ng-container *ngFor="let column of columns" [matColumnDef]="column.field">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         {{ column.header }}
       </th>
       <td mat-cell *matCellDef="let element">
-        {{ element[column.field] || "-" }}
+        <ng-container *ngIf="column.field === 'status'; else defaultCell">
+          <div
+            class="estado"
+            [ngClass]="element[column.field] ? 'activo' : 'inactivo'"
+          >
+            {{ element[column.field] ? "Activo" : "Inactivo" }}
+          </div>
+        </ng-container>
+        <ng-template #defaultCell>
+          {{ element[column.field] || "-" }}
+        </ng-template>
       </td>
     </ng-container>
 
@@ -43,9 +54,7 @@
             color="accent"
             (click)="onToggleStatus(element)"
           >
-            <mat-icon>{{
-              element.status === "A" ? "block" : "check_circle"
-            }}</mat-icon>
+            <mat-icon>{{ element.status ? "block" : "check_circle" }}</mat-icon>
           </button>
           <button mat-icon-button color="primary" (click)="onEdit(element)">
             <mat-icon>edit</mat-icon>
@@ -57,7 +66,7 @@
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 </div>

@@ -11,7 +11,7 @@ mat-form-field {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .input-column {
@@ -19,8 +19,14 @@ mat-form-field {
   min-width: 280px;
 }
 
-@media (max-width: 600px) {
-  .input-group {
-    flex-direction: column;
-  }
+.arrow-back {
+  margin-bottom: 10px;
+}
+
+.form-title {
+  text-align: center;
+}
+
+.textarea {
+  margin-bottom: 8px;
 }
