@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { BrandRequest } from '../../models/request/brand-request';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { BrandService } from '../../services/brand.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -6,10 +10,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { CategoryService } from '../../services/category.service';
-import { CategoryRequest } from '../../models/request/category-request';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,7 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-category-form',
+  selector: 'app-brand-form',
   imports: [
     ReactiveFormsModule,
     CommonModule,
@@ -27,66 +27,65 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatIconModule,
   ],
-  templateUrl: './category-form.component.html',
-  styleUrls: ['./category-form.component.css'],
+  templateUrl: './brand-form.component.html',
+  styleUrl: './brand-form.component.css',
 })
-export class CategoryFormComponent implements OnInit {
-  categoryForm: FormGroup;
+export class BrandFormComponent implements OnInit {
+  brandForm: FormGroup;
   isEditMode = false;
-  categoryId: string | null = null;
+  brandId: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private categoryService: CategoryService,
+    private brandService: BrandService,
     private snackBar: MatSnackBar
   ) {
-    this.categoryForm = this.fb.group({
+    this.brandForm = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
-    this.categoryId = this.route.snapshot.paramMap.get('id');
-    if (this.categoryId) {
+    this.brandId = this.route.snapshot.paramMap.get('id');
+    if (this.brandId) {
       this.isEditMode = true;
-      this.loadCategory(Number(this.categoryId));
+      this.loadBrand(Number(this.brandId));
     }
   }
 
   onSubmit(): void {
-    if (this.categoryForm.valid) {
+    if (this.brandForm.valid) {
       if (this.isEditMode) {
-        this.update(Number(this.categoryId), this.categoryForm.value);
+        this.update(Number(this.brandId), this.brandForm.value);
         return;
       }
-      this.save(this.categoryForm.value);
+      this.save(this.brandForm.value);
     }
   }
 
   goBack(): void {
-    this.router.navigateByUrl('management/categories');
+    this.router.navigateByUrl('management/brands');
   }
 
-  loadCategory(id: number): void {
-    this.categoryService.findById(id).subscribe({
-      next: (category) => {
-        this.categoryForm.patchValue({
-          name: category.name,
-          description: category.description,
-          status: category.status,
+  loadBrand(id: number): void {
+    this.brandService.findById(id).subscribe({
+      next: (brand) => {
+        this.brandForm.patchValue({
+          name: brand.name,
+          description: brand.description,
         });
       },
       error: (err) => {
-        console.error('Error al cargar la categoría:', err);
+        console.error('Error al cargar la marca:', err);
       },
     });
   }
 
-  save(category: CategoryRequest): void {
-    this.categoryService.save(category).subscribe({
+  save(brand: BrandRequest): void {
+    this.brandService.save(brand).subscribe({
       next: (response) => {
         this.snackBar.open(`${response.message}`, 'Cerrar', {
           duration: 2000,
@@ -96,13 +95,13 @@ export class CategoryFormComponent implements OnInit {
         this.goBack();
       },
       error: (err) => {
-        console.error('Error al guardar la categoría:', err);
+        console.error('Error al guardar la marca:', err);
       },
     });
   }
 
-  update(id: number, category: CategoryRequest): void {
-    this.categoryService.update(id, category).subscribe({
+  update(id: number, brand: BrandRequest): void {
+    this.brandService.update(id, brand).subscribe({
       next: (response) => {
         this.snackBar.open(`${response.message}`, 'Cerrar', {
           duration: 2000,
@@ -112,7 +111,7 @@ export class CategoryFormComponent implements OnInit {
         this.goBack();
       },
       error: (err) => {
-        console.error('Error al actualizar la categoría:', err);
+        console.error('Error al actualizar la marca:', err);
       },
     });
   }

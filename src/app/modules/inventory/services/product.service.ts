@@ -18,6 +18,10 @@ export class ProductService {
     return this.http.get<Product[]>(this.baseUrl);
   }
 
+  findAllActive(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.baseUrl}/active`);
+  }
+
   findById(id: number): Observable<ProductDto> {
     return this.http.get<ProductDto>(`${this.baseUrl}/${id}`);
   }

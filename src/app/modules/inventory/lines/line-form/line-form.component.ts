@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LineRequest } from '../../models/request/line-request';
 import {
   FormBuilder,
   FormGroup,
@@ -6,10 +7,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CategoryService } from '../../services/category.service';
-import { CategoryRequest } from '../../models/request/category-request';
+import { LineService } from '../../services/line.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,7 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-category-form',
+  selector: 'app-line-form',
   imports: [
     ReactiveFormsModule,
     CommonModule,
@@ -27,66 +27,65 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatIconModule,
   ],
-  templateUrl: './category-form.component.html',
-  styleUrls: ['./category-form.component.css'],
+  templateUrl: './line-form.component.html',
+  styleUrl: './line-form.component.css',
 })
-export class CategoryFormComponent implements OnInit {
-  categoryForm: FormGroup;
+export class LineFormComponent implements OnInit {
+  lineForm: FormGroup;
   isEditMode = false;
-  categoryId: string | null = null;
+  lineId: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private categoryService: CategoryService,
+    private lineService: LineService,
     private snackBar: MatSnackBar
   ) {
-    this.categoryForm = this.fb.group({
+    this.lineForm = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
-    this.categoryId = this.route.snapshot.paramMap.get('id');
-    if (this.categoryId) {
+    this.lineId = this.route.snapshot.paramMap.get('id');
+    if (this.lineId) {
       this.isEditMode = true;
-      this.loadCategory(Number(this.categoryId));
+      this.loadLine(Number(this.lineId));
     }
   }
 
   onSubmit(): void {
-    if (this.categoryForm.valid) {
+    if (this.lineForm.valid) {
       if (this.isEditMode) {
-        this.update(Number(this.categoryId), this.categoryForm.value);
+        this.update(Number(this.lineId), this.lineForm.value);
         return;
       }
-      this.save(this.categoryForm.value);
+      this.save(this.lineForm.value);
     }
   }
 
   goBack(): void {
-    this.router.navigateByUrl('management/categories');
+    this.router.navigateByUrl('management/lines');
   }
 
-  loadCategory(id: number): void {
-    this.categoryService.findById(id).subscribe({
-      next: (category) => {
-        this.categoryForm.patchValue({
-          name: category.name,
-          description: category.description,
-          status: category.status,
+  loadLine(id: number): void {
+    this.lineService.findById(id).subscribe({
+      next: (line) => {
+        this.lineForm.patchValue({
+          name: line.name,
+          description: line.description,
         });
       },
       error: (err) => {
-        console.error('Error al cargar la categoría:', err);
+        console.error('Error al cargar la línea:', err);
       },
     });
   }
 
-  save(category: CategoryRequest): void {
-    this.categoryService.save(category).subscribe({
+  save(line: LineRequest): void {
+    this.lineService.save(line).subscribe({
       next: (response) => {
         this.snackBar.open(`${response.message}`, 'Cerrar', {
           duration: 2000,
@@ -96,13 +95,13 @@ export class CategoryFormComponent implements OnInit {
         this.goBack();
       },
       error: (err) => {
-        console.error('Error al guardar la categoría:', err);
+        console.error('Error al guardar la línea:', err);
       },
     });
   }
 
-  update(id: number, category: CategoryRequest): void {
-    this.categoryService.update(id, category).subscribe({
+  update(id: number, line: LineRequest): void {
+    this.lineService.update(id, line).subscribe({
       next: (response) => {
         this.snackBar.open(`${response.message}`, 'Cerrar', {
           duration: 2000,
@@ -112,7 +111,7 @@ export class CategoryFormComponent implements OnInit {
         this.goBack();
       },
       error: (err) => {
-        console.error('Error al actualizar la categoría:', err);
+        console.error('Error al actualizar la línea:', err);
       },
     });
   }

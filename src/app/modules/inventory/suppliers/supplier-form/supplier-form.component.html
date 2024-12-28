@@ -1,0 +1,111 @@
+<div class="container">
+  <div class="form-container">
+    <button mat-button class="arrow-back" (click)="goBack()">
+      <mat-icon color="primary">arrow_back</mat-icon> Volver
+    </button>
+
+    <h2 class="form-title">
+      {{ isEditMode ? "Editando proveedor" : "Registrar nuevo proveedor" }}
+    </h2>
+
+    <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
+      <!-- Campo de Nombre -->
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+        <mat-error
+          *ngIf="
+            supplierForm.get('name')?.touched &&
+            supplierForm.get('name')?.invalid
+          "
+        >
+          El nombre es obligatorio.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Contacto</mat-label>
+        <input matInput formControlName="contactName" />
+        <mat-error
+          *ngIf="
+            supplierForm.get('contactName')?.touched &&
+            supplierForm.get('contactName')?.invalid
+          "
+        >
+          El nombre del contacto es obligatorio.
+        </mat-error>
+      </mat-form-field>
+
+      <div class="input-group">
+        <div class="input-column">
+          <mat-form-field appearance="fill">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="contactEmail" />
+            <mat-error
+              *ngIf="
+                supplierForm.get('contactEmail')?.touched &&
+                supplierForm.get('contactEmail')?.invalid
+              "
+            >
+              Debe ingresar un correo electrónico válido.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="input-column">
+          <mat-form-field appearance="fill">
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="phoneNumber" />
+            <mat-error
+              *ngIf="
+                supplierForm.get('phoneNumber')?.touched &&
+                supplierForm.get('phoneNumber')?.invalid
+              "
+            >
+              El teléfono es obligatorio.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Campo de Dirección -->
+      <mat-form-field appearance="fill">
+        <mat-label>Dirección</mat-label>
+        <input matInput formControlName="address" />
+        <mat-error
+          *ngIf="
+            supplierForm.get('address')?.touched &&
+            supplierForm.get('address')?.invalid
+          "
+        >
+          La dirección es obligatoria.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Campo de Página Web -->
+      <mat-form-field appearance="fill">
+        <mat-label>Pagina Web</mat-label>
+        <input matInput formControlName="website" />
+        <mat-error
+          *ngIf="
+            supplierForm.get('website')?.touched &&
+            supplierForm.get('website')?.invalid
+          "
+        >
+          La página web es obligatoria.
+        </mat-error>
+      </mat-form-field>
+
+      <div>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="supplierForm.invalid"
+        >
+          {{ isEditMode ? "Actualizar" : "Registrar" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

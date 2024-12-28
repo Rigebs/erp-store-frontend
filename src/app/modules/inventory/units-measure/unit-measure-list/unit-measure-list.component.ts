@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
+import { UnitMeasure } from '../../models/unit-measure';
 import { Router } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
+import { UnitMeasureService } from '../../services/unit-measure.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CategoryService } from '../../services/category.service';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
-import { Category } from '../../models/category';
-import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-categoriy-list',
+  selector: 'app-unit-measure-list',
   imports: [DynamicTableComponent, MatButtonModule, MatIconModule],
-  templateUrl: './category-list.component.html',
-  styleUrls: ['./category-list.component.css'],
+  templateUrl: './unit-measure-list.component.html',
+  styleUrl: './unit-measure-list.component.css',
 })
-export class CategoryListComponent implements OnInit {
+export class UnitMeasureListComponent implements OnInit {
   constructor(
     private router: Router,
-    private categoryService: CategoryService,
+    private unitMeasureService: UnitMeasureService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -29,20 +29,20 @@ export class CategoryListComponent implements OnInit {
     { field: 'status', header: 'Estado' },
   ];
 
-  categoriesData: Category[] = [];
+  unitMeasuresData: UnitMeasure[] = [];
 
-  createCategory() {
-    this.router.navigateByUrl('management/categories/new');
+  createUnitMeasure() {
+    this.router.navigateByUrl('management/unit-measures/new');
   }
 
   ngOnInit(): void {
-    this.loadCategories();
+    this.loadUnitMeasures();
   }
 
-  loadCategories() {
-    this.categoryService.findAll().subscribe({
+  loadUnitMeasures() {
+    this.unitMeasureService.findAll().subscribe({
       next: (data) => {
-        this.categoriesData = data;
+        this.unitMeasuresData = data;
         console.log(data);
       },
       error: (err) => {
@@ -51,25 +51,27 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  onEdit(category: Category) {
-    this.router.navigateByUrl(`management/categories/${category.id}/edit`);
+  onEdit(unitMeasure: UnitMeasure) {
+    this.router.navigateByUrl(
+      `management/unit-measures/${unitMeasure.id}/edit`
+    );
   }
 
-  onDelete(category: Category) {
+  onDelete(unitMeasure: UnitMeasure) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
-        message: `¿Estás seguro de eliminar la categoría ${category.name}?`,
+        message: `¿Estás seguro de eliminar la unidad de medida ${unitMeasure.name}?`,
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.categoryService.delete(category.id).subscribe({
+        this.unitMeasureService.delete(unitMeasure.id).subscribe({
           next: (response) => {
             this.showMessage(response.message);
-            this.categoriesData = this.categoriesData.filter(
-              (c) => c.id !== category.id
+            this.unitMeasuresData = this.unitMeasuresData.filter(
+              (u) => u.id !== unitMeasure.id
             );
           },
           error: (err) => {
@@ -82,27 +84,27 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  onToggleStatus(category: Category) {
+  onToggleStatus(unitMeasure: UnitMeasure) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
         message: `¿Estás seguro de ${
-          category.status ? 'desactivar' : 'activar'
-        } la categoría ${category.name}?`,
+          unitMeasure.status ? 'desactivar' : 'activar'
+        } la unidad de medida ${unitMeasure.name}?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.categoryService.toggleStatus(category.id).subscribe({
+        this.unitMeasureService.toggleStatus(unitMeasure.id).subscribe({
           next: (response) => {
             this.showMessage(response.message);
-            const categoryToUpdate = this.categoriesData.find(
-              (c) => c.id === category.id
+            const unitMeasureToUpdate = this.unitMeasuresData.find(
+              (u) => u.id === unitMeasure.id
             );
-            if (categoryToUpdate) {
-              categoryToUpdate.status = !categoryToUpdate.status;
+            if (unitMeasureToUpdate) {
+              unitMeasureToUpdate.status = !unitMeasureToUpdate.status;
             }
           },
           error: (err) => {

@@ -4,45 +4,47 @@ import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CategoryService } from '../../services/category.service';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
-import { Category } from '../../models/category';
+import { SupplierService } from '../../services/supplier.service';
+import { Supplier } from '../../models/supplier';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
-  selector: 'app-categoriy-list',
+  selector: 'app-supplier-list',
   imports: [DynamicTableComponent, MatButtonModule, MatIconModule],
-  templateUrl: './category-list.component.html',
-  styleUrls: ['./category-list.component.css'],
+  templateUrl: './supplier-list.component.html',
+  styleUrls: ['./supplier-list.component.css'],
 })
-export class CategoryListComponent implements OnInit {
+export class SupplierListComponent implements OnInit {
   constructor(
     private router: Router,
-    private categoryService: CategoryService,
+    private supplierService: SupplierService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
   columns = [
     { field: 'name', header: 'Nombre' },
-    { field: 'description', header: 'Descripción', hidden: true },
+    { field: 'contactName', header: 'Nombre del contacto' },
+    { field: 'contactEmail', header: 'Correo de contacto', hidden: true },
+    { field: 'phoneNumber', header: 'Teléfono', hidden: true },
     { field: 'status', header: 'Estado' },
   ];
 
-  categoriesData: Category[] = [];
+  suppliersData: Supplier[] = [];
 
-  createCategory() {
-    this.router.navigateByUrl('management/categories/new');
+  createSupplier() {
+    this.router.navigateByUrl('management/suppliers/new');
   }
 
   ngOnInit(): void {
-    this.loadCategories();
+    this.loadSuppliers();
   }
 
-  loadCategories() {
-    this.categoryService.findAll().subscribe({
+  loadSuppliers() {
+    this.supplierService.findAll().subscribe({
       next: (data) => {
-        this.categoriesData = data;
+        this.suppliersData = data;
         console.log(data);
       },
       error: (err) => {
@@ -51,25 +53,25 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  onEdit(category: Category) {
-    this.router.navigateByUrl(`management/categories/${category.id}/edit`);
+  onEdit(supplier: Supplier) {
+    this.router.navigateByUrl(`management/suppliers/${supplier.id}/edit`);
   }
 
-  onDelete(category: Category) {
+  onDelete(supplier: Supplier) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
-        message: `¿Estás seguro de eliminar la categoría ${category.name}?`,
+        message: `¿Estás seguro de eliminar el proveedor ${supplier.name}?`,
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.categoryService.delete(category.id).subscribe({
+        this.supplierService.delete(supplier.id).subscribe({
           next: (response) => {
             this.showMessage(response.message);
-            this.categoriesData = this.categoriesData.filter(
-              (c) => c.id !== category.id
+            this.suppliersData = this.suppliersData.filter(
+              (s) => s.id !== supplier.id
             );
           },
           error: (err) => {
@@ -82,27 +84,27 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  onToggleStatus(category: Category) {
+  onToggleStatus(supplier: Supplier) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
         message: `¿Estás seguro de ${
-          category.status ? 'desactivar' : 'activar'
-        } la categoría ${category.name}?`,
+          supplier.status ? 'desactivar' : 'activar'
+        } el proveedor ${supplier.name}?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.categoryService.toggleStatus(category.id).subscribe({
+        this.supplierService.toggleStatus(supplier.id).subscribe({
           next: (response) => {
             this.showMessage(response.message);
-            const categoryToUpdate = this.categoriesData.find(
-              (c) => c.id === category.id
+            const supplierToUpdate = this.suppliersData.find(
+              (s) => s.id === supplier.id
             );
-            if (categoryToUpdate) {
-              categoryToUpdate.status = !categoryToUpdate.status;
+            if (supplierToUpdate) {
+              supplierToUpdate.status = !supplierToUpdate.status;
             }
           },
           error: (err) => {

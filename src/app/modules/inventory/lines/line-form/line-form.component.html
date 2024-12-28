@@ -5,43 +5,39 @@
     </button>
 
     <h2 class="form-title">
-      {{ isEditMode ? "Editando categoría" : "Registrar nueva categoría" }}
+      {{ isEditMode ? "Editando línea" : "Registrar nueva línea" }}
     </h2>
 
-    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
-      <!-- Campo de Nombre -->
+    <form [formGroup]="lineForm" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="fill">
         <mat-label>Nombre</mat-label>
         <input matInput formControlName="name" />
         <mat-error
-          *ngIf="
-            categoryForm.get('name')?.touched &&
-            categoryForm.get('name')?.invalid
-          "
+          *ngIf="lineForm.get('name')?.touched && lineForm.get('name')?.invalid"
         >
           El nombre es obligatorio.
         </mat-error>
       </mat-form-field>
 
-      <!-- Campo de Descripción -->
       <mat-form-field appearance="fill">
         <mat-label>Descripción</mat-label>
         <textarea matInput formControlName="description"></textarea>
         <mat-error
           *ngIf="
-            categoryForm.get('description')?.touched &&
-            categoryForm.get('description')?.invalid
+            lineForm.get('description')?.touched &&
+            lineForm.get('description')?.invalid
           "
         >
           La descripción es obligatoria.
         </mat-error>
       </mat-form-field>
+
       <div>
         <button
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="categoryForm.invalid"
+          [disabled]="lineForm.invalid"
         >
           {{ isEditMode ? "Actualizar" : "Registrar" }}
         </button>

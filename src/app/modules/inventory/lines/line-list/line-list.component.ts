@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
+import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
+import { LineService } from '../../services/line.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CategoryService } from '../../services/category.service';
-import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
-import { Category } from '../../models/category';
+import { Line } from '../../models/line';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
-  selector: 'app-categoriy-list',
+  selector: 'app-line-list',
   imports: [DynamicTableComponent, MatButtonModule, MatIconModule],
-  templateUrl: './category-list.component.html',
-  styleUrls: ['./category-list.component.css'],
+  templateUrl: './line-list.component.html',
+  styleUrl: './line-list.component.css',
 })
-export class CategoryListComponent implements OnInit {
+export class LineListComponent implements OnInit {
   constructor(
     private router: Router,
-    private categoryService: CategoryService,
+    private lineService: LineService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -29,20 +29,20 @@ export class CategoryListComponent implements OnInit {
     { field: 'status', header: 'Estado' },
   ];
 
-  categoriesData: Category[] = [];
+  linesData: Line[] = [];
 
-  createCategory() {
-    this.router.navigateByUrl('management/categories/new');
+  createLine() {
+    this.router.navigateByUrl('management/lines/new');
   }
 
   ngOnInit(): void {
-    this.loadCategories();
+    this.loadLines();
   }
 
-  loadCategories() {
-    this.categoryService.findAll().subscribe({
+  loadLines() {
+    this.lineService.findAll().subscribe({
       next: (data) => {
-        this.categoriesData = data;
+        this.linesData = data;
         console.log(data);
       },
       error: (err) => {
@@ -51,26 +51,24 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  onEdit(category: Category) {
-    this.router.navigateByUrl(`management/categories/${category.id}/edit`);
+  onEdit(line: Line) {
+    this.router.navigateByUrl(`management/lines/${line.id}/edit`);
   }
 
-  onDelete(category: Category) {
+  onDelete(line: Line) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
-        message: `¿Estás seguro de eliminar la categoría ${category.name}?`,
+        message: `¿Estás seguro de eliminar la línea ${line.name}?`,
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.categoryService.delete(category.id).subscribe({
+        this.lineService.delete(line.id).subscribe({
           next: (response) => {
             this.showMessage(response.message);
-            this.categoriesData = this.categoriesData.filter(
-              (c) => c.id !== category.id
-            );
+            this.linesData = this.linesData.filter((l) => l.id !== line.id);
           },
           error: (err) => {
             console.log('Error: ', err);
@@ -82,27 +80,25 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  onToggleStatus(category: Category) {
+  onToggleStatus(line: Line) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
         message: `¿Estás seguro de ${
-          category.status ? 'desactivar' : 'activar'
-        } la categoría ${category.name}?`,
+          line.status ? 'desactivar' : 'activar'
+        } la línea ${line.name}?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.categoryService.toggleStatus(category.id).subscribe({
+        this.lineService.toggleStatus(line.id).subscribe({
           next: (response) => {
             this.showMessage(response.message);
-            const categoryToUpdate = this.categoriesData.find(
-              (c) => c.id === category.id
-            );
-            if (categoryToUpdate) {
-              categoryToUpdate.status = !categoryToUpdate.status;
+            const lineToUpdate = this.linesData.find((l) => l.id === line.id);
+            if (lineToUpdate) {
+              lineToUpdate.status = !lineToUpdate.status;
             }
           },
           error: (err) => {

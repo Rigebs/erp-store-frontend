@@ -26,6 +26,8 @@ import { UnitMeasure } from '../../models/unit-measure';
 import { ProductService } from '../../services/product.service';
 import { ProductRequest } from '../../models/request/product-request';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Product } from '../../models/product';
+import { ProductDto } from '../../models/dto/product-dto';
 
 @Component({
   selector: 'app-product-form',
@@ -54,6 +56,7 @@ export class ProductFormComponent implements OnInit {
 
   isEditMode = false;
   productId: string | null = null;
+  productEdit: ProductDto | undefined;
 
   constructor(
     private fb: FormBuilder,
@@ -96,7 +99,6 @@ export class ProductFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.productForm.valid) {
-      console.log('Formulario enviado:', this.productForm.value);
       if (this.isEditMode) {
         this.update(Number(this.productId), this.productForm.value);
         return;
@@ -114,6 +116,7 @@ export class ProductFormComponent implements OnInit {
   loadProduct(id: number): void {
     this.productService.findById(id).subscribe({
       next: (product) => {
+        this.loadProductRelations(product);
         this.productForm.patchValue({
           name: product.name,
           description: product.description,
@@ -133,7 +136,7 @@ export class ProductFormComponent implements OnInit {
   }
 
   getCategories() {
-    this.categoryService.findAll().subscribe({
+    this.categoryService.findAllActive().subscribe({
       next: (data) => {
         this.categories = data;
       },
@@ -143,8 +146,30 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
+  loadProductRelations(product: ProductDto) {
+    if (!product.brand.flag && !product.brand.status) {
+      this.brands = [...this.brands, product.brand];
+    }
+
+    if (!product.category.flag && !product.category.status) {
+      this.categories = [...this.categories, product.category];
+    }
+
+    if (!product.line.flag && !product.line.status) {
+      this.lines = [...this.lines, product.line];
+    }
+
+    if (!product.supplier.flag && !product.supplier.status) {
+      this.suppliers = [...this.suppliers, product.supplier];
+    }
+
+    if (!product.unitMeasure.flag && !product.unitMeasure.status) {
+      this.unitsMeasure = [...this.unitsMeasure, product.unitMeasure];
+    }
+  }
+
   getBrands() {
-    this.brandService.findAll().subscribe({
+    this.brandService.findAllActive().subscribe({
       next: (data) => {
         this.brands = data;
       },
@@ -155,7 +180,7 @@ export class ProductFormComponent implements OnInit {
   }
 
   getLines() {
-    this.lineService.findAll().subscribe({
+    this.lineService.findAllActive().subscribe({
       next: (data) => {
         this.lines = data;
       },
@@ -166,7 +191,7 @@ export class ProductFormComponent implements OnInit {
   }
 
   getSuppliers() {
-    this.supplierService.findAll().subscribe({
+    this.supplierService.findAllActive().subscribe({
       next: (data) => {
         this.suppliers = data;
       },
@@ -177,7 +202,7 @@ export class ProductFormComponent implements OnInit {
   }
 
   getUnitsMeasure() {
-    this.unitMeasureService.findAll().subscribe({
+    this.unitMeasureService.findAllActive().subscribe({
       next: (data) => {
         this.unitsMeasure = data;
       },

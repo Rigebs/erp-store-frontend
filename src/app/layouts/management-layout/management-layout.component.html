@@ -28,6 +28,26 @@
         <span matListItemTitle>Categorías</span>
       </a>
 
+      <a mat-list-item (click)="navigateTo('management/suppliers')">
+        <mat-icon matListItemIcon>local_shipping</mat-icon>
+        <span matListItemTitle>Proveedores</span>
+      </a>
+
+      <a mat-list-item (click)="navigateTo('management/lines')">
+        <mat-icon matListItemIcon>align_horizontal_right</mat-icon>
+        <span matListItemTitle>Lineas</span>
+      </a>
+
+      <a mat-list-item (click)="navigateTo('management/brands')">
+        <mat-icon matListItemIcon>workspace_premium</mat-icon>
+        <span matListItemTitle>Marcas</span>
+      </a>
+
+      <a mat-list-item (click)="navigateTo('management/units-measure')">
+        <mat-icon matListItemIcon>square_foot</mat-icon>
+        <span matListItemTitle>Unid. de medida</span>
+      </a>
+
       <!-- Opción de Reportes -->
       <a mat-list-item (click)="navigateTo('management/reports')">
         <mat-icon matListItemIcon>assessment</mat-icon>

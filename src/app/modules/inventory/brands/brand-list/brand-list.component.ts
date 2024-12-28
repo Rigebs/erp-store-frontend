@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
+import { BrandService } from '../../services/brand.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CategoryService } from '../../services/category.service';
-import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
-import { Category } from '../../models/category';
+import { Brand } from '../../models/brand';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
+import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-categoriy-list',
+  selector: 'app-brand-list',
   imports: [DynamicTableComponent, MatButtonModule, MatIconModule],
-  templateUrl: './category-list.component.html',
-  styleUrls: ['./category-list.component.css'],
+  templateUrl: './brand-list.component.html',
+  styleUrl: './brand-list.component.css',
 })
-export class CategoryListComponent implements OnInit {
+export class BrandListComponent implements OnInit {
   constructor(
     private router: Router,
-    private categoryService: CategoryService,
+    private brandService: BrandService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -29,20 +29,20 @@ export class CategoryListComponent implements OnInit {
     { field: 'status', header: 'Estado' },
   ];
 
-  categoriesData: Category[] = [];
+  brandsData: Brand[] = [];
 
-  createCategory() {
-    this.router.navigateByUrl('management/categories/new');
+  createBrand() {
+    this.router.navigateByUrl('management/brands/new');
   }
 
   ngOnInit(): void {
-    this.loadCategories();
+    this.loadBrands();
   }
 
-  loadCategories() {
-    this.categoryService.findAll().subscribe({
+  loadBrands() {
+    this.brandService.findAll().subscribe({
       next: (data) => {
-        this.categoriesData = data;
+        this.brandsData = data;
         console.log(data);
       },
       error: (err) => {
@@ -51,26 +51,24 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  onEdit(category: Category) {
-    this.router.navigateByUrl(`management/categories/${category.id}/edit`);
+  onEdit(brand: Brand) {
+    this.router.navigateByUrl(`management/brands/${brand.id}/edit`);
   }
 
-  onDelete(category: Category) {
+  onDelete(brand: Brand) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
-        message: `¿Estás seguro de eliminar la categoría ${category.name}?`,
+        message: `¿Estás seguro de eliminar la marca ${brand.name}?`,
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.categoryService.delete(category.id).subscribe({
+        this.brandService.delete(brand.id).subscribe({
           next: (response) => {
             this.showMessage(response.message);
-            this.categoriesData = this.categoriesData.filter(
-              (c) => c.id !== category.id
-            );
+            this.brandsData = this.brandsData.filter((b) => b.id !== brand.id);
           },
           error: (err) => {
             console.log('Error: ', err);
@@ -82,27 +80,27 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  onToggleStatus(category: Category) {
+  onToggleStatus(brand: Brand) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
         message: `¿Estás seguro de ${
-          category.status ? 'desactivar' : 'activar'
-        } la categoría ${category.name}?`,
+          brand.status ? 'desactivar' : 'activar'
+        } la marca ${brand.name}?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.categoryService.toggleStatus(category.id).subscribe({
+        this.brandService.toggleStatus(brand.id).subscribe({
           next: (response) => {
             this.showMessage(response.message);
-            const categoryToUpdate = this.categoriesData.find(
-              (c) => c.id === category.id
+            const brandToUpdate = this.brandsData.find(
+              (b) => b.id === brand.id
             );
-            if (categoryToUpdate) {
-              categoryToUpdate.status = !categoryToUpdate.status;
+            if (brandToUpdate) {
+              brandToUpdate.status = !brandToUpdate.status;
             }
           },
           error: (err) => {
