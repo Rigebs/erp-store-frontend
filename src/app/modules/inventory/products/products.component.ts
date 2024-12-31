@@ -25,6 +25,7 @@ export class ProductsComponent implements OnInit {
 
   columns = [
     { field: 'name', header: 'Nombre' },
+    { field: 'quantity', header: 'Cantidad' },
     { field: 'description', header: 'Descripción', hidden: true },
     { field: 'purchasePrice', header: 'Precio compra', hidden: true },
     { field: 'salePrice', header: 'Precio venta' },

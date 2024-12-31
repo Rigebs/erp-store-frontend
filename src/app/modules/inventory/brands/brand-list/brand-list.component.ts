@@ -8,6 +8,7 @@ import { ConfirmationDialogComponent } from '../../../../components/confirmation
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-brand-list',
@@ -19,6 +20,7 @@ export class BrandListComponent implements OnInit {
   constructor(
     private router: Router,
     private brandService: BrandService,
+    private productService: ProductService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -100,6 +102,19 @@ export class BrandListComponent implements OnInit {
               (b) => b.id === brand.id
             );
             if (brandToUpdate) {
+              if (brandToUpdate.status) {
+                this.productService
+                  .deleteRelationships(brandToUpdate.id, 'brands')
+                  .subscribe({
+                    next: (response) => {
+                      this.showMessage(response.message);
+                    },
+                    error: (err) => {
+                      console.log('Error: ', err);
+                    },
+                  });
+              }
+
               brandToUpdate.status = !brandToUpdate.status;
             }
           },

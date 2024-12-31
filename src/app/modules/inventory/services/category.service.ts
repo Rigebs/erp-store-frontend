@@ -10,7 +10,7 @@ import { CategoryDto } from '../models/dto/category-dto';
   providedIn: 'root',
 })
 export class CategoryService {
-  private readonly baseUrl = 'http://localhost:8080/categories';
+  private readonly baseUrl = 'http://localhost:8080/api/v1/users/categories';
 
   constructor(private http: HttpClient) {}
 

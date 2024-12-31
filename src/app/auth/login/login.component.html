@@ -1,0 +1,23 @@
+<!-- src/app/auth/login/login.component.html -->
+<form (ngSubmit)="onSubmit()" class="login-form">
+  <h2 align="center">Inicia sesión</h2>
+  <mat-form-field appearance="fill">
+    <mat-label>Usuario</mat-label>
+    <input matInput [(ngModel)]="username" name="username" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Contraseña</mat-label>
+    <input
+      matInput
+      [(ngModel)]="password"
+      name="password"
+      type="password"
+      required
+    />
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit">
+    Iniciar sesión
+  </button>
+</form>

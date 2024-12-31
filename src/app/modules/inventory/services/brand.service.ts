@@ -10,7 +10,7 @@ import { ApiResponse } from '../../../models/api-response';
   providedIn: 'root',
 })
 export class BrandService {
-  private readonly baseUrl = 'http://localhost:8080/brands';
+  private readonly baseUrl = 'http://localhost:8080/api/v1/users/brands';
 
   constructor(private http: HttpClient) {}
 

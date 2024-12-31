@@ -10,7 +10,7 @@ import { UnitMeasureDto } from '../models/dto/unit-measure-dto';
   providedIn: 'root',
 })
 export class UnitMeasureService {
-  private readonly baseUrl = 'http://localhost:8080/units-measure';
+  private readonly baseUrl = 'http://localhost:8080/api/v1/users/units-measure';
 
   constructor(private http: HttpClient) {}
 

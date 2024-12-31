@@ -116,7 +116,6 @@ export class ProductFormComponent implements OnInit {
   loadProduct(id: number): void {
     this.productService.findById(id).subscribe({
       next: (product) => {
-        this.loadProductRelations(product);
         this.productForm.patchValue({
           name: product.name,
           description: product.description,
@@ -144,28 +143,6 @@ export class ProductFormComponent implements OnInit {
         console.log('error: ', err);
       },
     });
-  }
-
-  loadProductRelations(product: ProductDto) {
-    if (!product.brand.flag && !product.brand.status) {
-      this.brands = [...this.brands, product.brand];
-    }
-
-    if (!product.category.flag && !product.category.status) {
-      this.categories = [...this.categories, product.category];
-    }
-
-    if (!product.line.flag && !product.line.status) {
-      this.lines = [...this.lines, product.line];
-    }
-
-    if (!product.supplier.flag && !product.supplier.status) {
-      this.suppliers = [...this.suppliers, product.supplier];
-    }
-
-    if (!product.unitMeasure.flag && !product.unitMeasure.status) {
-      this.unitsMeasure = [...this.unitsMeasure, product.unitMeasure];
-    }
   }
 
   getBrands() {

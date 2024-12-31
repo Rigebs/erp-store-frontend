@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Line } from '../../models/line';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-line-list',
@@ -19,6 +20,7 @@ export class LineListComponent implements OnInit {
   constructor(
     private router: Router,
     private lineService: LineService,
+    private productService: ProductService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -93,7 +95,7 @@ export class LineListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.lineService.toggleStatus(line.id).subscribe({
+        this.productService.deleteRelationships(line.id, 'lines').subscribe({
           next: (response) => {
             this.showMessage(response.message);
             const lineToUpdate = this.linesData.find((l) => l.id === line.id);

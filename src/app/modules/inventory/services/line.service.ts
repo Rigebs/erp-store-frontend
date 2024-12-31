@@ -10,7 +10,7 @@ import { LineDto } from '../models/dto/line-dto';
   providedIn: 'root',
 })
 export class LineService {
-  private readonly baseUrl = 'http://localhost:8080/lines';
+  private readonly baseUrl = 'http://localhost:8080/api/v1/users/lines';
 
   constructor(private http: HttpClient) {}
 

@@ -10,7 +10,7 @@ import { SupplierRequest } from '../models/request/supplier-request';
   providedIn: 'root',
 })
 export class SupplierService {
-  private readonly baseUrl = 'http://localhost:8080/suppliers';
+  private readonly baseUrl = 'http://localhost:8080/api/v1/users/suppliers';
 
   constructor(private http: HttpClient) {}
 

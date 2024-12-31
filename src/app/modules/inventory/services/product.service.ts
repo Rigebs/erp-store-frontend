@@ -10,7 +10,7 @@ import { ProductDto } from '../models/dto/product-dto';
   providedIn: 'root',
 })
 export class ProductService {
-  private readonly baseUrl = 'http://localhost:8080/products';
+  private readonly baseUrl = 'http://localhost:8080/api/v1/users/products';
 
   constructor(private http: HttpClient) {}
 
@@ -36,6 +36,10 @@ export class ProductService {
 
   delete(id: number): Observable<ApiResponse> {
     return this.http.delete<ApiResponse>(`${this.baseUrl}/${id}`);
+  }
+
+  deleteRelationships(id: number, table: string): Observable<ApiResponse> {
+    return this.http.delete<ApiResponse>(`${this.baseUrl}/${table}/${id}`);
   }
 
   toggleStatus(id: number): Observable<ApiResponse> {
