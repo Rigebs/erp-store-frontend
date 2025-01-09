@@ -41,6 +41,8 @@ export class LoginComponent {
 
     this.authService.login(loginRequest).subscribe({
       next: (response) => {
+        console.log(response.token);
+
         this.jwtUtilService.saveToken(response.token);
         this.showNotification('Inicio de sesión exitoso', 'Cerrar', 3000);
         this.router.navigate(['/management/products']);

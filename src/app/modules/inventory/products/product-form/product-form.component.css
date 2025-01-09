@@ -30,3 +30,35 @@ mat-form-field {
 .textarea {
   margin-bottom: 8px;
 }
+
+.custom-file-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.image-preview {
+  margin-top: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  max-width: 200px;
+  max-height: 200px;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.button-color {
+  background-color: #3f51b5;
+  color: white;
+}
+
+.button-selected-color {
+  background-color: #359691;
+  color: white;
+}

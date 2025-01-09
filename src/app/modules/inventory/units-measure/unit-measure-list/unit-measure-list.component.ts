@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-unit-measure-list',
@@ -19,12 +20,14 @@ export class UnitMeasureListComponent implements OnInit {
   constructor(
     private router: Router,
     private unitMeasureService: UnitMeasureService,
+    private productService: ProductService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
   columns = [
     { field: 'name', header: 'Nombre' },
+    { field: 'abbreviation', header: 'Abreviación' },
     { field: 'description', header: 'Descripción', hidden: true },
     { field: 'status', header: 'Estado' },
   ];
@@ -104,6 +107,21 @@ export class UnitMeasureListComponent implements OnInit {
               (u) => u.id === unitMeasure.id
             );
             if (unitMeasureToUpdate) {
+              if (unitMeasureToUpdate.status) {
+                this.productService
+                  .deleteRelationships(unitMeasureToUpdate.id, 'units_measure')
+                  .subscribe({
+                    next: (response) => {
+                      this.showMessage(response.message);
+                    },
+                    error: (err) => {
+                      console.error(
+                        'Error deleting brand relationships: ',
+                        err
+                      );
+                    },
+                  });
+              }
               unitMeasureToUpdate.status = !unitMeasureToUpdate.status;
             }
           },

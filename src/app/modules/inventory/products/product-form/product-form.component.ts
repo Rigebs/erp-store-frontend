@@ -28,6 +28,7 @@ import { ProductRequest } from '../../models/request/product-request';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Product } from '../../models/product';
 import { ProductDto } from '../../models/dto/product-dto';
+import { ImageService } from '../../services/image.service';
 
 @Component({
   selector: 'app-product-form',
@@ -58,6 +59,18 @@ export class ProductFormComponent implements OnInit {
   productId: string | null = null;
   productEdit: ProductDto | undefined;
 
+  fileError: string | null = null;
+  imagePreview: string | ArrayBuffer | null = null;
+
+  buttonTitle = 'Seleccionar...';
+  buttonIcon = 'image';
+
+  imageSelected = false;
+
+  file: File | null = null;
+
+  imageId: number | null = null;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -68,13 +81,15 @@ export class ProductFormComponent implements OnInit {
     private unitMeasureService: UnitMeasureService,
     private productService: ProductService,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private imageService: ImageService
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
-      description: ['', Validators.required],
+      description: [''],
       purchasePrice: [null, [Validators.required, Validators.min(0)]],
       salePrice: [null, [Validators.required, Validators.min(0)]],
+      imageId: [''],
       categoryId: [''],
       brandId: [''],
       lineId: [''],
@@ -122,11 +137,15 @@ export class ProductFormComponent implements OnInit {
           purchasePrice: product.purchasePrice,
           salePrice: product.salePrice,
           categoryId: product.category?.id || null,
+          imageId: product.image?.id || null,
           brandId: product.brand?.id || null,
           lineId: product.line?.id || null,
           supplierId: product.supplier?.id || null,
           unitMeasureId: product.unitMeasure?.id || null,
         });
+        if (product.image) {
+          this.imagePreview = product.image.secureUrl;
+        }
       },
       error: (err) => {
         console.log('Error al cargar el producto: ', err);
@@ -217,6 +236,54 @@ export class ProductFormComponent implements OnInit {
       },
       error: (err) => {
         console.log('ERROR: ', err);
+      },
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input?.files?.[0]) {
+      const file = input.files[0];
+      if (!file.type.startsWith('image/')) {
+        this.fileError = 'El archivo debe ser una imagen.';
+        this.imagePreview = null;
+      } else {
+        this.fileError = null;
+        this.buttonTitle = 'Subir imagen';
+        this.buttonIcon = 'cloud_upload';
+        this.file = file;
+        this.imageSelected = true;
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.imagePreview = reader.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+  uploadImage(): void {
+    if (!this.file) {
+      return;
+    }
+    this.imageService.uploadImage(this.file!, 'products').subscribe({
+      next: (response) => {
+        this.imageId = response.id;
+        this.productForm.patchValue({
+          imageId: this.imageId,
+        });
+        this.snackBar.open('Imagen subida correctamente', 'Cerrar', {
+          duration: 2000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      },
+      error: (err) => {
+        console.log('Error al subir la imagen: ', err);
+        this.snackBar.open('Error al subir la imagen', 'Cerrar', {
+          duration: 2000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
       },
     });
   }

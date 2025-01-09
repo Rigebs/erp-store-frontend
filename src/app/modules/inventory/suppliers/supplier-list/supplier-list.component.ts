@@ -8,6 +8,7 @@ import { DynamicTableComponent } from '../../../../components/dynamic-table/dyna
 import { SupplierService } from '../../services/supplier.service';
 import { Supplier } from '../../models/supplier';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-supplier-list',
@@ -19,6 +20,7 @@ export class SupplierListComponent implements OnInit {
   constructor(
     private router: Router,
     private supplierService: SupplierService,
+    private productService: ProductService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -104,6 +106,21 @@ export class SupplierListComponent implements OnInit {
               (s) => s.id === supplier.id
             );
             if (supplierToUpdate) {
+              if (supplierToUpdate.status) {
+                this.productService
+                  .deleteRelationships(supplierToUpdate.id, 'suppliers')
+                  .subscribe({
+                    next: (response) => {
+                      this.showMessage(response.message);
+                    },
+                    error: (err) => {
+                      console.error(
+                        'Error deleting brand relationships: ',
+                        err
+                      );
+                    },
+                  });
+              }
               supplierToUpdate.status = !supplierToUpdate.status;
             }
           },

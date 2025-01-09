@@ -18,7 +18,7 @@
                 id="name"
                 matInput
                 formControlName="name"
-                placeholder="Product Name"
+                placeholder="Nombre"
               />
               <mat-error
                 *ngIf="
@@ -26,7 +26,7 @@
                   productForm.get('name')?.touched
                 "
               >
-                Name is required.
+                El nombre es requerido.
               </mat-error>
             </mat-form-field>
           </div>
@@ -41,7 +41,7 @@
                 matInput
                 formControlName="purchasePrice"
                 type="number"
-                placeholder="Purchase Price"
+                placeholder="Precio de compra"
               />
               <mat-error
                 *ngIf="
@@ -49,7 +49,7 @@
                   productForm.get('purchasePrice')?.touched
                 "
               >
-                Price must be a positive number.
+                El precio deberia ser un número positivo.
               </mat-error>
             </mat-form-field>
           </div>
@@ -61,7 +61,7 @@
                 matInput
                 formControlName="salePrice"
                 type="number"
-                placeholder="Sale Price"
+                placeholder="Precio de venta"
               />
               <mat-error
                 *ngIf="
@@ -69,7 +69,7 @@
                   productForm.get('salePrice')?.touched
                 "
               >
-                Price must be a positive number.
+                El precio deberia ser un número positivo.
               </mat-error>
             </mat-form-field>
           </div>
@@ -81,17 +81,42 @@
               id="description"
               matInput
               formControlName="description"
-              placeholder="Description"
+              placeholder="Descripción"
             ></textarea>
-            <mat-error
-              *ngIf="
-                productForm.get('description')?.invalid &&
-                productForm.get('description')?.touched
-              "
-            >
-              Description is required.
-            </mat-error>
           </mat-form-field>
+        </div>
+
+        <div class="input-group">
+          <div class="input-column">
+            <label for="productImage">Sube una imagen del producto</label>
+            <div class="custom-file-input">
+              <a
+                mat-raised-button
+                [ngClass]="
+                  imageSelected ? 'button-selected-color' : 'button-color'
+                "
+                (click)="imageSelected ? uploadImage() : fileInput.click()"
+              >
+                <mat-icon>{{ buttonIcon }}</mat-icon>
+                {{ buttonTitle }}
+              </a>
+              <input
+                #fileInput
+                id="productImage"
+                type="file"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                hidden
+              />
+            </div>
+            <mat-error *ngIf="fileError">
+              {{ fileError }}
+            </mat-error>
+
+            <div *ngIf="imagePreview" class="image-preview">
+              <img [src]="imagePreview" alt="Image Preview" />
+            </div>
+          </div>
         </div>
 
         <div class="input-group">
@@ -168,7 +193,6 @@
             </mat-form-field>
           </div>
         </div>
-
         <div>
           <button
             mat-raised-button

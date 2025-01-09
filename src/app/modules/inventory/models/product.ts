@@ -6,9 +6,10 @@ export interface Product {
   salePrice: number;
   status: boolean;
   flag: boolean;
+  secureUrl: string;
   brandName: string;
   categoryName: string;
-  unitMeasureName: string;
+  unitMeasureAbbreviation: string;
   lineName: string;
   supplierName: string;
 }

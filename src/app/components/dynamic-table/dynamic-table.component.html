@@ -14,34 +14,79 @@
     </button>
   </mat-menu>
 </div>
+
 <mat-form-field>
   <mat-label>Filtrar productos</mat-label>
   <input matInput (keyup)="applyFilter($event)" #input />
 </mat-form-field>
+
 <div class="table-container">
   <table mat-table [dataSource]="dataSource" matSort>
+    <!-- Índice -->
     <ng-container matColumnDef="index">
       <th mat-header-cell *matHeaderCellDef>#</th>
       <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
     </ng-container>
 
+    <!-- Columnas dinámicas -->
     <ng-container *ngFor="let column of columns" [matColumnDef]="column.field">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         {{ column.header }}
       </th>
-      <td mat-cell *matCellDef="let element">
-        <ng-container *ngIf="column.field === 'status'; else defaultCell">
-          <div
-            class="estado"
-            [ngClass]="element[column.field] ? 'activo' : 'inactivo'"
-          >
-            {{ element[column.field] ? "Activo" : "Inactivo" }}
+
+      <!-- Condición para 'secureUrl' -->
+      <ng-container *ngIf="column.field === 'secureUrl'; else defaultCell">
+        <td mat-cell *matCellDef="let element">
+          <div class="image-container">
+            <img
+              [src]="element[column.field]"
+              alt="Product Image"
+              *ngIf="element[column.field]"
+            />
+            <span *ngIf="!element[column.field]">-</span>
           </div>
-        </ng-container>
-        <ng-template #defaultCell>
-          {{ element[column.field] || "-" }}
-        </ng-template>
-      </td>
+        </td>
+      </ng-container>
+
+      <!-- Resto de las condiciones de columna -->
+      <ng-template #defaultCell>
+        <td mat-cell *matCellDef="let element">
+          <!-- Condición para 'status' -->
+          <ng-container
+            *ngIf="column.field === 'status'; else priceOrDescription"
+          >
+            <div
+              class="estado"
+              [ngClass]="element[column.field] ? 'activo' : 'inactivo'"
+            >
+              {{ element[column.field] ? "Activo" : "Inactivo" }}
+            </div>
+          </ng-container>
+
+          <ng-template #priceOrDescription>
+            <!-- Condición para 'salePrice' -->
+            <ng-container
+              *ngIf="column.field.includes('salePrice'); else checkDescription"
+            >
+              s/ {{ element[column.field] || "-" }}
+            </ng-container>
+
+            <!-- Condición para 'description' -->
+            <ng-template #checkDescription>
+              <ng-container
+                *ngIf="column.field === 'description'; else defaultText"
+              >
+                <p>{{ element[column.field] || "-" }}</p>
+              </ng-container>
+
+              <!-- Texto por defecto -->
+              <ng-template #defaultText>
+                {{ element[column.field] || "-" }}
+              </ng-template>
+            </ng-template>
+          </ng-template>
+        </td>
+      </ng-template>
     </ng-container>
 
     <!-- Acciones -->

@@ -95,16 +95,28 @@ export class LineListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.productService.deleteRelationships(line.id, 'lines').subscribe({
+        this.lineService.toggleStatus(line.id).subscribe({
           next: (response) => {
             this.showMessage(response.message);
             const lineToUpdate = this.linesData.find((l) => l.id === line.id);
             if (lineToUpdate) {
+              if (lineToUpdate.status) {
+                this.productService
+                  .deleteRelationships(line.id, 'lines')
+                  .subscribe({
+                    next: (response) => {
+                      this.showMessage(response.message);
+                    },
+                    error: (err) => {
+                      console.error('Error deleting line relationships: ', err);
+                    },
+                  });
+              }
               lineToUpdate.status = !lineToUpdate.status;
             }
           },
           error: (err) => {
-            console.log('Error: ', err);
+            console.error('Error toggling line status: ', err);
           },
         });
       } else {

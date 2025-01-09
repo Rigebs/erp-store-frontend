@@ -1,30 +1,32 @@
+import { isPlatformBrowser } from '@angular/common';
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { catchError, throwError } from 'rxjs';
+import { catchError, throwError, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
+import { JwtUtilService } from '../utils/jwt-util.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
-  const snackBar = inject(MatSnackBar);
+  const platformId = inject(PLATFORM_ID);
+  const isBrowser = isPlatformBrowser(platformId);
 
-  let token: string | null = null;
+  if (isBrowser) {
+    const router = inject(Router);
+    const snackBar = inject(MatSnackBar);
+    const jwtUtilService = inject(JwtUtilService);
 
-  if (typeof window !== 'undefined' && window.localStorage) {
-    token = localStorage.getItem('authToken');
-  }
+    const token: string | null = jwtUtilService.getToken();
 
-  if (token) {
-    req = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  }
+    if (token) {
+      req = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
 
-  return next(req).pipe(
-    catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && error.error?.error === 'Expired Token') {
+    return next(req).pipe(
+      catchError((error: HttpErrorResponse) => {
         snackBar.open(
           'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
           'Cerrar',
@@ -32,13 +34,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             duration: 3000,
           }
         );
-
-        localStorage.clear();
-        sessionStorage.clear();
+        jwtUtilService.removeToken();
         router.navigate(['/auth/login']);
-      }
 
-      return throwError(() => error);
-    })
-  );
+        return throwError(() => error);
+      })
+    );
+  } else {
+    return of();
+  }
 };

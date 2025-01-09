@@ -30,9 +30,10 @@ export class ProductsComponent implements OnInit {
     { field: 'purchasePrice', header: 'Precio compra', hidden: true },
     { field: 'salePrice', header: 'Precio venta' },
     { field: 'status', header: 'Estado' },
+    { field: 'secureUrl', header: 'Imagen' },
     { field: 'categoryName', header: 'Categoría' },
     { field: 'brandName', header: 'Marca' },
-    { field: 'unitMeasureName', header: 'U/M', hidden: true },
+    { field: 'unitMeasureAbbreviation', header: 'U/M', hidden: true },
     { field: 'lineName', header: 'Línea', hidden: true },
     { field: 'supplierName', header: 'Proveedor', hidden: true },
   ];

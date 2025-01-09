@@ -8,6 +8,7 @@ import { CategoryService } from '../../services/category.service';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { Category } from '../../models/category';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-categoriy-list',
@@ -19,6 +20,7 @@ export class CategoryListComponent implements OnInit {
   constructor(
     private router: Router,
     private categoryService: CategoryService,
+    private productService: ProductService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -102,6 +104,21 @@ export class CategoryListComponent implements OnInit {
               (c) => c.id === category.id
             );
             if (categoryToUpdate) {
+              if (categoryToUpdate.status) {
+                this.productService
+                  .deleteRelationships(categoryToUpdate.id, 'categories')
+                  .subscribe({
+                    next: (response) => {
+                      this.showMessage(response.message);
+                    },
+                    error: (err) => {
+                      console.error(
+                        'Error deleting brand relationships: ',
+                        err
+                      );
+                    },
+                  });
+              }
               categoryToUpdate.status = !categoryToUpdate.status;
             }
           },

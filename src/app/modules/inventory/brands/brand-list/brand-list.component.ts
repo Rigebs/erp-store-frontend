@@ -110,16 +110,18 @@ export class BrandListComponent implements OnInit {
                       this.showMessage(response.message);
                     },
                     error: (err) => {
-                      console.log('Error: ', err);
+                      console.error(
+                        'Error deleting brand relationships: ',
+                        err
+                      );
                     },
                   });
               }
-
               brandToUpdate.status = !brandToUpdate.status;
             }
           },
           error: (err) => {
-            console.log('Error: ', err);
+            console.error('Error toggling brand status: ', err);
           },
         });
       } else {

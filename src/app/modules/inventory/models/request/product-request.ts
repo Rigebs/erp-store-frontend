@@ -5,6 +5,7 @@ export interface ProductRequest {
   salePrice: number;
   status: boolean;
   flag: boolean;
+  imageId: number;
   brandId: number;
   categoryId: number;
   unitMeasureId: number;

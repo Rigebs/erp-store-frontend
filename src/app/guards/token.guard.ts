@@ -5,7 +5,7 @@ import { JwtUtilService } from '../utils/jwt-util.service';
 import { PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const tokenGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const jwtUtilService = inject(JwtUtilService);
   const platformId = inject(PLATFORM_ID);
@@ -13,13 +13,14 @@ export const authGuard: CanActivateFn = (route, state) => {
   if (isPlatformBrowser(platformId)) {
     const token = jwtUtilService.getToken();
 
-    if (token) {
-      console.log('Token presente, redirigiendo a /management/products');
-      router.navigate(['/management/products']);
+    if (token && jwtUtilService.isValidToken(token)) {
+      return true;
+    } else {
+      router.navigate(['/auth/login'], {
+        queryParams: { returnUrl: state.url },
+      });
       return false;
     }
   }
-
-  console.log('SSR: Permitiendo acceso al login');
   return true;
 };

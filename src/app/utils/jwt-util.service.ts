@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
@@ -8,23 +9,34 @@ import { jwtDecode, JwtPayload } from 'jwt-decode';
 export class JwtUtilService {
   private readonly TOKEN_KEY = 'authToken';
 
-  constructor(private router: Router) {}
+  private token: string | null = null;
+
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    if (isPlatformBrowser(this.platformId)) {
+      this.token = localStorage.getItem(this.TOKEN_KEY);
+    }
+  }
 
   saveToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.TOKEN_KEY, token);
+    }
+    this.token = token;
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    if (!this.token && isPlatformBrowser(this.platformId)) {
+      this.token = localStorage.getItem(this.TOKEN_KEY);
+    }
+    return this.token;
   }
 
   isValidToken(token: string): boolean {
-    if (!token) {
-      return false;
-    }
-
     try {
-      const decoded = this.decodeToken<JwtPayload>();
+      const decoded = this.decodeToken<JwtPayload>(token);
       if (!decoded || !decoded.exp) {
         return false;
       }
@@ -38,14 +50,17 @@ export class JwtUtilService {
   }
 
   removeToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(this.TOKEN_KEY);
+    }
+    this.token = null;
   }
 
-  decodeToken<T = JwtPayload>(): T | null {
-    const token = this.getToken();
-    if (token) {
+  decodeToken<T = JwtPayload>(token?: string): T | null {
+    const jwt = token || this.getToken();
+    if (jwt) {
       try {
-        return jwtDecode<T>(token);
+        return jwtDecode<T>(jwt);
       } catch (error) {
         console.error('Error al decodificar el token:', error);
         return null;
@@ -59,13 +74,6 @@ export class JwtUtilService {
     if (!token) {
       return false;
     }
-
-    const decoded = this.decodeToken<JwtPayload>();
-    if (!decoded || !decoded.exp) {
-      return false;
-    }
-
-    const currentTime = Math.floor(Date.now() / 1000);
-    return decoded.exp > currentTime;
+    return this.isValidToken(token);
   }
 }
