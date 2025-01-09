@@ -1,0 +1,51 @@
+<div class="container">
+  <div class="form-container">
+    <button mat-button class="arrow-back" (click)="goBack()">
+      <mat-icon color="primary">arrow_back</mat-icon> Volver
+    </button>
+
+    <h2 class="form-title">
+      {{ isEditMode ? "Editando categoría" : "Registrar nueva categoría" }}
+    </h2>
+
+    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+      <!-- Campo de Nombre -->
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+        <mat-error
+          *ngIf="
+            categoryForm.get('name')?.touched &&
+            categoryForm.get('name')?.invalid
+          "
+        >
+          El nombre es obligatorio.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Campo de Descripción -->
+      <mat-form-field appearance="fill">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+        <mat-error
+          *ngIf="
+            categoryForm.get('description')?.touched &&
+            categoryForm.get('description')?.invalid
+          "
+        >
+          La descripción es obligatoria.
+        </mat-error>
+      </mat-form-field>
+      <div>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="categoryForm.invalid"
+        >
+          {{ isEditMode ? "Actualizar" : "Registrar" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,117 @@
+<div class="column-visibility-controls">
+  <button mat-button [matMenuTriggerFor]="menu">
+    <mat-icon>toggle_on</mat-icon> Config. columnas
+  </button>
+  <mat-menu #menu="matMenu">
+    <button
+      mat-menu-item
+      *ngFor="let column of columns"
+      (click)="toggleColumnVisibility(column)"
+    >
+      <mat-checkbox [checked]="!column.hidden">{{
+        column.header
+      }}</mat-checkbox>
+    </button>
+  </mat-menu>
+</div>
+
+<mat-form-field>
+  <mat-label>Filtrar productos</mat-label>
+  <input matInput (keyup)="applyFilter($event)" #input />
+</mat-form-field>
+
+<div class="table-container">
+  <table mat-table [dataSource]="dataSource" matSort>
+    <!-- Índice -->
+    <ng-container matColumnDef="index">
+      <th mat-header-cell *matHeaderCellDef>#</th>
+      <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+    </ng-container>
+
+    <!-- Columnas dinámicas -->
+    <ng-container *ngFor="let column of columns" [matColumnDef]="column.field">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ column.header }}
+      </th>
+
+      <!-- Condición para 'secureUrl' -->
+      <ng-container *ngIf="column.field === 'secureUrl'; else defaultCell">
+        <td mat-cell *matCellDef="let element">
+          <div class="image-container">
+            <img
+              [src]="element[column.field]"
+              alt="Product Image"
+              *ngIf="element[column.field]"
+            />
+            <span *ngIf="!element[column.field]">-</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Resto de las condiciones de columna -->
+      <ng-template #defaultCell>
+        <td mat-cell *matCellDef="let element">
+          <!-- Condición para 'status' -->
+          <ng-container
+            *ngIf="column.field === 'status'; else priceOrDescription"
+          >
+            <div
+              class="estado"
+              [ngClass]="element[column.field] ? 'activo' : 'inactivo'"
+            >
+              {{ element[column.field] ? "Activo" : "Inactivo" }}
+            </div>
+          </ng-container>
+
+          <ng-template #priceOrDescription>
+            <!-- Condición para 'salePrice' -->
+            <ng-container
+              *ngIf="column.field.includes('salePrice'); else checkDescription"
+            >
+              s/ {{ element[column.field] || "-" }}
+            </ng-container>
+
+            <!-- Condición para 'description' -->
+            <ng-template #checkDescription>
+              <ng-container
+                *ngIf="column.field === 'description'; else defaultText"
+              >
+                <p>{{ element[column.field] || "-" }}</p>
+              </ng-container>
+
+              <!-- Texto por defecto -->
+              <ng-template #defaultText>
+                {{ element[column.field] || "-" }}
+              </ng-template>
+            </ng-template>
+          </ng-template>
+        </td>
+      </ng-template>
+    </ng-container>
+
+    <!-- Acciones -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="actions">
+          <button
+            mat-icon-button
+            color="accent"
+            (click)="onToggleStatus(element)"
+          >
+            <mat-icon>{{ element.status ? "block" : "check_circle" }}</mat-icon>
+          </button>
+          <button mat-icon-button color="primary" (click)="onEdit(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="onDelete(element)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

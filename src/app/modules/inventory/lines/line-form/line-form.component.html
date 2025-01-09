@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="form-container">
+    <button mat-button class="arrow-back" (click)="goBack()">
+      <mat-icon color="primary">arrow_back</mat-icon> Volver
+    </button>
+
+    <h2 class="form-title">
+      {{ isEditMode ? "Editando línea" : "Registrar nueva línea" }}
+    </h2>
+
+    <form [formGroup]="lineForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+        <mat-error
+          *ngIf="lineForm.get('name')?.touched && lineForm.get('name')?.invalid"
+        >
+          El nombre es obligatorio.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+        <mat-error
+          *ngIf="
+            lineForm.get('description')?.touched &&
+            lineForm.get('description')?.invalid
+          "
+        >
+          La descripción es obligatoria.
+        </mat-error>
+      </mat-form-field>
+
+      <div>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="lineForm.invalid"
+        >
+          {{ isEditMode ? "Actualizar" : "Registrar" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

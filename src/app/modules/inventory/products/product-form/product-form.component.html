@@ -1,0 +1,209 @@
+<div>
+  <div class="container">
+    <div class="form-container">
+      <button mat-button class="arrow-back" (click)="goBack()">
+        <mat-icon color="primary">arrow_back</mat-icon>Volver
+      </button>
+
+      <h2 class="form-title">
+        {{ isEditMode ? "Editando producto" : "Registra un nuevo producto" }}
+      </h2>
+
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+        <!-- Campo de nombre -->
+        <div class="input-group">
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <input
+                id="name"
+                matInput
+                formControlName="name"
+                placeholder="Nombre"
+              />
+              <mat-error
+                *ngIf="
+                  productForm.get('name')?.invalid &&
+                  productForm.get('name')?.touched
+                "
+              >
+                El nombre es requerido.
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Campo de precio de compra y precio de venta -->
+        <div class="input-group">
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <input
+                id="purchasePrice"
+                matInput
+                formControlName="purchasePrice"
+                type="number"
+                placeholder="Precio de compra"
+              />
+              <mat-error
+                *ngIf="
+                  productForm.get('purchasePrice')?.invalid &&
+                  productForm.get('purchasePrice')?.touched
+                "
+              >
+                El precio deberia ser un número positivo.
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <input
+                id="salePrice"
+                matInput
+                formControlName="salePrice"
+                type="number"
+                placeholder="Precio de venta"
+              />
+              <mat-error
+                *ngIf="
+                  productForm.get('salePrice')?.invalid &&
+                  productForm.get('salePrice')?.touched
+                "
+              >
+                El precio deberia ser un número positivo.
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="textarea">
+          <mat-form-field appearance="fill">
+            <textarea
+              id="description"
+              matInput
+              formControlName="description"
+              placeholder="Descripción"
+            ></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="input-group">
+          <div class="input-column">
+            <label for="productImage">Sube una imagen del producto</label>
+            <div class="custom-file-input">
+              <a
+                mat-raised-button
+                [ngClass]="
+                  imageSelected ? 'button-selected-color' : 'button-color'
+                "
+                (click)="imageSelected ? uploadImage() : fileInput.click()"
+              >
+                <mat-icon>{{ buttonIcon }}</mat-icon>
+                {{ buttonTitle }}
+              </a>
+              <input
+                #fileInput
+                id="productImage"
+                type="file"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                hidden
+              />
+            </div>
+            <mat-error *ngIf="fileError">
+              {{ fileError }}
+            </mat-error>
+
+            <div *ngIf="imagePreview" class="image-preview">
+              <img [src]="imagePreview" alt="Image Preview" />
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <mat-select
+                formControlName="categoryId"
+                placeholder="Selecciona una categoría"
+              >
+                <mat-option
+                  *ngFor="let category of categories"
+                  [value]="category.id"
+                >
+                  {{ category.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <mat-select
+                formControlName="brandId"
+                placeholder="Selecciona una marca"
+              >
+                <mat-option *ngFor="let brand of brands" [value]="brand.id">
+                  {{ brand.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <mat-select
+                formControlName="lineId"
+                placeholder="Selecciona una línea"
+              >
+                <mat-option *ngFor="let line of lines" [value]="line.id">
+                  {{ line.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <mat-select
+                formControlName="supplierId"
+                placeholder="Selecciona un proveedor"
+              >
+                <mat-option
+                  *ngFor="let supplier of suppliers"
+                  [value]="supplier.id"
+                >
+                  {{ supplier.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="input-column">
+            <mat-form-field appearance="fill">
+              <mat-select
+                formControlName="unitMeasureId"
+                placeholder="Selecciona una unidad de medida"
+              >
+                <mat-option *ngFor="let unit of unitsMeasure" [value]="unit.id">
+                  {{ unit.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="productForm.invalid"
+          >
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<form
+  (ngSubmit)="onSubmit(registerForm)"
+  #registerForm="ngForm"
+  class="register-form"
+>
+  <h2 align="center">Registrarse</h2>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Usuario</mat-label>
+    <input
+      matInput
+      [(ngModel)]="username"
+      name="username"
+      required
+      #usernameModel="ngModel"
+    />
+    <mat-error *ngIf="usernameModel.invalid && usernameModel.touched">
+      El usuario es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Email</mat-label>
+    <input
+      matInput
+      [(ngModel)]="email"
+      name="email"
+      type="email"
+      required
+      #emailModel="ngModel"
+    />
+    <mat-error *ngIf="emailModel.invalid && emailModel.touched">
+      El email es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Contraseña</mat-label>
+    <input
+      matInput
+      [(ngModel)]="password"
+      name="password"
+      type="password"
+      required
+      #passwordModel="ngModel"
+    />
+    <mat-error *ngIf="passwordModel.invalid && passwordModel.touched">
+      La contraseña es obligatoria
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Confirmar Contraseña</mat-label>
+    <input
+      matInput
+      [(ngModel)]="confirmPassword"
+      name="confirmPassword"
+      type="password"
+      required
+      [ngClass]="{ invalid: confirmPassword !== password }"
+      #confirmPasswordModel="ngModel"
+    />
+    <mat-error
+      *ngIf="confirmPasswordModel.invalid && confirmPasswordModel.touched"
+    >
+      La confirmación de la contraseña es obligatoria
+    </mat-error>
+    <mat-error
+      *ngIf="confirmPassword !== password && confirmPasswordModel.touched"
+    >
+      Las contraseñas no coinciden
+    </mat-error>
+  </mat-form-field>
+
+  <!-- Mostrar mensaje de error -->
+  <div *ngIf="registrationError" style="color: red; text-align: center">
+    {{ registrationError }}
+  </div>
+
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="registerForm.invalid"
+  >
+    Registrarse
+  </button>
+</form>

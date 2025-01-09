@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="form-container">
+    <button mat-button class="arrow-back" (click)="goBack()">
+      <mat-icon color="primary">arrow_back</mat-icon> Volver
+    </button>
+
+    <h2 class="form-title">
+      {{ isEditMode ? "Editando marca" : "Registrar nueva marca" }}
+    </h2>
+
+    <form [formGroup]="brandForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+        <mat-error
+          *ngIf="
+            brandForm.get('name')?.touched && brandForm.get('name')?.invalid
+          "
+        >
+          El nombre es obligatorio.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+        <mat-error
+          *ngIf="
+            brandForm.get('description')?.touched &&
+            brandForm.get('description')?.invalid
+          "
+        >
+          La descripción es obligatoria.
+        </mat-error>
+      </mat-form-field>
+
+      <div>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="brandForm.invalid"
+        >
+          {{ isEditMode ? "Actualizar" : "Registrar" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

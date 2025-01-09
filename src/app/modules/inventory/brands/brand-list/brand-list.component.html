@@ -1,0 +1,16 @@
+<div>
+  <div class="container">
+    <div class="">
+      <button mat-flat-button color="warn" (click)="createBrand()">
+        <mat-icon>add</mat-icon> Agregar
+      </button>
+    </div>
+    <app-dynamic-table
+      [data]="brandsData"
+      [columns]="columns"
+      (edit)="onEdit($event)"
+      (delete)="onDelete($event)"
+      (toggleStatus)="onToggleStatus($event)"
+    ></app-dynamic-table>
+  </div>
+</div>

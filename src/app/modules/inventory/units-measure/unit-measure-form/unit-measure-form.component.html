@@ -1,0 +1,67 @@
+<div class="container">
+  <div class="form-container">
+    <button mat-button class="arrow-back" (click)="goBack()">
+      <mat-icon color="primary">arrow_back</mat-icon> Volver
+    </button>
+
+    <h2 class="form-title">
+      {{
+        isEditMode
+          ? "Editando unidad de medida"
+          : "Registrar nueva unidad de medida"
+      }}
+    </h2>
+
+    <form [formGroup]="unitMeasureForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+        <mat-error
+          *ngIf="
+            unitMeasureForm.get('name')?.touched &&
+            unitMeasureForm.get('name')?.invalid
+          "
+        >
+          El nombre es obligatorio.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Abreviatura</mat-label>
+        <input matInput formControlName="abbreviation" />
+        <mat-error
+          *ngIf="
+            unitMeasureForm.get('abbreviation')?.touched &&
+            unitMeasureForm.get('abbreviation')?.invalid
+          "
+        >
+          La abreviatura es obligatoria.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+        <mat-error
+          *ngIf="
+            unitMeasureForm.get('description')?.touched &&
+            unitMeasureForm.get('description')?.invalid
+          "
+        >
+          La descripción es obligatoria.
+        </mat-error>
+      </mat-form-field>
+
+      <div>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="unitMeasureForm.invalid"
+        >
+          {{ isEditMode ? "Actualizar" : "Registrar" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
