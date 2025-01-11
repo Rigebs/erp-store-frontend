@@ -1,0 +1,9 @@
+p {
+  margin: 8px 0;
+}
+
+.summary-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

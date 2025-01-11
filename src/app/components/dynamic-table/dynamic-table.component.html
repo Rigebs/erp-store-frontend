@@ -39,11 +39,12 @@
         <td mat-cell *matCellDef="let element">
           <div class="image-container">
             <img
-              [src]="element[column.field]"
+              [src]="
+                element[column.field] ||
+                'https://res.cloudinary.com/doqozshir/image/upload/v1736552640/products/smkq68toqxfn1xopkoon.svg'
+              "
               alt="Product Image"
-              *ngIf="element[column.field]"
             />
-            <span *ngIf="!element[column.field]">-</span>
           </div>
         </td>
       </ng-container>
