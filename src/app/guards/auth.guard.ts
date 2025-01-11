@@ -13,7 +13,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   if (isPlatformBrowser(platformId)) {
     const token = jwtUtilService.getToken();
 
-    if (token) {
+    if (token && jwtUtilService.isValidToken()) {
       console.log('Token presente, redirigiendo a /management/products');
       router.navigate(['/management/products']);
       return false;

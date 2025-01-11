@@ -115,6 +115,8 @@ export class ProductFormComponent implements OnInit {
   onSubmit(): void {
     if (this.productForm.valid) {
       if (this.isEditMode) {
+        console.log(this.productForm.value);
+
         this.update(Number(this.productId), this.productForm.value);
         return;
       }

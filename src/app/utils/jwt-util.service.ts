@@ -34,9 +34,9 @@ export class JwtUtilService {
     return this.token;
   }
 
-  isValidToken(token: string): boolean {
+  isValidToken(): boolean {
     try {
-      const decoded = this.decodeToken<JwtPayload>(token);
+      const decoded = this.decodeToken<JwtPayload>();
       if (!decoded || !decoded.exp) {
         return false;
       }
@@ -56,8 +56,8 @@ export class JwtUtilService {
     this.token = null;
   }
 
-  decodeToken<T = JwtPayload>(token?: string): T | null {
-    const jwt = token || this.getToken();
+  decodeToken<T = JwtPayload>(): T | null {
+    const jwt = this.getToken();
     if (jwt) {
       try {
         return jwtDecode<T>(jwt);
@@ -74,6 +74,10 @@ export class JwtUtilService {
     if (!token) {
       return false;
     }
-    return this.isValidToken(token);
+    return this.isValidToken();
+  }
+
+  getId(): number {
+    return this.decodeToken<{ id: number }>()!.id;
   }
 }

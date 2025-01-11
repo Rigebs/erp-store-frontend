@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { tokenGuard } from './guards/token.guard';
+import { NewSaleComponent } from './modules/sales/new-sale/new-sale.component';
 
 export const routes: Routes = [
   {
@@ -9,11 +10,15 @@ export const routes: Routes = [
   },
   {
     path: 'management',
-    loadChildren: () => import('./modules/inventory/management.routes'),
+    loadChildren: () => import('./modules/management.routes'),
     canActivate: [tokenGuard],
   },
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.routes'),
+  },
+  {
+    path: 'new-sale',
+    component: NewSaleComponent,
   },
 ];

@@ -1,0 +1,40 @@
+<div class="product-selector">
+  <mat-form-field class="full-width">
+    <mat-label>Buscar producto</mat-label>
+    <input
+      matInput
+      [(ngModel)]="searchTerm"
+      placeholder="Ingresa el nombre del producto"
+    />
+  </mat-form-field>
+  <div class="product-cards">
+    <mat-card *ngFor="let product of filteredProducts()" class="product-card">
+      <mat-card-header>
+        <mat-card-title
+          ><h4>
+            <strong> {{ product.name }}</strong>
+          </h4></mat-card-title
+        >
+      </mat-card-header>
+      <mat-card-content>
+        <div class="product-image">
+          <img
+            mat-card-image
+            [src]="
+              product.secureUrl ||
+              'https://res.cloudinary.com/doqozshir/image/upload/v1736552640/products/smkq68toqxfn1xopkoon.svg'
+            "
+            [alt]="product.name"
+          />
+        </div>
+
+        <p><strong>Precio: </strong>{{ product.salePrice }}</p>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-icon-button color="warn" (click)="selectProduct(product)">
+          <mat-icon>add_shopping_cart</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

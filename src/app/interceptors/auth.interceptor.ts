@@ -36,6 +36,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         );
         jwtUtilService.removeToken();
         router.navigate(['/auth/login']);
+        snackBar.open('Te mandamos al login', 'cerrar', {
+          duration: 3000,
+        });
+        console.log('error');
 
         return throwError(() => error);
       })
