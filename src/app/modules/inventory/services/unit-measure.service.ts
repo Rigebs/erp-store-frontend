@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { UnitMeasure } from '../models/unit-measure';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '../../../models/api-response';
+import { UnitMeasure } from '../models/unit-measure';
 import { UnitMeasureRequest } from '../models/request/unit-measure-request';
 import { UnitMeasureDto } from '../models/dto/unit-measure-dto';
+import { ApiResponse } from '../../../models/api-response';
+import { JwtUtilService } from '../../../utils/jwt-util.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,14 +13,19 @@ import { UnitMeasureDto } from '../models/dto/unit-measure-dto';
 export class UnitMeasureService {
   private readonly baseUrl = 'http://localhost:8080/api/v1/users/units-measure';
 
-  constructor(private http: HttpClient) {}
+  private readonly userId: number;
+  constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {
+    this.userId = jwtUtilService.getId()!;
+  }
 
   findAll(): Observable<UnitMeasure[]> {
-    return this.http.get<UnitMeasure[]>(this.baseUrl);
+    return this.http.get<UnitMeasure[]>(`${this.baseUrl}/from/${this.userId}`);
   }
 
   findAllActive(): Observable<UnitMeasure[]> {
-    return this.http.get<UnitMeasure[]>(`${this.baseUrl}/active`);
+    return this.http.get<UnitMeasure[]>(
+      `${this.baseUrl}/from/${this.userId}/active`
+    );
   }
 
   findById(id: number): Observable<UnitMeasureDto> {

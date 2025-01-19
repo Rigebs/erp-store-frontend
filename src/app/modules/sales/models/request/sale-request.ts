@@ -6,6 +6,6 @@ export interface SaleRequest {
   tax: number;
   discount: number;
   customerId?: number;
-  cashierId: number;
+  cashierId: number | undefined;
   saleDetails: SaleDetailRequest[];
 }

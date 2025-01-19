@@ -29,6 +29,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Product } from '../../models/product';
 import { ProductDto } from '../../models/dto/product-dto';
 import { ImageService } from '../../services/image.service';
+import { JwtUtilService } from '../../../../utils/jwt-util.service';
 
 @Component({
   selector: 'app-product-form',
@@ -82,13 +83,15 @@ export class ProductFormComponent implements OnInit {
     private productService: ProductService,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
-    private imageService: ImageService
+    private imageService: ImageService,
+    jwtUtilService: JwtUtilService
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
       purchasePrice: [null, [Validators.required, Validators.min(0)]],
       salePrice: [null, [Validators.required, Validators.min(0)]],
+      userId: jwtUtilService.getId(),
       imageId: [''],
       categoryId: [''],
       brandId: [''],
@@ -121,6 +124,7 @@ export class ProductFormComponent implements OnInit {
         return;
       }
       this.save(this.productForm.value);
+      console.log(this.productForm.value);
     } else {
       console.log('Formulario no válido');
     }

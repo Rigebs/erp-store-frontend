@@ -70,14 +70,17 @@ export class JwtUtilService {
   }
 
   isAuthenticated(): boolean {
-    const token = this.getToken();
-    if (!token) {
-      return false;
-    }
     return this.isValidToken();
   }
 
-  getId(): number {
-    return this.decodeToken<{ id: number }>()!.id;
+  getId(): number | undefined {
+    const token = this.getToken();
+    if (token) {
+      const decoded = this.decodeToken<{ id: number }>();
+      if (decoded?.id !== undefined) {
+        return decoded.id;
+      }
+    }
+    return undefined;
   }
 }

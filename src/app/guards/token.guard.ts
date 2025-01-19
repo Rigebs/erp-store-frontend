@@ -15,12 +15,21 @@ export const tokenGuard: CanActivateFn = (route, state) => {
   if (isPlatformBrowser(platformId)) {
     const token = jwtUtilService.getToken();
 
-    if (token && jwtUtilService.isValidToken()) {
-      return true;
+    if (token) {
+      if (jwtUtilService.isValidToken()) {
+        return true;
+      } else {
+        jwtUtilService.removeToken();
+        router.navigate(['/auth/login']);
+        snackBar.open('Tu sesión ha expirado', 'Cerrar', {
+          duration: 2000,
+        });
+        return false;
+      }
     } else {
-      jwtUtilService.removeToken();
       router.navigate(['/auth/login']);
-      snackBar.open('Tu sesión ha expirado', 'Cerrar', {
+
+      snackBar.open('Inicia sesión, por favor', 'Cerrar', {
         duration: 2000,
       });
       return false;

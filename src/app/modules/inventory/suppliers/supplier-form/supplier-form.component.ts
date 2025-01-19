@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { JwtUtilService } from '../../../../utils/jwt-util.service';
 
 @Component({
   selector: 'app-supplier-form',
@@ -40,7 +41,8 @@ export class SupplierFormComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private supplierService: SupplierService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    jwtUtilService: JwtUtilService
   ) {
     this.supplierForm = this.fb.group({
       name: ['', Validators.required],
@@ -50,6 +52,7 @@ export class SupplierFormComponent implements OnInit {
       address: ['', Validators.required],
       website: ['', Validators.required],
       status: [true, Validators.required],
+      userId: [jwtUtilService.getId()],
     });
   }
 

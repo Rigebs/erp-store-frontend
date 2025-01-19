@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Supplier } from '../models/supplier';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '../../../models/api-response';
-import { SupplierDto } from '../models/dto/supplier-dto';
+import { Supplier } from '../models/supplier';
 import { SupplierRequest } from '../models/request/supplier-request';
+import { SupplierDto } from '../models/dto/supplier-dto';
+import { ApiResponse } from '../../../models/api-response';
+import { JwtUtilService } from '../../../utils/jwt-util.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,14 +13,19 @@ import { SupplierRequest } from '../models/request/supplier-request';
 export class SupplierService {
   private readonly baseUrl = 'http://localhost:8080/api/v1/users/suppliers';
 
-  constructor(private http: HttpClient) {}
+  private readonly userId: number;
+  constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {
+    this.userId = jwtUtilService.getId()!;
+  }
 
   findAll(): Observable<Supplier[]> {
-    return this.http.get<Supplier[]>(this.baseUrl);
+    return this.http.get<Supplier[]>(`${this.baseUrl}/from/${this.userId}`);
   }
 
   findAllActive(): Observable<Supplier[]> {
-    return this.http.get<Supplier[]>(`${this.baseUrl}/active`);
+    return this.http.get<Supplier[]>(
+      `${this.baseUrl}/from/${this.userId}/active`
+    );
   }
 
   findById(id: number): Observable<SupplierDto> {

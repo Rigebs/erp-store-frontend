@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Category } from '../models/category';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '../../../models/api-response';
+import { Category } from '../models/category';
 import { CategoryRequest } from '../models/request/category-request';
 import { CategoryDto } from '../models/dto/category-dto';
+import { ApiResponse } from '../../../models/api-response';
+import { JwtUtilService } from '../../../utils/jwt-util.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,14 +13,19 @@ import { CategoryDto } from '../models/dto/category-dto';
 export class CategoryService {
   private readonly baseUrl = 'http://localhost:8080/api/v1/users/categories';
 
-  constructor(private http: HttpClient) {}
+  private readonly userId: number;
+  constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {
+    this.userId = jwtUtilService.getId()!;
+  }
 
   findAll(): Observable<Category[]> {
-    return this.http.get<Category[]>(this.baseUrl);
+    return this.http.get<Category[]>(`${this.baseUrl}/from/${this.userId}`);
   }
 
   findAllActive(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.baseUrl}/active`);
+    return this.http.get<Category[]>(
+      `${this.baseUrl}/from/${this.userId}/active`
+    );
   }
 
   findById(id: number): Observable<CategoryDto> {

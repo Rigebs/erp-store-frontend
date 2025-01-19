@@ -14,12 +14,10 @@ export const authGuard: CanActivateFn = (route, state) => {
     const token = jwtUtilService.getToken();
 
     if (token && jwtUtilService.isValidToken()) {
-      console.log('Token presente, redirigiendo a /management/products');
       router.navigate(['/management/products']);
       return false;
     }
   }
 
-  console.log('SSR: Permitiendo acceso al login');
   return true;
 };

@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { JwtUtilService } from '../../../../utils/jwt-util.service';
 
 @Component({
   selector: 'app-line-form',
@@ -40,11 +41,13 @@ export class LineFormComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private lineService: LineService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    jwtUtilService: JwtUtilService
   ) {
     this.lineForm = this.fb.group({
       name: ['', Validators.required],
-      description: ['', Validators.required],
+      description: [''],
+      userId: [jwtUtilService.getId()],
     });
   }
 

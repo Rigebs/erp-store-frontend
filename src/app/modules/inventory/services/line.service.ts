@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Line } from '../models/line';
 import { Observable } from 'rxjs';
+import { Line } from '../models/line';
 import { LineRequest } from '../models/request/line-request';
-import { ApiResponse } from '../../../models/api-response';
 import { LineDto } from '../models/dto/line-dto';
+import { ApiResponse } from '../../../models/api-response';
+import { JwtUtilService } from '../../../utils/jwt-util.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,14 +13,17 @@ import { LineDto } from '../models/dto/line-dto';
 export class LineService {
   private readonly baseUrl = 'http://localhost:8080/api/v1/users/lines';
 
-  constructor(private http: HttpClient) {}
+  private readonly userId: number;
+  constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {
+    this.userId = jwtUtilService.getId()!;
+  }
 
   findAll(): Observable<Line[]> {
-    return this.http.get<Line[]>(this.baseUrl);
+    return this.http.get<Line[]>(`${this.baseUrl}/from/${this.userId}`);
   }
 
   findAllActive(): Observable<Line[]> {
-    return this.http.get<Line[]>(`${this.baseUrl}/active`);
+    return this.http.get<Line[]>(`${this.baseUrl}/from/${this.userId}/active`);
   }
 
   findById(id: number): Observable<LineDto> {

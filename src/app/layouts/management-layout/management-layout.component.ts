@@ -6,6 +6,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { Router, RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { JwtUtilService } from '../../utils/jwt-util.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-management-layout',
@@ -25,7 +27,9 @@ export class ManagementLayoutComponent {
 
   constructor(
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: any
+    @Inject(PLATFORM_ID) private platformId: any,
+    private jwtUtilService: JwtUtilService,
+    private snackBar: MatSnackBar
   ) {}
 
   toggleSidenav() {
@@ -38,6 +42,14 @@ export class ManagementLayoutComponent {
 
   onSidenavClosed() {
     this.isOpen = false;
+  }
+
+  logout() {
+    this.jwtUtilService.removeToken();
+    this.snackBar.open('Sesión cerrada', 'Cerrar', {
+      duration: 3000,
+    });
+    this.router.navigateByUrl('/auth/login');
   }
 
   getSidenavMode() {

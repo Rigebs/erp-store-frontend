@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../components/confirmation-dialog/confirmation-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { JwtUtilService } from '../../../utils/jwt-util.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-products',
@@ -20,7 +22,8 @@ export class ProductsComponent implements OnInit {
     private router: Router,
     private productService: ProductService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private jwtUtilService: JwtUtilService
   ) {}
 
   columns = [
@@ -53,11 +56,15 @@ export class ProductsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadProducts();
+    if (isPlatformBrowser(this.jwtUtilService['platformId'])) {
+      console.log('es plataforma');
+
+      this.loadProducts();
+    }
   }
 
   loadProducts() {
-    this.productService.findAll().subscribe({
+    this.productService.findAllByUser().subscribe({
       next: (data) => {
         this.productsData = data;
         console.log(data);

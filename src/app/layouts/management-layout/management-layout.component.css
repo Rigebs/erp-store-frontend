@@ -2,6 +2,11 @@
   padding: 12px;
 }
 
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
 mat-toolbar {
   position: relative;
   z-index: 5;

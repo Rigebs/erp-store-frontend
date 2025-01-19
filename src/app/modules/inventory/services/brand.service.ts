@@ -5,6 +5,7 @@ import { Brand } from '../models/brand';
 import { BrandRequest } from '../models/request/brand-request';
 import { BrandDto } from '../models/dto/brand-dto';
 import { ApiResponse } from '../../../models/api-response';
+import { JwtUtilService } from '../../../utils/jwt-util.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,14 +13,17 @@ import { ApiResponse } from '../../../models/api-response';
 export class BrandService {
   private readonly baseUrl = 'http://localhost:8080/api/v1/users/brands';
 
-  constructor(private http: HttpClient) {}
+  private readonly userId: number;
+  constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {
+    this.userId = jwtUtilService.getId()!;
+  }
 
   findAll(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(this.baseUrl);
+    return this.http.get<Brand[]>(`${this.baseUrl}/from/${this.userId}`);
   }
 
   findAllActive(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(`${this.baseUrl}/active`);
+    return this.http.get<Brand[]>(`${this.baseUrl}/from/${this.userId}/active`);
   }
 
   findById(id: number): Observable<BrandDto> {

@@ -4,6 +4,7 @@ table {
 
 .selected-products {
   overflow: auto;
+  max-height: 260px;
 }
 
 .actions-container {

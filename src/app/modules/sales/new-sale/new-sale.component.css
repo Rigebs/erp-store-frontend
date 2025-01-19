@@ -7,12 +7,12 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-width: 41%;
-  max-width: 41%;
+  min-width: 43%;
+  max-width: 43%;
 }
 
 app-product-selector {
-  width: 60%;
+  width: 59%;
 }
 
 @media (max-width: 768px) {

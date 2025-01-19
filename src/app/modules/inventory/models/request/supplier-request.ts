@@ -7,4 +7,5 @@ export interface SupplierRequest {
   address: string;
   website: string;
   status: boolean;
+  userId: number;
 }
