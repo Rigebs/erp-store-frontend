@@ -12,7 +12,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/auth`;
+  private readonly baseUrl = `${environment.NG_APP_URL_API_AUTH}`;
 
   constructor(private http: HttpClient, private router: Router) {}
 
