@@ -29,7 +29,7 @@ export const tokenGuard: CanActivateFn = (route, state) => {
     } else {
       router.navigate(['/auth/login']);
 
-      snackBar.open('Inicia sesión, por favor', 'Cerrar', {
+      snackBar.open('Inicia sesión, por favor, no habia token :(', 'Cerrar', {
         duration: 2000,
       });
       return false;

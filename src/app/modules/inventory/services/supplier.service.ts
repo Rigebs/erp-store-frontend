@@ -6,12 +6,13 @@ import { SupplierRequest } from '../models/request/supplier-request';
 import { SupplierDto } from '../models/dto/supplier-dto';
 import { ApiResponse } from '../../../models/api-response';
 import { JwtUtilService } from '../../../utils/jwt-util.service';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupplierService {
-  private readonly baseUrl = 'http://localhost:8080/api/v1/users/suppliers';
+  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/suppliers`;
 
   private readonly userId: number;
   constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {

@@ -6,12 +6,13 @@ import { LineRequest } from '../models/request/line-request';
 import { LineDto } from '../models/dto/line-dto';
 import { ApiResponse } from '../../../models/api-response';
 import { JwtUtilService } from '../../../utils/jwt-util.service';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LineService {
-  private readonly baseUrl = 'http://localhost:8080/api/v1/users/lines';
+  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/lines`;
 
   private readonly userId: number;
   constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {

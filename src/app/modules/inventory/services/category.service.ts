@@ -6,12 +6,13 @@ import { CategoryRequest } from '../models/request/category-request';
 import { CategoryDto } from '../models/dto/category-dto';
 import { ApiResponse } from '../../../models/api-response';
 import { JwtUtilService } from '../../../utils/jwt-util.service';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryService {
-  private readonly baseUrl = 'http://localhost:8080/api/v1/users/categories';
+  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/categories`;
 
   private readonly userId: number;
   constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {

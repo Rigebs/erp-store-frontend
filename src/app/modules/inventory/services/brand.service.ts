@@ -6,12 +6,13 @@ import { BrandRequest } from '../models/request/brand-request';
 import { BrandDto } from '../models/dto/brand-dto';
 import { ApiResponse } from '../../../models/api-response';
 import { JwtUtilService } from '../../../utils/jwt-util.service';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BrandService {
-  private readonly baseUrl = 'http://localhost:8080/api/v1/users/brands';
+  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/brands`;
 
   private readonly userId: number;
   constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {

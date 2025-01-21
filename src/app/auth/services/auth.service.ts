@@ -6,12 +6,13 @@ import { Observable } from 'rxjs/internal/Observable';
 import { LoginRequest } from '../models/login-request';
 import { RegisterRequest } from '../models/register-request';
 import { ApiResponse } from '../../models/api-response';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8080/api/v1/auth';
+  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/auth`;
 
   constructor(private http: HttpClient, private router: Router) {}
 

@@ -146,6 +146,20 @@ export default [
             (m) => m.NewSaleComponent
           ),
       },
+      {
+        path: 'sales/list',
+        loadComponent: () =>
+          import('./sales/sales-list/sales-list.component').then(
+            (m) => m.SalesListComponent
+          ),
+      },
+      {
+        path: 'sales/find/:saleId',
+        loadComponent: () =>
+          import('./sales/sale-details/sale-details.component').then(
+            (m) => m.SaleDetailsComponent
+          ),
+      },
     ],
   },
 ] as Routes;
