@@ -12,7 +12,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root',
 })
 export class ProductService {
-  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/products`;
+  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/products`;
 
   private readonly userId: number;
   constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {

@@ -11,7 +11,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root',
 })
 export class SaleService {
-  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/sales`;
+  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/sales`;
 
   private readonly userId: number;
 

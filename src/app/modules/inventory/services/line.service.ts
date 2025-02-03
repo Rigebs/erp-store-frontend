@@ -12,7 +12,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root',
 })
 export class LineService {
-  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/lines`;
+  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/lines`;
 
   private readonly userId: number;
   constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {

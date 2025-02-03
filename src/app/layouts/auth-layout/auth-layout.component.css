@@ -17,4 +17,8 @@
   .auth-layout {
     padding: 20px;
   }
+
+  .auth-layout {
+    min-height: 92vh;
+  }
 }

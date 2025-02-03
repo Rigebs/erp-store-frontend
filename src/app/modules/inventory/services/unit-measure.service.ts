@@ -12,7 +12,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root',
 })
 export class UnitMeasureService {
-  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/units-measure`;
+  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/units-measure`;
 
   private readonly userId: number;
   constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {

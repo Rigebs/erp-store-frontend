@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root',
 })
 export class ImageService {
-  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/images`;
+  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/images`;
 
   constructor(private http: HttpClient) {}
 

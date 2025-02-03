@@ -12,7 +12,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root',
 })
 export class CategoryService {
-  private readonly baseUrl = `${environment.NG_APP_URL_ROOT}/categories`;
+  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/categories`;
 
   private readonly userId: number;
   constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {
