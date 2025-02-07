@@ -1,6 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 @Injectable({
@@ -11,24 +9,14 @@ export class JwtUtilService {
 
   private token: string | null = null;
 
-  constructor(
-    private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {
-    if (isPlatformBrowser(this.platformId)) {
-      this.token = localStorage.getItem(this.TOKEN_KEY);
-    }
-  }
-
   saveToken(token: string): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(this.TOKEN_KEY, token);
-    }
+    localStorage.setItem(this.TOKEN_KEY, token);
+
     this.token = token;
   }
 
   getToken(): string | null {
-    if (!this.token && isPlatformBrowser(this.platformId)) {
+    if (!this.token) {
       this.token = localStorage.getItem(this.TOKEN_KEY);
     }
     return this.token;
@@ -50,9 +38,8 @@ export class JwtUtilService {
   }
 
   removeToken(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(this.TOKEN_KEY);
-    }
+    localStorage.removeItem(this.TOKEN_KEY);
+
     this.token = null;
   }
 

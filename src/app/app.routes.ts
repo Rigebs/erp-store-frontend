@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { tokenGuard } from './guards/token.guard';
-import { NewSaleComponent } from './modules/sales/new-sale/new-sale.component';
 
 export const routes: Routes = [
   {
@@ -16,9 +15,5 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.routes'),
-  },
-  {
-    path: 'new-sale',
-    component: NewSaleComponent,
   },
 ];

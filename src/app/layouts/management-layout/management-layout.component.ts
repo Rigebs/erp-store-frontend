@@ -1,11 +1,10 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { Router, RouterOutlet } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
 import { JwtUtilService } from '../../utils/jwt-util.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -27,7 +26,6 @@ export class ManagementLayoutComponent {
 
   constructor(
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: any,
     private jwtUtilService: JwtUtilService,
     private snackBar: MatSnackBar
   ) {}
@@ -53,9 +51,6 @@ export class ManagementLayoutComponent {
   }
 
   getSidenavMode() {
-    if (isPlatformBrowser(this.platformId)) {
-      return window.innerWidth <= 768 ? 'over' : 'side';
-    }
-    return 'side';
+    return window.innerWidth <= 768 ? 'over' : 'side';
   }
 }
