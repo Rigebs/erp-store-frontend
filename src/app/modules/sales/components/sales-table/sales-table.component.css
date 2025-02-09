@@ -8,6 +8,14 @@ table {
   width: 100%;
 }
 
+.date {
+  min-width: 200px;
+}
+
+.price {
+  min-width: 100px;
+}
+
 mat-icon {
   color: rgb(62, 62, 155);
 }

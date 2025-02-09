@@ -21,6 +21,14 @@ mat-sidenav {
   width: 250px;
 }
 
+mat-progress-bar {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+}
+
 @media (max-width: 768px) {
   mat-sidenav-container {
     height: calc(92.5vh - 64px);
