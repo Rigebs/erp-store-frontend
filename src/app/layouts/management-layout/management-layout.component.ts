@@ -7,6 +7,7 @@ import { MatListModule } from '@angular/material/list';
 import { Router, RouterOutlet } from '@angular/router';
 import { JwtUtilService } from '../../utils/jwt-util.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-management-layout',
@@ -17,6 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatIconModule,
     MatSidenavModule,
     MatListModule,
+    MatMenuModule,
   ],
   templateUrl: './management-layout.component.html',
   styleUrls: ['./management-layout.component.css'],

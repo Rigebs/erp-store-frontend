@@ -1,8 +1,7 @@
-<form
-  (ngSubmit)="onSubmit(registerForm)"
-  #registerForm="ngForm"
-  class="register-form"
->
+<button (click)="goBack()" mat-button>
+  <mat-icon>arrow_back</mat-icon>Volver
+</button>
+<form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="register-form">
   <h2 align="center">Registrarse</h2>
 
   <mat-form-field appearance="fill">
@@ -63,25 +62,16 @@
     <mat-error
       *ngIf="confirmPasswordModel.invalid && confirmPasswordModel.touched"
     >
-      La confirmación de la contraseña es obligatoria
-    </mat-error>
-    <mat-error
-      *ngIf="confirmPassword !== password && confirmPasswordModel.touched"
-    >
-      Las contraseñas no coinciden
+      La confirmación es obligatoria
     </mat-error>
   </mat-form-field>
-
-  <!-- Mostrar mensaje de error -->
-  <div *ngIf="registrationError" style="color: red; text-align: center">
-    {{ registrationError }}
-  </div>
 
   <button
     mat-raised-button
     color="primary"
     type="submit"
     [disabled]="registerForm.invalid"
+    class="register"
   >
     Registrarse
   </button>

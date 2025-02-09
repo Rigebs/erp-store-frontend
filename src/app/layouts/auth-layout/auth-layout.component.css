@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100vh;
   background-color: #f4f7fc;
 }
 
@@ -15,10 +15,7 @@
 
 @media (max-width: 768px) {
   .auth-layout {
-    padding: 20px;
-  }
-
-  .auth-layout {
-    min-height: 92.5vh;
+    max-height: 92.5vh;
+    padding: 0px 20px;
   }
 }

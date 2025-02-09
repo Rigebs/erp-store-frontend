@@ -34,6 +34,7 @@ export class LoginComponent {
       );
       return;
     }
+
     const loginRequest: LoginRequest = {
       email: this.username,
       password: this.password,
@@ -59,5 +60,9 @@ export class LoginComponent {
     this.snackBar.open(message, action, {
       duration,
     });
+  }
+
+  goToRegister() {
+    this.router.navigateByUrl('/auth/register');
   }
 }

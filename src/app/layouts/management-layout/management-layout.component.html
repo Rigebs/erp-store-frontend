@@ -2,9 +2,23 @@
   <button mat-icon-button (click)="toggleSidenav()">
     <mat-icon>menu</mat-icon>
   </button>
-  <button mat-button (click)="logout()">
-    Cerrar sesión<mat-icon>logout</mat-icon>
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menu"
+    aria-label="Example icon-button with a menu"
+  >
+    <mat-icon>account_circle</mat-icon>
   </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>
+      <mat-icon>person_check</mat-icon>
+      <span>Revisar perfil</span>
+    </button>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar sesión</span>
+    </button>
+  </mat-menu>
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav

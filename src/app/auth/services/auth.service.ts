@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { TokenResponse } from '../models/token-response';
 import { Observable } from 'rxjs/internal/Observable';
 import { LoginRequest } from '../models/login-request';
@@ -14,7 +13,7 @@ import { environment } from '../../../environments/environment';
 export class AuthService {
   private readonly baseUrl = `${environment.NG_APP_URL_API_AUTH}`;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
   login(loginRequest: LoginRequest): Observable<TokenResponse> {
     return this.http.post<TokenResponse>(`${this.baseUrl}/login`, loginRequest);
