@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Brand } from '../models/brand';
@@ -7,6 +7,8 @@ import { BrandDto } from '../models/dto/brand-dto';
 import { ApiResponse } from '../../../models/api-response';
 import { JwtUtilService } from '../../../utils/jwt-util.service';
 import { environment } from '../../../../environments/environment';
+import { Line } from '../models/line';
+import { Pageable } from '../../../models/pageable';
 
 @Injectable({
   providedIn: 'root',
@@ -19,8 +21,17 @@ export class BrandService {
     this.userId = jwtUtilService.getId()!;
   }
 
-  findAll(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(`${this.baseUrl}/from/${this.userId}`);
+  findAll(page: number, size: number): Observable<Pageable<Brand>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<Pageable<Brand>>(
+      `${this.baseUrl}/from/${this.userId}`,
+      {
+        params,
+      }
+    );
   }
 
   findAllActive(): Observable<Brand[]> {

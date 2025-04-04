@@ -5,10 +5,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { LineService } from '../../services/line.service';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Line } from '../../models/line';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 import { ProductService } from '../../services/product.service';
+import { NotificationUtilService } from '../../../../utils/notification-util.service';
 
 @Component({
   selector: 'app-line-list',
@@ -22,7 +22,7 @@ export class LineListComponent implements OnInit {
     private lineService: LineService,
     private productService: ProductService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private notificationUtilService: NotificationUtilService
   ) {}
 
   columns = [
@@ -32,19 +32,21 @@ export class LineListComponent implements OnInit {
   ];
 
   linesData: Line[] = [];
+  total: number = 0;
 
   createLine() {
     this.router.navigateByUrl('management/lines/new');
   }
 
   ngOnInit(): void {
-    this.loadLines();
+    this.loadLines(0, 10);
   }
 
-  loadLines() {
-    this.lineService.findAll().subscribe({
+  loadLines(page: number, size: number) {
+    this.lineService.findAll(page, size).subscribe({
       next: (data) => {
-        this.linesData = data;
+        this.linesData = data.content;
+        this.total = data.totalElements;
         console.log(data);
       },
       error: (err) => {
@@ -69,7 +71,7 @@ export class LineListComponent implements OnInit {
       if (result) {
         this.lineService.delete(line.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             this.linesData = this.linesData.filter((l) => l.id !== line.id);
           },
           error: (err) => {
@@ -97,7 +99,7 @@ export class LineListComponent implements OnInit {
       if (result) {
         this.lineService.toggleStatus(line.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             const lineToUpdate = this.linesData.find((l) => l.id === line.id);
             if (lineToUpdate) {
               if (lineToUpdate.status) {
@@ -105,7 +107,9 @@ export class LineListComponent implements OnInit {
                   .deleteRelationships(line.id, 'lines')
                   .subscribe({
                     next: (response) => {
-                      this.showMessage(response.message);
+                      this.notificationUtilService.showMessage(
+                        response.message
+                      );
                     },
                     error: (err) => {
                       console.error('Error deleting line relationships: ', err);
@@ -125,11 +129,14 @@ export class LineListComponent implements OnInit {
     });
   }
 
-  showMessage(message: string) {
-    this.snackBar.open(`${message}`, 'Cerrar', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
+  pageChange(event: { items: number; page: number }) {
+    this.lineService.findAll(event.page, event.items).subscribe({
+      next: (data) => {
+        this.linesData = data.content;
+      },
+      error: (err) => {
+        console.log('ERROR: ', err);
+      },
     });
   }
 }

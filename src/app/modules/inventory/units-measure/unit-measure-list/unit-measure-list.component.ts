@@ -4,11 +4,11 @@ import { UnitMeasure } from '../../models/unit-measure';
 import { Router } from '@angular/router';
 import { UnitMeasureService } from '../../services/unit-measure.service';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductService } from '../../services/product.service';
+import { NotificationUtilService } from '../../../../utils/notification-util.service';
 
 @Component({
   selector: 'app-unit-measure-list',
@@ -22,7 +22,7 @@ export class UnitMeasureListComponent implements OnInit {
     private unitMeasureService: UnitMeasureService,
     private productService: ProductService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private notificationUtilService: NotificationUtilService
   ) {}
 
   columns = [
@@ -33,20 +33,21 @@ export class UnitMeasureListComponent implements OnInit {
   ];
 
   unitMeasuresData: UnitMeasure[] = [];
+  total: number = 0;
 
   createUnitMeasure() {
     this.router.navigateByUrl('management/unit-measures/new');
   }
 
   ngOnInit(): void {
-    this.loadUnitMeasures();
+    this.loadUnitMeasures(0, 10);
   }
 
-  loadUnitMeasures() {
-    this.unitMeasureService.findAll().subscribe({
+  loadUnitMeasures(page: number, size: number) {
+    this.unitMeasureService.findAll(page, size).subscribe({
       next: (data) => {
-        this.unitMeasuresData = data;
-        console.log(data);
+        this.unitMeasuresData = data.content;
+        this.total = data.totalElements;
       },
       error: (err) => {
         console.log('ERROR: ', err);
@@ -72,7 +73,7 @@ export class UnitMeasureListComponent implements OnInit {
       if (result) {
         this.unitMeasureService.delete(unitMeasure.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             this.unitMeasuresData = this.unitMeasuresData.filter(
               (u) => u.id !== unitMeasure.id
             );
@@ -102,7 +103,7 @@ export class UnitMeasureListComponent implements OnInit {
       if (result) {
         this.unitMeasureService.toggleStatus(unitMeasure.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             const unitMeasureToUpdate = this.unitMeasuresData.find(
               (u) => u.id === unitMeasure.id
             );
@@ -112,7 +113,9 @@ export class UnitMeasureListComponent implements OnInit {
                   .deleteRelationships(unitMeasureToUpdate.id, 'units_measure')
                   .subscribe({
                     next: (response) => {
-                      this.showMessage(response.message);
+                      this.notificationUtilService.showMessage(
+                        response.message
+                      );
                     },
                     error: (err) => {
                       console.error(
@@ -132,14 +135,6 @@ export class UnitMeasureListComponent implements OnInit {
       } else {
         console.log('El usuario canceló la acción');
       }
-    });
-  }
-
-  showMessage(message: string) {
-    this.snackBar.open(`${message}`, 'Cerrar', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
     });
   }
 }

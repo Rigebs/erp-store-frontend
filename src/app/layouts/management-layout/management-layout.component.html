@@ -20,7 +20,10 @@
     </button>
   </mat-menu>
 </mat-toolbar>
-<mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+@if (isLoading) {
+
+<mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
 
 <mat-sidenav-container>
   <mat-sidenav
@@ -80,7 +83,7 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <div class="content">
+    <div class="container content">
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>

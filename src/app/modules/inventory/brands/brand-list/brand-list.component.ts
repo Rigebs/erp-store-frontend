@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BrandService } from '../../services/brand.service';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Brand } from '../../models/brand';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductService } from '../../services/product.service';
+import { NotificationUtilService } from '../../../../utils/notification-util.service';
 
 @Component({
   selector: 'app-brand-list',
@@ -22,7 +22,7 @@ export class BrandListComponent implements OnInit {
     private brandService: BrandService,
     private productService: ProductService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private notificationUtilService: NotificationUtilService
   ) {}
 
   columns = [
@@ -32,20 +32,21 @@ export class BrandListComponent implements OnInit {
   ];
 
   brandsData: Brand[] = [];
+  total: number = 0;
 
   createBrand() {
     this.router.navigateByUrl('management/brands/new');
   }
 
   ngOnInit(): void {
-    this.loadBrands();
+    this.loadBrands(0, 10);
   }
 
-  loadBrands() {
-    this.brandService.findAll().subscribe({
+  loadBrands(page: number, size: number) {
+    this.brandService.findAll(page, size).subscribe({
       next: (data) => {
-        this.brandsData = data;
-        console.log(data);
+        this.brandsData = data.content;
+        this.total = data.totalElements;
       },
       error: (err) => {
         console.log('ERROR: ', err);
@@ -69,7 +70,7 @@ export class BrandListComponent implements OnInit {
       if (result) {
         this.brandService.delete(brand.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             this.brandsData = this.brandsData.filter((b) => b.id !== brand.id);
           },
           error: (err) => {
@@ -97,7 +98,7 @@ export class BrandListComponent implements OnInit {
       if (result) {
         this.brandService.toggleStatus(brand.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             const brandToUpdate = this.brandsData.find(
               (b) => b.id === brand.id
             );
@@ -107,7 +108,9 @@ export class BrandListComponent implements OnInit {
                   .deleteRelationships(brandToUpdate.id, 'brands')
                   .subscribe({
                     next: (response) => {
-                      this.showMessage(response.message);
+                      this.notificationUtilService.showMessage(
+                        response.message
+                      );
                     },
                     error: (err) => {
                       console.error(
@@ -127,14 +130,6 @@ export class BrandListComponent implements OnInit {
       } else {
         console.log('El usuario canceló la acción');
       }
-    });
-  }
-
-  showMessage(message: string) {
-    this.snackBar.open(`${message}`, 'Cerrar', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
     });
   }
 }

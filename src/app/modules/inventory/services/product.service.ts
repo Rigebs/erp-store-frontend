@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Product } from '../models/product';
 import { Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { ProductRequest } from '../models/request/product-request';
 import { ProductDto } from '../models/dto/product-dto';
 import { JwtUtilService } from '../../../utils/jwt-util.service';
 import { environment } from '../../../../environments/environment';
+import { Pageable } from '../../../models/pageable';
 
 @Injectable({
   providedIn: 'root',
@@ -14,17 +15,32 @@ import { environment } from '../../../../environments/environment';
 export class ProductService {
   private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/products`;
 
-  private readonly userId: number;
-  constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {
-    this.userId = jwtUtilService.getId()!;
+  constructor(
+    private http: HttpClient,
+    private jwtUtilService: JwtUtilService
+  ) {}
+
+  private get userId(): number | undefined {
+    return this.jwtUtilService.getId();
   }
 
-  findAllByUser(): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.baseUrl}/from/${this.userId}`);
+  findAll(page: number, size: number): Observable<Pageable<Product>> {
+    console.log(this.userId);
+
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<Pageable<Product>>(
+      `${this.baseUrl}/from/${this.userId}`,
+      {
+        params,
+      }
+    );
   }
 
-  findAllActive(): Observable<Product[]> {
-    return this.http.get<Product[]>(
+  findAllActive(): Observable<Pageable<Product>> {
+    return this.http.get<Pageable<Product>>(
       `${this.baseUrl}/from/${this.userId}/active`
     );
   }

@@ -3,12 +3,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { CategoryService } from '../../services/category.service';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { Category } from '../../models/category';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 import { ProductService } from '../../services/product.service';
+import { NotificationUtilService } from '../../../../utils/notification-util.service';
 
 @Component({
   selector: 'app-categoriy-list',
@@ -22,7 +22,7 @@ export class CategoryListComponent implements OnInit {
     private categoryService: CategoryService,
     private productService: ProductService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private notificationUtilService: NotificationUtilService
   ) {}
 
   columns = [
@@ -32,20 +32,21 @@ export class CategoryListComponent implements OnInit {
   ];
 
   categoriesData: Category[] = [];
+  total: number = 0;
 
   createCategory() {
     this.router.navigateByUrl('management/categories/new');
   }
 
   ngOnInit(): void {
-    this.loadCategories();
+    this.loadCategories(0, 10);
   }
 
-  loadCategories() {
-    this.categoryService.findAll().subscribe({
+  loadCategories(page: number, size: number) {
+    this.categoryService.findAll(page, size).subscribe({
       next: (data) => {
-        this.categoriesData = data;
-        console.log(data);
+        this.categoriesData = data.content;
+        this.total = data.totalElements;
       },
       error: (err) => {
         console.log('ERROR: ', err);
@@ -69,7 +70,7 @@ export class CategoryListComponent implements OnInit {
       if (result) {
         this.categoryService.delete(category.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             this.categoriesData = this.categoriesData.filter(
               (c) => c.id !== category.id
             );
@@ -99,7 +100,7 @@ export class CategoryListComponent implements OnInit {
       if (result) {
         this.categoryService.toggleStatus(category.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             const categoryToUpdate = this.categoriesData.find(
               (c) => c.id === category.id
             );
@@ -109,7 +110,9 @@ export class CategoryListComponent implements OnInit {
                   .deleteRelationships(categoryToUpdate.id, 'categories')
                   .subscribe({
                     next: (response) => {
-                      this.showMessage(response.message);
+                      this.notificationUtilService.showMessage(
+                        response.message
+                      );
                     },
                     error: (err) => {
                       console.error(
@@ -129,14 +132,6 @@ export class CategoryListComponent implements OnInit {
       } else {
         console.log('El usuario canceló la acción');
       }
-    });
-  }
-
-  showMessage(message: string) {
-    this.snackBar.open(`${message}`, 'Cerrar', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
     });
   }
 }

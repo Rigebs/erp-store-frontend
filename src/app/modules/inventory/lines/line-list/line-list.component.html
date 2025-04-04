@@ -9,7 +9,9 @@
       [data]="linesData"
       [columns]="columns"
       (edit)="onEdit($event)"
+      [total]="total"
       (delete)="onDelete($event)"
+      (pageChange)="pageChange($event)"
       (toggleStatus)="onToggleStatus($event)"
     ></app-dynamic-table>
   </div>

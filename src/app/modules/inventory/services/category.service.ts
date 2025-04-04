@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Category } from '../models/category';
@@ -7,6 +7,7 @@ import { CategoryDto } from '../models/dto/category-dto';
 import { ApiResponse } from '../../../models/api-response';
 import { JwtUtilService } from '../../../utils/jwt-util.service';
 import { environment } from '../../../../environments/environment';
+import { Pageable } from '../../../models/pageable';
 
 @Injectable({
   providedIn: 'root',
@@ -19,8 +20,17 @@ export class CategoryService {
     this.userId = jwtUtilService.getId()!;
   }
 
-  findAll(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.baseUrl}/from/${this.userId}`);
+  findAll(page: number, size: number): Observable<Pageable<Category>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<Pageable<Category>>(
+      `${this.baseUrl}/from/${this.userId}`,
+      {
+        params,
+      }
+    );
   }
 
   findAllActive(): Observable<Category[]> {

@@ -28,13 +28,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class NewSaleComponent implements OnInit {
   selectedProducts: SaleDetail[] = [];
-  discount = 0; // Descuento fijo (puedes cambiarlo dinámicamente si es necesario)
+  discount = 0;
   products: Product[] = [];
   saleDetails: SaleDetailRequest[] = [];
 
-  subtotal: number = 0; // Subtotal de los productos seleccionados
-  taxRate: number = 0.18; // Tasa de impuesto (18%)
-  total: number = 0; // Total después de impuestos y descuentos
+  subtotal: number = 0;
+  taxRate: number = 0.18;
+  total: number = 0;
 
   disabled: boolean = true;
 
@@ -49,8 +49,7 @@ export class NewSaleComponent implements OnInit {
   ngOnInit(): void {
     this.productService.findAllActive().subscribe({
       next: (data) => {
-        this.products = data;
-        console.log(data);
+        this.products = data.content;
       },
       error: (err) => {
         console.log(err);

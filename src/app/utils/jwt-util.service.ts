@@ -47,6 +47,8 @@ export class JwtUtilService {
     const jwt = this.getToken();
     if (jwt) {
       try {
+        console.log(jwtDecode<T>(jwt));
+
         return jwtDecode<T>(jwt);
       } catch (error) {
         console.error('Error al decodificar el token:', error);

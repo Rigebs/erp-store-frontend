@@ -3,12 +3,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { SupplierService } from '../../services/supplier.service';
 import { Supplier } from '../../models/supplier';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 import { ProductService } from '../../services/product.service';
+import { NotificationUtilService } from '../../../../utils/notification-util.service';
 
 @Component({
   selector: 'app-supplier-list',
@@ -22,7 +22,7 @@ export class SupplierListComponent implements OnInit {
     private supplierService: SupplierService,
     private productService: ProductService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private notificationUtilService: NotificationUtilService
   ) {}
 
   columns = [
@@ -34,20 +34,21 @@ export class SupplierListComponent implements OnInit {
   ];
 
   suppliersData: Supplier[] = [];
+  total: number = 0;
 
   createSupplier() {
     this.router.navigateByUrl('management/suppliers/new');
   }
 
   ngOnInit(): void {
-    this.loadSuppliers();
+    this.loadSuppliers(0, 10);
   }
 
-  loadSuppliers() {
-    this.supplierService.findAll().subscribe({
+  loadSuppliers(page: number, size: number) {
+    this.supplierService.findAll(page, size).subscribe({
       next: (data) => {
-        this.suppliersData = data;
-        console.log(data);
+        this.suppliersData = data.content;
+        this.total = data.totalElements;
       },
       error: (err) => {
         console.log('ERROR: ', err);
@@ -71,7 +72,7 @@ export class SupplierListComponent implements OnInit {
       if (result) {
         this.supplierService.delete(supplier.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             this.suppliersData = this.suppliersData.filter(
               (s) => s.id !== supplier.id
             );
@@ -101,7 +102,7 @@ export class SupplierListComponent implements OnInit {
       if (result) {
         this.supplierService.toggleStatus(supplier.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             const supplierToUpdate = this.suppliersData.find(
               (s) => s.id === supplier.id
             );
@@ -111,7 +112,9 @@ export class SupplierListComponent implements OnInit {
                   .deleteRelationships(supplierToUpdate.id, 'suppliers')
                   .subscribe({
                     next: (response) => {
-                      this.showMessage(response.message);
+                      this.notificationUtilService.showMessage(
+                        response.message
+                      );
                     },
                     error: (err) => {
                       console.error(
@@ -131,14 +134,6 @@ export class SupplierListComponent implements OnInit {
       } else {
         console.log('El usuario canceló la acción');
       }
-    });
-  }
-
-  showMessage(message: string) {
-    this.snackBar.open(`${message}`, 'Cerrar', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
     });
   }
 }

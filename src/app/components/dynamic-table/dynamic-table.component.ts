@@ -15,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -28,6 +29,8 @@ import { MatChipsModule } from '@angular/material/chips';
     MatCheckboxModule,
     MatMenuModule,
     MatChipsModule,
+    MatPaginator,
+    MatButtonModule,
   ],
   templateUrl: './dynamic-table.component.html',
   styleUrl: './dynamic-table.component.css',
@@ -36,9 +39,14 @@ export class DynamicTableComponent implements OnInit {
   @Input() columns: { field: string; header: string; hidden?: boolean }[] = [];
   @Input() data: any[] = [];
 
+  @Input() total: number = 0;
+  @Input() page: number = 0;
+
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
   @Output() toggleStatus = new EventEmitter<any>();
+
+  @Output() pageChange = new EventEmitter<{ items: number; page: number }>();
 
   displayedColumns: string[] = [];
   dataSource: MatTableDataSource<any>;
@@ -52,8 +60,11 @@ export class DynamicTableComponent implements OnInit {
     this.dataSource.data = this.data;
   }
 
+  onPageChange(event: PageEvent) {
+    this.pageChange.emit({ items: event.pageSize, page: event.pageIndex });
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    // Detectar cambios en los datos.
     if (changes['data'] && !changes['data'].firstChange) {
       this.dataSource.data = this.data;
     }

@@ -8,6 +8,7 @@
     <app-dynamic-table
       [data]="suppliersData"
       [columns]="columns"
+      [total]="total"
       (edit)="onEdit($event)"
       (delete)="onDelete($event)"
       (toggleStatus)="onToggleStatus($event)"

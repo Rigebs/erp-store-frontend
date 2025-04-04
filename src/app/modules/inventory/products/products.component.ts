@@ -7,7 +7,7 @@ import { Product } from '../models/product';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../components/confirmation-dialog/confirmation-dialog.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationUtilService } from '../../../utils/notification-util.service';
 
 @Component({
   selector: 'app-products',
@@ -20,7 +20,7 @@ export class ProductsComponent implements OnInit {
     private router: Router,
     private productService: ProductService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private notificationUtilService: NotificationUtilService
   ) {}
 
   columns = [
@@ -47,19 +47,32 @@ export class ProductsComponent implements OnInit {
   ];
 
   productsData: Product[] = [];
+  total: number = 0;
 
   createProduct() {
     this.router.navigateByUrl('management/products/new');
   }
 
   ngOnInit(): void {
-    this.loadProducts();
+    this.loadProducts(0, 10);
   }
 
-  loadProducts() {
-    this.productService.findAllByUser().subscribe({
+  loadProducts(page: number, size: number) {
+    this.productService.findAll(page, size).subscribe({
       next: (data) => {
-        this.productsData = data;
+        this.productsData = data.content;
+        this.total = data.totalElements;
+      },
+      error: (err) => {
+        console.log('ERROR: ', err);
+      },
+    });
+  }
+
+  pageChange(event: { items: number; page: number }) {
+    this.productService.findAll(event.page, event.items).subscribe({
+      next: (data) => {
+        this.productsData = data.content;
         console.log(data);
       },
       error: (err) => {
@@ -84,7 +97,7 @@ export class ProductsComponent implements OnInit {
       if (result) {
         this.productService.delete(product.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             this.productsData = this.productsData.filter(
               (p) => p.id !== product.id
             );
@@ -114,7 +127,7 @@ export class ProductsComponent implements OnInit {
       if (result) {
         this.productService.toggleStatus(product.id).subscribe({
           next: (response) => {
-            this.showMessage(response.message);
+            this.notificationUtilService.showMessage(response.message);
             const productToUpdate = this.productsData.find(
               (p) => p.id === product.id
             );
@@ -129,14 +142,6 @@ export class ProductsComponent implements OnInit {
       } else {
         console.log('El usuario canceló la acción');
       }
-    });
-  }
-
-  showMessage(message: string) {
-    this.snackBar.open(`${message}`, 'Cerrar', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
     });
   }
 }

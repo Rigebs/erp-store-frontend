@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Supplier } from '../models/supplier';
@@ -7,6 +7,7 @@ import { SupplierDto } from '../models/dto/supplier-dto';
 import { ApiResponse } from '../../../models/api-response';
 import { JwtUtilService } from '../../../utils/jwt-util.service';
 import { environment } from '../../../../environments/environment';
+import { Pageable } from '../../../models/pageable';
 
 @Injectable({
   providedIn: 'root',
@@ -19,8 +20,17 @@ export class SupplierService {
     this.userId = jwtUtilService.getId()!;
   }
 
-  findAll(): Observable<Supplier[]> {
-    return this.http.get<Supplier[]>(`${this.baseUrl}/from/${this.userId}`);
+  findAll(page: number, size: number): Observable<Pageable<Supplier>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<Pageable<Supplier>>(
+      `${this.baseUrl}/from/${this.userId}`,
+      {
+        params,
+      }
+    );
   }
 
   findAllActive(): Observable<Supplier[]> {
