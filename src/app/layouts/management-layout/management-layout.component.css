@@ -21,6 +21,25 @@ mat-sidenav {
   width: 250px;
 }
 
+.nested-item {
+  padding-left: 20px;
+  font-size: 0.95rem;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.parent-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.arrow-icon {
+  color: rgba(0, 0, 0, 0.38);
+}
+
 mat-progress-bar {
   position: absolute;
   top: 64px;

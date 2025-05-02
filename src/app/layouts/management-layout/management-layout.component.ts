@@ -32,6 +32,95 @@ export class ManagementLayoutComponent {
   isOpen: boolean = false;
 
   isLoading: boolean = false;
+  openedSections: { [key: string]: boolean } = {};
+
+  menuItems = [
+    {
+      label: 'Registrar venta',
+      icon: 'shopping_cart',
+      route: 'management/sales/new',
+    },
+    {
+      label: 'Ver ventas',
+      icon: 'fact_check',
+      route: 'management/sales/list',
+    },
+    {
+      label: 'Productos',
+      icon: 'storefront',
+      route: 'management/products',
+    },
+    {
+      label: 'Categorías',
+      icon: 'category',
+      route: 'management/categories',
+    },
+    {
+      label: 'Proveedores',
+      icon: 'local_shipping',
+      route: 'management/suppliers',
+    },
+    {
+      label: 'Lineas',
+      icon: 'align_horizontal_right',
+      route: 'management/lines',
+    },
+    {
+      label: 'Marcas',
+      icon: 'workspace_premium',
+      route: 'management/brands',
+    },
+    {
+      label: 'Unid. de medida',
+      icon: 'square_foot',
+      route: 'management/units-measure',
+    },
+    {
+      label: 'Reportes',
+      icon: 'assessment',
+      children: [
+        {
+          label: 'Ventas',
+          icon: 'bar_chart',
+          route: '/reportes/ventas',
+        },
+        {
+          label: 'Inventario',
+          icon: 'inventory',
+          route: '/reportes/inventario',
+        },
+        {
+          label: 'Clientes',
+          icon: 'people',
+          route: '/reportes/clientes',
+        },
+      ],
+    },
+    {
+      label: 'Configuración',
+      icon: 'settings',
+      children: [
+        {
+          label: 'Usuarios',
+          icon: 'manage_accounts',
+          route: '/configuracion/usuarios',
+        },
+        {
+          label: 'Preferencias',
+          icon: 'tune',
+          route: '/configuracion/preferencias',
+        },
+      ],
+    },
+  ];
+
+  toggleSection(label: string): void {
+    this.openedSections[label] = !this.openedSections[label];
+  }
+
+  isSectionOpen(label: string): boolean {
+    return this.openedSections[label];
+  }
 
   constructor(
     private router: Router,
