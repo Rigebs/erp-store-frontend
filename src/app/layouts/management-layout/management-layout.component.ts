@@ -46,35 +46,42 @@ export class ManagementLayoutComponent {
       route: 'management/sales/list',
     },
     {
-      label: 'Productos',
+      label: 'Inventario',
       icon: 'storefront',
-      route: 'management/products',
+      children: [
+        {
+          label: 'Productos',
+          icon: 'inventory',
+          route: 'management/products',
+        },
+        {
+          label: 'Categorías',
+          icon: 'category',
+          route: 'management/categories',
+        },
+        {
+          label: 'Proveedores',
+          icon: 'local_shipping',
+          route: 'management/suppliers',
+        },
+        {
+          label: 'Lineas',
+          icon: 'align_horizontal_right',
+          route: 'management/lines',
+        },
+        {
+          label: 'Marcas',
+          icon: 'workspace_premium',
+          route: 'management/brands',
+        },
+        {
+          label: 'Unid. de medida',
+          icon: 'square_foot',
+          route: 'management/units-measure',
+        },
+      ],
     },
-    {
-      label: 'Categorías',
-      icon: 'category',
-      route: 'management/categories',
-    },
-    {
-      label: 'Proveedores',
-      icon: 'local_shipping',
-      route: 'management/suppliers',
-    },
-    {
-      label: 'Lineas',
-      icon: 'align_horizontal_right',
-      route: 'management/lines',
-    },
-    {
-      label: 'Marcas',
-      icon: 'workspace_premium',
-      route: 'management/brands',
-    },
-    {
-      label: 'Unid. de medida',
-      icon: 'square_foot',
-      route: 'management/units-measure',
-    },
+
     {
       label: 'Reportes',
       icon: 'assessment',
@@ -114,14 +121,6 @@ export class ManagementLayoutComponent {
     },
   ];
 
-  toggleSection(label: string): void {
-    this.openedSections[label] = !this.openedSections[label];
-  }
-
-  isSectionOpen(label: string): boolean {
-    return this.openedSections[label];
-  }
-
   constructor(
     private router: Router,
     private jwtUtilService: JwtUtilService,
@@ -139,6 +138,14 @@ export class ManagementLayoutComponent {
 
   toggleSidenav() {
     this.isOpen = !this.isOpen;
+  }
+
+  toggleSection(label: string): void {
+    this.openedSections[label] = !this.openedSections[label];
+  }
+
+  isSectionOpen(label: string): boolean {
+    return this.openedSections[label];
   }
 
   navigateTo(route: string) {

@@ -36,6 +36,10 @@ mat-sidenav {
   justify-content: space-between;
 }
 
+.item-child-container {
+  border-left: 1px solid rgba(0, 0, 0, 0.38);
+}
+
 .arrow-icon {
   color: rgba(0, 0, 0, 0.38);
 }

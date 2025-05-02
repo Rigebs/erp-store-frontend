@@ -52,15 +52,17 @@
             </div>
           </a>
           <div class="nested-item" *ngIf="isSectionOpen(item.label)">
-            <a
-              mat-list-item
-              *ngFor="let child of item.children"
-              class="nested-item"
-              (click)="navigateTo(child.route)"
-            >
-              <mat-icon matListItemIcon>{{ child.icon }}</mat-icon>
-              <span matListItemTitle>{{ child.label }}</span>
-            </a>
+            <div class="item-child-container">
+              <a
+                mat-list-item
+                *ngFor="let child of item.children"
+                class="nested-item"
+                (click)="navigateTo(child.route)"
+              >
+                <mat-icon matListItemIcon>{{ child.icon }}</mat-icon>
+                <span matListItemTitle>{{ child.label }}</span>
+              </a>
+            </div>
           </div>
         </ng-container>
       </ng-container>
