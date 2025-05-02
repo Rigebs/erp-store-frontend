@@ -33,8 +33,8 @@ export class SupplierService {
     );
   }
 
-  findAllActive(): Observable<Supplier[]> {
-    return this.http.get<Supplier[]>(
+  findAllActive(): Observable<Pageable<Supplier>> {
+    return this.http.get<Pageable<Supplier>>(
       `${this.baseUrl}/from/${this.userId}/active`
     );
   }

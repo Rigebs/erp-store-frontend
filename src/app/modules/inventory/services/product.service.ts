@@ -25,8 +25,6 @@ export class ProductService {
   }
 
   findAll(page: number, size: number): Observable<Pageable<Product>> {
-    console.log(this.userId);
-
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());

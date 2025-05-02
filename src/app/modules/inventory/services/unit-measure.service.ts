@@ -33,8 +33,8 @@ export class UnitMeasureService {
     );
   }
 
-  findAllActive(): Observable<UnitMeasure[]> {
-    return this.http.get<UnitMeasure[]>(
+  findAllActive(): Observable<Pageable<UnitMeasure>> {
+    return this.http.get<Pageable<UnitMeasure>>(
       `${this.baseUrl}/from/${this.userId}/active`
     );
   }

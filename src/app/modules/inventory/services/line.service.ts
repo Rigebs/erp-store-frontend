@@ -33,8 +33,10 @@ export class LineService {
     );
   }
 
-  findAllActive(): Observable<Line[]> {
-    return this.http.get<Line[]>(`${this.baseUrl}/from/${this.userId}/active`);
+  findAllActive(): Observable<Pageable<Line>> {
+    return this.http.get<Pageable<Line>>(
+      `${this.baseUrl}/from/${this.userId}/active`
+    );
   }
 
   findById(id: number): Observable<LineDto> {

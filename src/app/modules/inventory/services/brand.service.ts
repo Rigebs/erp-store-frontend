@@ -34,8 +34,10 @@ export class BrandService {
     );
   }
 
-  findAllActive(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(`${this.baseUrl}/from/${this.userId}/active`);
+  findAllActive(): Observable<Pageable<Brand>> {
+    return this.http.get<Pageable<Brand>>(
+      `${this.baseUrl}/from/${this.userId}/active`
+    );
   }
 
   findById(id: number): Observable<BrandDto> {

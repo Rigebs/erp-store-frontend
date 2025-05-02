@@ -33,8 +33,8 @@ export class CategoryService {
     );
   }
 
-  findAllActive(): Observable<Category[]> {
-    return this.http.get<Category[]>(
+  findAllActive(): Observable<Pageable<Category>> {
+    return this.http.get<Pageable<Category>>(
       `${this.baseUrl}/from/${this.userId}/active`
     );
   }
