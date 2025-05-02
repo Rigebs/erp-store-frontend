@@ -162,7 +162,8 @@ export class ProductFormComponent implements OnInit {
   getCategories() {
     this.categoryService.findAllActive().subscribe({
       next: (data) => {
-        this.categories = data;
+        this.categories = data.content;
+        console.log(data);
       },
       error: (err) => {
         console.log('error: ', err);
@@ -173,7 +174,7 @@ export class ProductFormComponent implements OnInit {
   getBrands() {
     this.brandService.findAllActive().subscribe({
       next: (data) => {
-        this.brands = data;
+        this.brands = data.content;
       },
       error: (err) => {
         console.log('error: ', err);
@@ -184,7 +185,7 @@ export class ProductFormComponent implements OnInit {
   getLines() {
     this.lineService.findAllActive().subscribe({
       next: (data) => {
-        this.lines = data;
+        this.lines = data.content;
       },
       error: (err) => {
         console.log('error: ', err);
@@ -195,7 +196,7 @@ export class ProductFormComponent implements OnInit {
   getSuppliers() {
     this.supplierService.findAllActive().subscribe({
       next: (data) => {
-        this.suppliers = data;
+        this.suppliers = data.content;
       },
       error: (err) => {
         console.log('error: ', err);
@@ -206,7 +207,7 @@ export class ProductFormComponent implements OnInit {
   getUnitsMeasure() {
     this.unitMeasureService.findAllActive().subscribe({
       next: (data) => {
-        this.unitsMeasure = data;
+        this.unitsMeasure = data.content;
       },
       error: (err) => {
         console.log('error: ', err);

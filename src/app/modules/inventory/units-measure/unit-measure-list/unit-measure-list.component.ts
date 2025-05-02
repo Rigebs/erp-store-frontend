@@ -36,7 +36,7 @@ export class UnitMeasureListComponent implements OnInit {
   total: number = 0;
 
   createUnitMeasure() {
-    this.router.navigateByUrl('management/unit-measures/new');
+    this.router.navigateByUrl('management/units-measure/new');
   }
 
   ngOnInit(): void {
