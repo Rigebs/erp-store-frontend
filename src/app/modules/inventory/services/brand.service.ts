@@ -1,13 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Brand } from '../models/brand';
-import { BrandRequest } from '../models/request/brand-request';
-import { BrandDto } from '../models/dto/brand-dto';
+import { BrandRequest, BrandResponse } from '../models/brand';
 import { ApiResponse } from '../../../models/api-response';
 import { JwtUtilService } from '../../../utils/jwt-util.service';
 import { environment } from '../../../../environments/environment';
-import { Line } from '../models/line';
 import { Pageable } from '../../../models/pageable';
 
 @Injectable({
@@ -21,42 +18,43 @@ export class BrandService {
     this.userId = jwtUtilService.getId()!;
   }
 
-  findAll(page: number, size: number): Observable<Pageable<Brand>> {
+  findAll(
+    page: number,
+    size: number
+  ): Observable<ApiResponse<Pageable<BrandResponse>>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<Pageable<Brand>>(
-      `${this.baseUrl}/from/${this.userId}`,
-      {
-        params,
-      }
+    return this.http.get<ApiResponse<Pageable<BrandResponse>>>(
+      `${this.baseUrl}`,
+      { params }
     );
   }
 
-  findAllActive(): Observable<Pageable<Brand>> {
-    return this.http.get<Pageable<Brand>>(
-      `${this.baseUrl}/from/${this.userId}/active`
+  findById(id: number): Observable<ApiResponse<BrandResponse>> {
+    return this.http.get<ApiResponse<BrandResponse>>(`${this.baseUrl}/${id}`);
+  }
+
+  save(brandRequest: BrandRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.baseUrl, brandRequest);
+  }
+
+  update(
+    id: number,
+    brandRequest: BrandRequest
+  ): Observable<ApiResponse<void>> {
+    return this.http.put<ApiResponse<void>>(
+      `${this.baseUrl}/${id}`,
+      brandRequest
     );
   }
 
-  findById(id: number): Observable<BrandDto> {
-    return this.http.get<BrandDto>(`${this.baseUrl}/${id}`);
+  delete(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/${id}`);
   }
 
-  save(brandRequest: BrandRequest): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(this.baseUrl, brandRequest);
-  }
-
-  update(id: number, brandRequest: BrandRequest): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.baseUrl}/${id}`, brandRequest);
-  }
-
-  delete(id: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.baseUrl}/${id}`);
-  }
-
-  toggleStatus(id: number): Observable<ApiResponse> {
-    return this.http.patch<ApiResponse>(`${this.baseUrl}/${id}`, {});
+  toggleEnabled(id: number): Observable<ApiResponse<void>> {
+    return this.http.patch<ApiResponse<void>>(`${this.baseUrl}/${id}`, {});
   }
 }

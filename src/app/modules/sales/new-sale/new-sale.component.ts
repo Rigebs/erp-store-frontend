@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductSelectorComponent } from '../components/product-selector/product-selector.component';
 import { SummaryComponent } from '../components/summary/summary.component';
 import { SelectedProductsComponent } from '../components/selected-products/selected-products.component';
-import { Product } from '../../inventory/models/product';
+import { ProductRequest } from '../../inventory/models/product';
 import { ProductService } from '../../inventory/services/product.service';
 import { SaleDetailRequest } from '../models/request/sale-detail-request';
 import { SaleDetail } from '../models/sale-detail';
@@ -29,7 +29,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class NewSaleComponent implements OnInit {
   selectedProducts: SaleDetail[] = [];
   discount = 0;
-  products: Product[] = [];
+  products: ProductRequest[] = [];
   saleDetails: SaleDetailRequest[] = [];
 
   subtotal: number = 0;
@@ -47,9 +47,9 @@ export class NewSaleComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.productService.findAllActive().subscribe({
-      next: (data) => {
-        this.products = data.content;
+    this.productService.findAll(0, 10).subscribe({
+      next: (response) => {
+        this.products = response.data.content;
       },
       error: (err) => {
         console.log(err);

@@ -16,9 +16,9 @@ export default [
       {
         path: 'products',
         loadComponent: () =>
-          import('./inventory/products/products.component').then(
-            (m) => m.ProductsComponent
-          ),
+          import(
+            './inventory/products/product-list/product-list.component'
+          ).then((m) => m.ProductListComponent),
       },
       {
         path: 'products/new',

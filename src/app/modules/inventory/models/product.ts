@@ -1,16 +1,37 @@
-export interface Product {
+import { BrandResponse } from './brand';
+import { CategoryResponse } from './category';
+import { LineResponse } from './line';
+import { SupplierResponse } from './supplier';
+import { UnitMeasureResponse } from './unit-measure';
+
+export interface ProductRequest {
   id: number;
   name: string;
   quantity: number;
   description: string;
   purchasePrice: number;
   salePrice: number;
-  status: boolean;
+  enabled: boolean;
   flag: boolean;
-  secureUrl: string;
-  brandName: string;
-  categoryName: string;
-  unitMeasureAbbreviation: string;
-  lineName: string;
-  supplierName: string;
+  imageUrl: string;
+  brand: BrandResponse;
+  category: CategoryResponse;
+  unitMeasure: UnitMeasureResponse;
+  line: LineResponse;
+  supplier: SupplierResponse;
+}
+
+export interface ProductRequest {
+  name: string;
+  description: string;
+  purchasePrice: number;
+  salePrice: number;
+  imageUrl: string;
+  enabled: boolean;
+  flag: boolean;
+  brandId: number;
+  categoryId: number;
+  unitMeasureId: number;
+  lineId: number;
+  supplierId: number;
 }

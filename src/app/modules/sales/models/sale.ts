@@ -7,7 +7,7 @@ export interface Sale {
   total: number;
   tax: number;
   discount: number;
-  status: boolean;
+  enabled: boolean;
   customer: string;
   saleDetails: SaleDetail[];
 }

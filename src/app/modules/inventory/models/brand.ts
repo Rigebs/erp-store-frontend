@@ -1,7 +1,13 @@
-export interface Brand {
+export interface BrandResponse {
   id: number;
   name: string;
   description: string;
-  status: boolean;
+  enabled: boolean;
   flag: boolean;
+}
+
+export interface BrandRequest {
+  name: string;
+  description: string;
+  userId: number;
 }

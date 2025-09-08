@@ -13,23 +13,21 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Category } from '../../models/category';
+import { CategoryResponse } from '../../models/category';
 import { CategoryService } from '../../services/category.service';
 import { BrandService } from '../../services/brand.service';
 import { LineService } from '../../services/line.service';
 import { SupplierService } from '../../services/supplier.service';
 import { UnitMeasureService } from '../../services/unit-measure.service';
-import { Brand } from '../../models/brand';
-import { Line } from '../../models/line';
-import { Supplier } from '../../models/supplier';
-import { UnitMeasure } from '../../models/unit-measure';
+import { BrandResponse } from '../../models/brand';
+import { LineResponse } from '../../models/line';
+import { SupplierRequest } from '../../models/supplier';
+import { UnitMeasureResponse } from '../../models/unit-measure';
 import { ProductService } from '../../services/product.service';
-import { ProductRequest } from '../../models/request/product-request';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Product } from '../../models/product';
-import { ProductDto } from '../../models/dto/product-dto';
 import { ImageService } from '../../services/image.service';
 import { JwtUtilService } from '../../../../utils/jwt-util.service';
+import { ProductRequest } from '../../models/product';
 
 @Component({
   selector: 'app-product-form',
@@ -50,15 +48,15 @@ import { JwtUtilService } from '../../../../utils/jwt-util.service';
 export class ProductFormComponent implements OnInit {
   productForm: FormGroup;
 
-  categories: Category[] = [];
-  brands: Brand[] = [];
-  lines: Line[] = [];
-  suppliers: Supplier[] = [];
-  unitsMeasure: UnitMeasure[] = [];
+  categories: CategoryResponse[] = [];
+  brands: BrandResponse[] = [];
+  lines: LineResponse[] = [];
+  suppliers: SupplierRequest[] = [];
+  unitsMeasure: UnitMeasureResponse[] = [];
 
   isEditMode = false;
   productId: string | null = null;
-  productEdit: ProductDto | undefined;
+  productEdit: ProductRequest | undefined;
 
   fileError: string | null = null;
   imagePreview: string | ArrayBuffer | null = null;
@@ -70,7 +68,7 @@ export class ProductFormComponent implements OnInit {
 
   file: File | null = null;
 
-  imageId: number | null = null;
+  imageUrl: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -92,7 +90,7 @@ export class ProductFormComponent implements OnInit {
       purchasePrice: [null, [Validators.required, Validators.min(0)]],
       salePrice: [null, [Validators.required, Validators.min(0)]],
       userId: jwtUtilService.getId(),
-      imageId: [''],
+      imageUrl: [''],
       categoryId: [''],
       brandId: [''],
       lineId: [''],
@@ -136,21 +134,20 @@ export class ProductFormComponent implements OnInit {
 
   loadProduct(id: number): void {
     this.productService.findById(id).subscribe({
-      next: (product) => {
+      next: (response) => {
         this.productForm.patchValue({
-          name: product.name,
-          description: product.description,
-          purchasePrice: product.purchasePrice,
-          salePrice: product.salePrice,
-          categoryId: product.category?.id || null,
-          imageId: product.image?.id || null,
-          brandId: product.brand?.id || null,
-          lineId: product.line?.id || null,
-          supplierId: product.supplier?.id || null,
-          unitMeasureId: product.unitMeasure?.id || null,
+          name: response.data.name,
+          description: response.data.description,
+          purchasePrice: response.data.purchasePrice,
+          salePrice: response.data.salePrice,
+          categoryId: response.data.category?.id || null,
+          brandId: response.data.brand?.id || null,
+          lineId: response.data.line?.id || null,
+          supplierId: response.data.supplier?.id || null,
+          unitMeasureId: response.data.unitMeasure?.id || null,
         });
-        if (product.image) {
-          this.imagePreview = product.image.secureUrl;
+        if (response.data.imageUrl) {
+          this.imagePreview = response.data.imageUrl;
         }
       },
       error: (err) => {
@@ -160,10 +157,10 @@ export class ProductFormComponent implements OnInit {
   }
 
   getCategories() {
-    this.categoryService.findAllActive().subscribe({
-      next: (data) => {
-        this.categories = data.content;
-        console.log(data);
+    this.categoryService.findAll(0, 12).subscribe({
+      next: (response) => {
+        this.categories = response.data.content;
+        console.log(response);
       },
       error: (err) => {
         console.log('error: ', err);
@@ -172,9 +169,9 @@ export class ProductFormComponent implements OnInit {
   }
 
   getBrands() {
-    this.brandService.findAllActive().subscribe({
-      next: (data) => {
-        this.brands = data.content;
+    this.brandService.findAll(0, 12).subscribe({
+      next: (response) => {
+        this.brands = response.data.content;
       },
       error: (err) => {
         console.log('error: ', err);
@@ -183,9 +180,9 @@ export class ProductFormComponent implements OnInit {
   }
 
   getLines() {
-    this.lineService.findAllActive().subscribe({
-      next: (data) => {
-        this.lines = data.content;
+    this.lineService.findAll(0, 12).subscribe({
+      next: (response) => {
+        this.lines = response.data.content;
       },
       error: (err) => {
         console.log('error: ', err);
@@ -194,9 +191,9 @@ export class ProductFormComponent implements OnInit {
   }
 
   getSuppliers() {
-    this.supplierService.findAllActive().subscribe({
-      next: (data) => {
-        this.suppliers = data.content;
+    this.supplierService.findAll(0, 12).subscribe({
+      next: (response) => {
+        this.suppliers = response.data.content;
       },
       error: (err) => {
         console.log('error: ', err);
@@ -205,9 +202,9 @@ export class ProductFormComponent implements OnInit {
   }
 
   getUnitsMeasure() {
-    this.unitMeasureService.findAllActive().subscribe({
-      next: (data) => {
-        this.unitsMeasure = data.content;
+    this.unitMeasureService.findAll(0, 12).subscribe({
+      next: (response) => {
+        this.unitsMeasure = response.data.content;
       },
       error: (err) => {
         console.log('error: ', err);
@@ -216,6 +213,8 @@ export class ProductFormComponent implements OnInit {
   }
 
   save(product: ProductRequest) {
+    console.log(product);
+
     this.productService.save(product).subscribe({
       next: (response) => {
         this.snackBar.open(`${response.message}`, 'Cerrar', {
@@ -268,15 +267,16 @@ export class ProductFormComponent implements OnInit {
       }
     }
   }
+
   uploadImage(): void {
     if (!this.file) {
       return;
     }
     this.imageService.uploadImage(this.file!, 'products').subscribe({
       next: (response) => {
-        this.imageId = response.id;
+        this.imageUrl = response.data.imageUrl;
         this.productForm.patchValue({
-          imageId: this.imageId,
+          imageUrl: this.imageUrl,
         });
         this.snackBar.open('Imagen subida correctamente', 'Cerrar', {
           duration: 2000,

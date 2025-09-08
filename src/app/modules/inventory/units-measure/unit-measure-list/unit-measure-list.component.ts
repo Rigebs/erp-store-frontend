@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
-import { UnitMeasure } from '../../models/unit-measure';
+import { UnitMeasureResponse } from '../../models/unit-measure';
 import { Router } from '@angular/router';
 import { UnitMeasureService } from '../../services/unit-measure.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -29,10 +29,10 @@ export class UnitMeasureListComponent implements OnInit {
     { field: 'name', header: 'Nombre' },
     { field: 'abbreviation', header: 'Abreviación' },
     { field: 'description', header: 'Descripción', hidden: true },
-    { field: 'status', header: 'Estado' },
+    { field: 'enabled', header: 'Estado' },
   ];
 
-  unitMeasuresData: UnitMeasure[] = [];
+  unitMeasuresData: UnitMeasureResponse[] = [];
   total: number = 0;
 
   createUnitMeasure() {
@@ -45,9 +45,9 @@ export class UnitMeasureListComponent implements OnInit {
 
   loadUnitMeasures(page: number, size: number) {
     this.unitMeasureService.findAll(page, size).subscribe({
-      next: (data) => {
-        this.unitMeasuresData = data.content;
-        this.total = data.totalElements;
+      next: (response) => {
+        this.unitMeasuresData = response.data.content;
+        this.total = response.data.totalElements;
       },
       error: (err) => {
         console.log('ERROR: ', err);
@@ -55,13 +55,13 @@ export class UnitMeasureListComponent implements OnInit {
     });
   }
 
-  onEdit(unitMeasure: UnitMeasure) {
+  onEdit(unitMeasure: UnitMeasureResponse) {
     this.router.navigateByUrl(
       `management/unit-measures/${unitMeasure.id}/edit`
     );
   }
 
-  onDelete(unitMeasure: UnitMeasure) {
+  onDelete(unitMeasure: UnitMeasureResponse) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
@@ -88,27 +88,27 @@ export class UnitMeasureListComponent implements OnInit {
     });
   }
 
-  onToggleStatus(unitMeasure: UnitMeasure) {
+  onToggleEnabled(unitMeasure: UnitMeasureResponse) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
         message: `¿Estás seguro de ${
-          unitMeasure.status ? 'desactivar' : 'activar'
+          unitMeasure.enabled ? 'desactivar' : 'activar'
         } la unidad de medida ${unitMeasure.name}?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.unitMeasureService.toggleStatus(unitMeasure.id).subscribe({
+        this.unitMeasureService.toggleEnabled(unitMeasure.id).subscribe({
           next: (response) => {
             this.notificationUtilService.showMessage(response.message);
             const unitMeasureToUpdate = this.unitMeasuresData.find(
               (u) => u.id === unitMeasure.id
             );
             if (unitMeasureToUpdate) {
-              if (unitMeasureToUpdate.status) {
+              if (unitMeasureToUpdate.enabled) {
                 this.productService
                   .deleteRelationships(unitMeasureToUpdate.id, 'units_measure')
                   .subscribe({
@@ -125,7 +125,7 @@ export class UnitMeasureListComponent implements OnInit {
                     },
                   });
               }
-              unitMeasureToUpdate.status = !unitMeasureToUpdate.status;
+              unitMeasureToUpdate.enabled = !unitMeasureToUpdate.enabled;
             }
           },
           error: (err) => {

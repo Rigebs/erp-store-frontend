@@ -20,14 +20,14 @@ export class SaleService {
   }
 
   getAllSales(): Observable<Sale[]> {
-    return this.http.get<Sale[]>(`${this.baseUrl}/from/${this.userId}`);
+    return this.http.get<Sale[]>(`${this.baseUrl}`);
   }
 
   getSale(saleId: number): Observable<Sale> {
     return this.http.get<Sale>(`${this.baseUrl}/${saleId}`);
   }
 
-  save(saleRequest: SaleRequest): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(this.baseUrl, saleRequest);
+  save(saleRequest: SaleRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.baseUrl, saleRequest);
   }
 }

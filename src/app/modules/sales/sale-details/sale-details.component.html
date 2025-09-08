@@ -18,19 +18,15 @@
       </div>
       <div>
         <strong>Estado:</strong>
-        <mat-chip [color]="sale?.status ? 'primary' : 'warn'">
-          {{ sale?.status ? "Completada" : "Pendiente" }}
+        <mat-chip [color]="sale?.enabled ? 'primary' : 'warn'">
+          {{ sale?.enabled ? "Completada" : "Pendiente" }}
         </mat-chip>
       </div>
     </div>
 
     <mat-divider></mat-divider>
     <div class="sale-table-container">
-      <table
-        mat-table
-        [dataSource]="sale?.saleDetails || []"
-        class="sale-table"
-      >
+      <table mat-table [dataSource]="sale?.saleDetails || []" class="sale-table">
         <!-- Producto -->
         <ng-container matColumnDef="productName">
           <th mat-header-cell *matHeaderCellDef>Producto</th>
@@ -60,10 +56,7 @@
         </ng-container>
 
         <!-- Filas de la tabla -->
-        <tr
-          mat-header-row
-          *matHeaderRowDef="displayedColumns; sticky: true"
-        ></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
     </div>

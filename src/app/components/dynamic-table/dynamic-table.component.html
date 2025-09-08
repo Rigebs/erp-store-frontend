@@ -3,14 +3,10 @@
     <mat-icon>toggle_on</mat-icon> Config. columnas
   </button>
   <mat-menu #menu="matMenu">
-    <button
-      mat-menu-item
-      *ngFor="let column of columns"
-      (click)="toggleColumnVisibility(column)"
-    >
+    <button mat-menu-item *ngFor="let column of columns" (click)="toggleColumnVisibility(column)">
       <mat-checkbox [checked]="!column.hidden">{{
         column.header
-      }}</mat-checkbox>
+        }}</mat-checkbox>
     </button>
   </mat-menu>
 </div>
@@ -34,17 +30,14 @@
         {{ column.header }}
       </th>
 
-      <!-- Condición para 'secureUrl' -->
-      <ng-container *ngIf="column.field === 'secureUrl'; else defaultCell">
+      <!-- Condición para 'imageUrl' -->
+      <ng-container *ngIf="column.field === 'imageUrl'; else defaultCell">
         <td mat-cell *matCellDef="let element">
           <div class="image-container">
-            <img
-              [src]="
+            <img [src]="
                 element[column.field] ||
                 'https://res.cloudinary.com/doqozshir/image/upload/v1736552640/products/smkq68toqxfn1xopkoon.svg'
-              "
-              alt="Product Image"
-            />
+              " alt="Product Image" />
           </div>
         </td>
       </ng-container>
@@ -52,31 +45,22 @@
       <!-- Resto de las condiciones de columna -->
       <ng-template #defaultCell>
         <td mat-cell *matCellDef="let element">
-          <!-- Condición para 'status' -->
-          <ng-container
-            *ngIf="column.field === 'status'; else priceOrDescription"
-          >
-            <div
-              class="estado"
-              [ngClass]="element[column.field] ? 'activo' : 'inactivo'"
-            >
+          <!-- Condición para 'enabled' -->
+          <ng-container *ngIf="column.field === 'enabled'; else priceOrDescription">
+            <div class="estado" [ngClass]="element[column.field] ? 'activo' : 'inactivo'">
               {{ element[column.field] ? "Activo" : "Inactivo" }}
             </div>
           </ng-container>
 
           <ng-template #priceOrDescription>
             <!-- Condición para 'salePrice' -->
-            <ng-container
-              *ngIf="column.field.includes('salePrice'); else checkDescription"
-            >
+            <ng-container *ngIf="column.field.includes('salePrice'); else checkDescription">
               s/ {{ element[column.field] || "-" }}
             </ng-container>
 
             <!-- Condición para 'description' -->
             <ng-template #checkDescription>
-              <ng-container
-                *ngIf="column.field === 'description'; else defaultText"
-              >
+              <ng-container *ngIf="column.field === 'description'; else defaultText">
                 <p>{{ element[column.field] || "-" }}</p>
               </ng-container>
 
@@ -95,12 +79,8 @@
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
         <div class="actions">
-          <button
-            mat-icon-button
-            color="accent"
-            (click)="onToggleStatus(element)"
-          >
-            <mat-icon>{{ element.status ? "block" : "check_circle" }}</mat-icon>
+          <button mat-icon-button color="accent" (click)="onToggleEnabled(element)">
+            <mat-icon>{{ element.enabled ? "block" : "check_circle" }}</mat-icon>
           </button>
           <button mat-icon-button color="primary" (click)="onEdit(element)">
             <mat-icon>edit</mat-icon>
@@ -116,8 +96,4 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 </div>
-<mat-paginator
-  [pageSizeOptions]="[10, 20, 30]"
-  [length]="total"
-  (page)="onPageChange($event)"
-></mat-paginator>
+<mat-paginator [pageSizeOptions]="[10, 20, 30]" [length]="total" (page)="onPageChange($event)"></mat-paginator>

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { UnitMeasureRequest } from '../../models/request/unit-measure-request';
 import { UnitMeasureService } from '../../services/unit-measure.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { JwtUtilService } from '../../../../utils/jwt-util.service';
+import { UnitMeasureRequest } from '../../models/unit-measure';
 
 @Component({
   selector: 'app-unit-measure-form',
@@ -76,11 +76,11 @@ export class UnitMeasureFormComponent implements OnInit {
 
   loadUnitMeasure(id: number): void {
     this.unitMeasureService.findById(id).subscribe({
-      next: (unitMeasure) => {
+      next: (response) => {
         this.unitMeasureForm.patchValue({
-          name: unitMeasure.name,
-          abbreviation: unitMeasure.abbreviation,
-          description: unitMeasure.description,
+          name: response.data.name,
+          abbreviation: response.data.abbreviation,
+          description: response.data.description,
         });
       },
       error: (err) => {

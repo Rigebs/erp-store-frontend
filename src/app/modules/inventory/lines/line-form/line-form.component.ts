@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { LineRequest } from '../../models/request/line-request';
 import {
   FormBuilder,
   FormGroup,
@@ -16,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { JwtUtilService } from '../../../../utils/jwt-util.service';
+import { LineRequest } from '../../models/line';
 
 @Component({
   selector: 'app-line-form',
@@ -75,10 +75,10 @@ export class LineFormComponent implements OnInit {
 
   loadLine(id: number): void {
     this.lineService.findById(id).subscribe({
-      next: (line) => {
+      next: (response) => {
         this.lineForm.patchValue({
-          name: line.name,
-          description: line.description,
+          name: response.data.name,
+          description: response.data.description,
         });
       },
       error: (err) => {

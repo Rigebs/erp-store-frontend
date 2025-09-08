@@ -1,13 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Supplier } from '../models/supplier';
-import { SupplierRequest } from '../models/request/supplier-request';
-import { SupplierDto } from '../models/dto/supplier-dto';
 import { ApiResponse } from '../../../models/api-response';
-import { JwtUtilService } from '../../../utils/jwt-util.service';
 import { environment } from '../../../../environments/environment';
 import { Pageable } from '../../../models/pageable';
+import { SupplierRequest, SupplierResponse } from '../models/supplier';
 
 @Injectable({
   providedIn: 'root',
@@ -15,50 +12,47 @@ import { Pageable } from '../../../models/pageable';
 export class SupplierService {
   private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/suppliers`;
 
-  private readonly userId: number;
-  constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {
-    this.userId = jwtUtilService.getId()!;
-  }
+  constructor(private http: HttpClient) {}
 
-  findAll(page: number, size: number): Observable<Pageable<Supplier>> {
+  findAll(
+    page: number,
+    size: number
+  ): Observable<ApiResponse<Pageable<SupplierResponse>>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<Pageable<Supplier>>(
-      `${this.baseUrl}/from/${this.userId}`,
-      {
-        params,
-      }
+    return this.http.get<ApiResponse<Pageable<SupplierResponse>>>(
+      this.baseUrl,
+      { params }
     );
   }
 
-  findAllActive(): Observable<Pageable<Supplier>> {
-    return this.http.get<Pageable<Supplier>>(
-      `${this.baseUrl}/from/${this.userId}/active`
+  findById(id: number): Observable<ApiResponse<SupplierResponse>> {
+    return this.http.get<ApiResponse<SupplierResponse>>(
+      `${this.baseUrl}/${id}`
     );
   }
 
-  findById(id: number): Observable<SupplierDto> {
-    return this.http.get<SupplierDto>(`${this.baseUrl}/${id}`);
-  }
-
-  save(supplierRequest: SupplierRequest): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(this.baseUrl, supplierRequest);
+  save(supplierRequest: SupplierRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.baseUrl, supplierRequest);
   }
 
   update(
     id: number,
     supplierRequest: SupplierRequest
-  ): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.baseUrl}/${id}`, supplierRequest);
+  ): Observable<ApiResponse<void>> {
+    return this.http.put<ApiResponse<void>>(
+      `${this.baseUrl}/${id}`,
+      supplierRequest
+    );
   }
 
-  delete(id: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.baseUrl}/${id}`);
+  delete(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/${id}`);
   }
 
-  toggleStatus(id: number): Observable<ApiResponse> {
-    return this.http.patch<ApiResponse>(`${this.baseUrl}/${id}`, {});
+  toggleEnabled(id: number): Observable<ApiResponse<void>> {
+    return this.http.patch<ApiResponse<void>>(`${this.baseUrl}/${id}`, {});
   }
 }

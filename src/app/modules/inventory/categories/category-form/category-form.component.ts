@@ -9,13 +9,13 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CategoryService } from '../../services/category.service';
-import { CategoryRequest } from '../../models/request/category-request';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { JwtUtilService } from '../../../../utils/jwt-util.service';
+import { CategoryRequest } from '../../models/category';
 
 @Component({
   selector: 'app-category-form',
@@ -75,11 +75,11 @@ export class CategoryFormComponent implements OnInit {
 
   loadCategory(id: number): void {
     this.categoryService.findById(id).subscribe({
-      next: (category) => {
+      next: (response) => {
         this.categoryForm.patchValue({
-          name: category.name,
-          description: category.description,
-          status: category.status,
+          name: response.data.name,
+          description: response.data.description,
+          enabled: response.data.enabled,
         });
       },
       error: (err) => {

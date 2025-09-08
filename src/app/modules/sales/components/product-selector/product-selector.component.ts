@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Product } from '../../../inventory/models/product';
+import { ProductRequest } from '../../../inventory/models/product';
 
 @Component({
   selector: 'app-product-selector',
@@ -24,7 +24,7 @@ import { Product } from '../../../inventory/models/product';
 })
 export class ProductSelectorComponent {
   @Output() productSelected = new EventEmitter<any>();
-  @Input() products: Product[] = [];
+  @Input() products: ProductRequest[] = [];
   searchTerm = '';
 
   selectProduct(product: any) {

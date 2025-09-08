@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { Product } from '../../../inventory/models/product';
+import { ProductRequest } from '../../../inventory/models/product';
 import { SaleDetail } from '../../models/sale-detail';
 import { FormatUtilService } from '../../../../utils/format-util.service';
 
@@ -18,7 +18,7 @@ export class SelectedProductsComponent {
   @Output() productAdd = new EventEmitter<any>();
   @Output() productDeduct = new EventEmitter<any>();
 
-  constructor(public formatUtilService: FormatUtilService){}
+  constructor(public formatUtilService: FormatUtilService) {}
 
   displayedColumns: string[] = [
     'name',
@@ -28,15 +28,15 @@ export class SelectedProductsComponent {
     'actions',
   ];
 
-  remove(product: Product) {
+  remove(product: ProductRequest) {
     this.productRemoved.emit(product);
   }
 
-  add(product: Product) {
+  add(product: ProductRequest) {
     this.productAdd.emit(product);
   }
 
-  deduct(product: Product) {
+  deduct(product: ProductRequest) {
     this.productDeduct.emit(product);
   }
 }

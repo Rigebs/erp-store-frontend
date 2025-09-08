@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { LineService } from '../../services/line.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Line } from '../../models/line';
+import { LineResponse } from '../../models/line';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 import { ProductService } from '../../services/product.service';
 import { NotificationUtilService } from '../../../../utils/notification-util.service';
@@ -28,10 +28,10 @@ export class LineListComponent implements OnInit {
   columns = [
     { field: 'name', header: 'Nombre' },
     { field: 'description', header: 'Descripción', hidden: true },
-    { field: 'status', header: 'Estado' },
+    { field: 'enabled', header: 'Estado' },
   ];
 
-  linesData: Line[] = [];
+  linesData: LineResponse[] = [];
   total: number = 0;
 
   createLine() {
@@ -44,10 +44,9 @@ export class LineListComponent implements OnInit {
 
   loadLines(page: number, size: number) {
     this.lineService.findAll(page, size).subscribe({
-      next: (data) => {
-        this.linesData = data.content;
-        this.total = data.totalElements;
-        console.log(data);
+      next: (response) => {
+        this.linesData = response.data.content;
+        this.total = response.data.totalElements;
       },
       error: (err) => {
         console.log('ERROR: ', err);
@@ -55,11 +54,11 @@ export class LineListComponent implements OnInit {
     });
   }
 
-  onEdit(line: Line) {
+  onEdit(line: LineResponse) {
     this.router.navigateByUrl(`management/lines/${line.id}/edit`);
   }
 
-  onDelete(line: Line) {
+  onDelete(line: LineResponse) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
@@ -84,25 +83,25 @@ export class LineListComponent implements OnInit {
     });
   }
 
-  onToggleStatus(line: Line) {
+  onToggleEnabled(line: LineResponse) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
         message: `¿Estás seguro de ${
-          line.status ? 'desactivar' : 'activar'
+          line.enabled ? 'desactivar' : 'activar'
         } la línea ${line.name}?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.lineService.toggleStatus(line.id).subscribe({
+        this.lineService.toggleEnabled(line.id).subscribe({
           next: (response) => {
             this.notificationUtilService.showMessage(response.message);
             const lineToUpdate = this.linesData.find((l) => l.id === line.id);
             if (lineToUpdate) {
-              if (lineToUpdate.status) {
+              if (lineToUpdate.enabled) {
                 this.productService
                   .deleteRelationships(line.id, 'lines')
                   .subscribe({
@@ -116,11 +115,11 @@ export class LineListComponent implements OnInit {
                     },
                   });
               }
-              lineToUpdate.status = !lineToUpdate.status;
+              lineToUpdate.enabled = !lineToUpdate.enabled;
             }
           },
           error: (err) => {
-            console.error('Error toggling line status: ', err);
+            console.error('Error toggling line enabled: ', err);
           },
         });
       } else {
@@ -131,8 +130,8 @@ export class LineListComponent implements OnInit {
 
   pageChange(event: { items: number; page: number }) {
     this.lineService.findAll(event.page, event.items).subscribe({
-      next: (data) => {
-        this.linesData = data.content;
+      next: (response) => {
+        this.linesData = response.data.content;
       },
       error: (err) => {
         console.log('ERROR: ', err);

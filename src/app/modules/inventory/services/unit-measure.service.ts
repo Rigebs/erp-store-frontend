@@ -1,11 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UnitMeasure } from '../models/unit-measure';
-import { UnitMeasureRequest } from '../models/request/unit-measure-request';
-import { UnitMeasureDto } from '../models/dto/unit-measure-dto';
+import {
+  UnitMeasureRequest,
+  UnitMeasureResponse,
+} from '../models/unit-measure';
 import { ApiResponse } from '../../../models/api-response';
-import { JwtUtilService } from '../../../utils/jwt-util.service';
 import { environment } from '../../../../environments/environment';
 import { Pageable } from '../../../models/pageable';
 
@@ -15,53 +15,47 @@ import { Pageable } from '../../../models/pageable';
 export class UnitMeasureService {
   private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/units-measure`;
 
-  private readonly userId: number;
-  constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {
-    this.userId = jwtUtilService.getId()!;
-  }
+  constructor(private http: HttpClient) {}
 
-  findAll(page: number, size: number): Observable<Pageable<UnitMeasure>> {
+  findAll(
+    page: number,
+    size: number
+  ): Observable<ApiResponse<Pageable<UnitMeasureResponse>>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<Pageable<UnitMeasure>>(
-      `${this.baseUrl}/from/${this.userId}`,
-      {
-        params,
-      }
+    return this.http.get<ApiResponse<Pageable<UnitMeasureResponse>>>(
+      this.baseUrl,
+      { params }
     );
   }
 
-  findAllActive(): Observable<Pageable<UnitMeasure>> {
-    return this.http.get<Pageable<UnitMeasure>>(
-      `${this.baseUrl}/from/${this.userId}/active`
+  findById(id: number): Observable<ApiResponse<UnitMeasureResponse>> {
+    return this.http.get<ApiResponse<UnitMeasureResponse>>(
+      `${this.baseUrl}/${id}`
     );
   }
 
-  findById(id: number): Observable<UnitMeasureDto> {
-    return this.http.get<UnitMeasureDto>(`${this.baseUrl}/${id}`);
-  }
-
-  save(unitMeasureRequest: UnitMeasureRequest): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(this.baseUrl, unitMeasureRequest);
+  save(unitMeasureRequest: UnitMeasureRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.baseUrl, unitMeasureRequest);
   }
 
   update(
     id: number,
     unitMeasureRequest: UnitMeasureRequest
-  ): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(
+  ): Observable<ApiResponse<void>> {
+    return this.http.put<ApiResponse<void>>(
       `${this.baseUrl}/${id}`,
       unitMeasureRequest
     );
   }
 
-  delete(id: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.baseUrl}/${id}`);
+  delete(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/${id}`);
   }
 
-  toggleStatus(id: number): Observable<ApiResponse> {
-    return this.http.patch<ApiResponse>(`${this.baseUrl}/${id}`, {});
+  toggleEnabled(id: number): Observable<ApiResponse<void>> {
+    return this.http.patch<ApiResponse<void>>(`${this.baseUrl}/${id}`, {});
   }
 }

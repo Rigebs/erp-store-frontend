@@ -15,12 +15,15 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(loginRequest: LoginRequest): Observable<TokenResponse> {
-    return this.http.post<TokenResponse>(`${this.baseUrl}/login`, loginRequest);
+  login(loginRequest: LoginRequest): Observable<ApiResponse<TokenResponse>> {
+    return this.http.post<ApiResponse<TokenResponse>>(
+      `${this.baseUrl}/login`,
+      loginRequest
+    );
   }
 
-  register(registerRequest: RegisterRequest): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(
+  register(registerRequest: RegisterRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(
       `${this.baseUrl}/register`,
       registerRequest
     );

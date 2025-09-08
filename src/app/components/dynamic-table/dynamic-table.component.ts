@@ -15,7 +15,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import {
+  MatPaginator,
+  MatPaginatorModule,
+  PageEvent,
+} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -29,7 +33,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
     MatCheckboxModule,
     MatMenuModule,
     MatChipsModule,
-    MatPaginator,
+    MatPaginatorModule,
     MatButtonModule,
   ],
   templateUrl: './dynamic-table.component.html',
@@ -44,7 +48,7 @@ export class DynamicTableComponent implements OnInit {
 
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
-  @Output() toggleStatus = new EventEmitter<any>();
+  @Output() toggleEnabled = new EventEmitter<any>();
 
   @Output() pageChange = new EventEmitter<{ items: number; page: number }>();
 
@@ -73,7 +77,7 @@ export class DynamicTableComponent implements OnInit {
     }
   }
 
-  applyFilter(event: Event) {
+  applyFilter(event: KeyboardEvent) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
 
@@ -103,7 +107,7 @@ export class DynamicTableComponent implements OnInit {
     this.delete.emit(element);
   }
 
-  onToggleStatus(element: any): void {
-    this.toggleStatus.emit(element);
+  onToggleEnabled(element: any): void {
+    this.toggleEnabled.emit(element);
   }
 }

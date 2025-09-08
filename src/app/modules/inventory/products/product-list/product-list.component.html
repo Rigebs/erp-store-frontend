@@ -1,0 +1,10 @@
+<div class="container">
+    <div class="">
+        <button mat-flat-button color="warn" (click)="createProduct()">
+            <mat-icon>add</mat-icon> Agregar
+        </button>
+    </div>
+    <app-dynamic-table [data]="productsData" [columns]="columns" (edit)="onEdit($event)" [total]="total"
+        (pageChange)="pageChange($event)" (delete)="onDelete($event)"
+        (toggleEnabled)="onToggleEnabled($event)"></app-dynamic-table>
+</div>

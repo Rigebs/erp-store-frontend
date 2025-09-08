@@ -1,21 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { DynamicTableComponent } from '../../../components/dynamic-table/dynamic-table.component';
-import { MatButtonModule } from '@angular/material/button';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ProductService } from '../services/product.service';
-import { Product } from '../models/product';
-import { MatIconModule } from '@angular/material/icon';
+import { ProductService } from '../../services/product.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from '../../../components/confirmation-dialog/confirmation-dialog.component';
-import { NotificationUtilService } from '../../../utils/notification-util.service';
+import { NotificationUtilService } from '../../../../utils/notification-util.service';
+import { ProductRequest } from '../../models/product';
+import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
+import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-products',
+  selector: 'app-product-list',
   imports: [DynamicTableComponent, MatButtonModule, MatIconModule],
-  templateUrl: './products.component.html',
-  styleUrl: './products.component.css',
+  templateUrl: './product-list.component.html',
+  styleUrl: './product-list.component.css',
 })
-export class ProductsComponent implements OnInit {
+export class ProductListComponent {
   constructor(
     private router: Router,
     private productService: ProductService,
@@ -29,8 +29,8 @@ export class ProductsComponent implements OnInit {
     { field: 'description', header: 'Descripción', hidden: true },
     { field: 'purchasePrice', header: 'Precio compra', hidden: true },
     { field: 'salePrice', header: 'Precio venta' },
-    { field: 'status', header: 'Estado' },
-    { field: 'secureUrl', header: 'Imagen' },
+    { field: 'enabled', header: 'Estado' },
+    { field: 'imageUrl', header: 'Imagen' },
     { field: 'categoryName', header: 'Categoría' },
     { field: 'brandName', header: 'Marca' },
     { field: 'unitMeasureAbbreviation', header: 'U/M', hidden: true },
@@ -41,12 +41,12 @@ export class ProductsComponent implements OnInit {
   columnsProduct = [
     { key: 'name', label: 'Nombre' },
     { key: 'salePrice', label: 'Precio venta' },
-    { key: 'status', label: 'Estado' },
+    { key: 'enabled', label: 'Estado' },
     { key: 'categoryName', label: 'Categoría' },
     { key: 'brandName', label: 'Marca' },
   ];
 
-  productsData: Product[] = [];
+  productsData: ProductRequest[] = [];
   total: number = 0;
 
   createProduct() {
@@ -59,9 +59,9 @@ export class ProductsComponent implements OnInit {
 
   loadProducts(page: number, size: number) {
     this.productService.findAll(page, size).subscribe({
-      next: (data) => {
-        this.productsData = data.content;
-        this.total = data.totalElements;
+      next: (response) => {
+        this.productsData = response.data.content;
+        this.total = response.data.totalElements;
       },
       error: (err) => {
         console.log('ERROR: ', err);
@@ -71,9 +71,8 @@ export class ProductsComponent implements OnInit {
 
   pageChange(event: { items: number; page: number }) {
     this.productService.findAll(event.page, event.items).subscribe({
-      next: (data) => {
-        this.productsData = data.content;
-        console.log(data);
+      next: (response) => {
+        this.productsData = response.data.content;
       },
       error: (err) => {
         console.log('ERROR: ', err);
@@ -81,11 +80,11 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  onEdit(product: Product) {
+  onEdit(product: ProductRequest) {
     this.router.navigateByUrl(`management/products/${product.id}/edit`);
   }
 
-  onDelete(product: Product) {
+  onDelete(product: ProductRequest) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
@@ -112,27 +111,27 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  onToggleStatus(product: Product) {
+  onToggleEnabled(product: ProductRequest) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
         message: `¿Estás seguro de ${
-          product.status ? 'desactivar' : 'activar'
+          product.enabled ? 'desactivar' : 'activar'
         } el producto ${product.name}?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.productService.toggleStatus(product.id).subscribe({
+        this.productService.toggleEnabled(product.id).subscribe({
           next: (response) => {
             this.notificationUtilService.showMessage(response.message);
             const productToUpdate = this.productsData.find(
               (p) => p.id === product.id
             );
             if (productToUpdate) {
-              productToUpdate.status = !productToUpdate.status;
+              productToUpdate.enabled = !productToUpdate.enabled;
             }
           },
           error: (err) => {

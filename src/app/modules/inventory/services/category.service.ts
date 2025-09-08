@@ -1,11 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Category } from '../models/category';
-import { CategoryRequest } from '../models/request/category-request';
-import { CategoryDto } from '../models/dto/category-dto';
+import { CategoryRequest, CategoryResponse } from '../models/category';
 import { ApiResponse } from '../../../models/api-response';
-import { JwtUtilService } from '../../../utils/jwt-util.service';
 import { environment } from '../../../../environments/environment';
 import { Pageable } from '../../../models/pageable';
 
@@ -15,50 +12,47 @@ import { Pageable } from '../../../models/pageable';
 export class CategoryService {
   private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/categories`;
 
-  private readonly userId: number;
-  constructor(private http: HttpClient, jwtUtilService: JwtUtilService) {
-    this.userId = jwtUtilService.getId()!;
-  }
+  constructor(private http: HttpClient) {}
 
-  findAll(page: number, size: number): Observable<Pageable<Category>> {
+  findAll(
+    page: number,
+    size: number
+  ): Observable<ApiResponse<Pageable<CategoryResponse>>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<Pageable<Category>>(
-      `${this.baseUrl}/from/${this.userId}`,
-      {
-        params,
-      }
+    return this.http.get<ApiResponse<Pageable<CategoryResponse>>>(
+      this.baseUrl,
+      { params }
     );
   }
 
-  findAllActive(): Observable<Pageable<Category>> {
-    return this.http.get<Pageable<Category>>(
-      `${this.baseUrl}/from/${this.userId}/active`
+  findById(id: number): Observable<ApiResponse<CategoryResponse>> {
+    return this.http.get<ApiResponse<CategoryResponse>>(
+      `${this.baseUrl}/${id}`
     );
   }
 
-  findById(id: number): Observable<CategoryDto> {
-    return this.http.get<CategoryDto>(`${this.baseUrl}/${id}`);
-  }
-
-  save(categoryRequest: CategoryRequest): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(this.baseUrl, categoryRequest);
+  save(categoryRequest: CategoryRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.baseUrl, categoryRequest);
   }
 
   update(
     id: number,
     categoryRequest: CategoryRequest
-  ): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.baseUrl}/${id}`, categoryRequest);
+  ): Observable<ApiResponse<void>> {
+    return this.http.put<ApiResponse<void>>(
+      `${this.baseUrl}/${id}`,
+      categoryRequest
+    );
   }
 
-  delete(id: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.baseUrl}/${id}`);
+  delete(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/${id}`);
   }
 
-  toggleStatus(id: number): Observable<ApiResponse> {
-    return this.http.patch<ApiResponse>(`${this.baseUrl}/${id}`, {});
+  toggleEnabled(id: number): Observable<ApiResponse<void>> {
+    return this.http.patch<ApiResponse<void>>(`${this.baseUrl}/${id}`, {});
   }
 }

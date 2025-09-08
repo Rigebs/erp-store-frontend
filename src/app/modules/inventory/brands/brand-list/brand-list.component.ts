@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BrandService } from '../../services/brand.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Brand } from '../../models/brand';
+import { BrandResponse } from '../../models/brand';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,10 +28,10 @@ export class BrandListComponent implements OnInit {
   columns = [
     { field: 'name', header: 'Nombre' },
     { field: 'description', header: 'Descripción', hidden: true },
-    { field: 'status', header: 'Estado' },
+    { field: 'enabled', header: 'Estado' },
   ];
 
-  brandsData: Brand[] = [];
+  brandsData: BrandResponse[] = [];
   total: number = 0;
 
   createBrand() {
@@ -44,9 +44,9 @@ export class BrandListComponent implements OnInit {
 
   loadBrands(page: number, size: number) {
     this.brandService.findAll(page, size).subscribe({
-      next: (data) => {
-        this.brandsData = data.content;
-        this.total = data.totalElements;
+      next: (response) => {
+        this.brandsData = response.data.content;
+        this.total = response.data.totalElements;
       },
       error: (err) => {
         console.log('ERROR: ', err);
@@ -54,11 +54,11 @@ export class BrandListComponent implements OnInit {
     });
   }
 
-  onEdit(brand: Brand) {
+  onEdit(brand: BrandResponse) {
     this.router.navigateByUrl(`management/brands/${brand.id}/edit`);
   }
 
-  onDelete(brand: Brand) {
+  onDelete(brand: BrandResponse) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
@@ -83,27 +83,27 @@ export class BrandListComponent implements OnInit {
     });
   }
 
-  onToggleStatus(brand: Brand) {
+  onToggleEnabled(brand: BrandResponse) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
         message: `¿Estás seguro de ${
-          brand.status ? 'desactivar' : 'activar'
+          brand.enabled ? 'desactivar' : 'activar'
         } la marca ${brand.name}?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.brandService.toggleStatus(brand.id).subscribe({
+        this.brandService.toggleEnabled(brand.id).subscribe({
           next: (response) => {
             this.notificationUtilService.showMessage(response.message);
             const brandToUpdate = this.brandsData.find(
               (b) => b.id === brand.id
             );
             if (brandToUpdate) {
-              if (brandToUpdate.status) {
+              if (brandToUpdate.enabled) {
                 this.productService
                   .deleteRelationships(brandToUpdate.id, 'brands')
                   .subscribe({
@@ -120,11 +120,11 @@ export class BrandListComponent implements OnInit {
                     },
                   });
               }
-              brandToUpdate.status = !brandToUpdate.status;
+              brandToUpdate.enabled = !brandToUpdate.enabled;
             }
           },
           error: (err) => {
-            console.error('Error toggling brand status: ', err);
+            console.error('Error toggling brand enabled: ', err);
           },
         });
       } else {

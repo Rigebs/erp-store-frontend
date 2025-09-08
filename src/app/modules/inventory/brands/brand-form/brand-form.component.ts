@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { BrandRequest } from '../../models/request/brand-request';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrandService } from '../../services/brand.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { JwtUtilService } from '../../../../utils/jwt-util.service';
+import { BrandRequest } from '../../models/brand';
 
 @Component({
   selector: 'app-brand-form',
@@ -75,10 +75,10 @@ export class BrandFormComponent implements OnInit {
 
   loadBrand(id: number): void {
     this.brandService.findById(id).subscribe({
-      next: (brand) => {
+      next: (response) => {
         this.brandForm.patchValue({
-          name: brand.name,
-          description: brand.description,
+          name: response.data.name,
+          description: response.data.description,
         });
       },
       error: (err) => {

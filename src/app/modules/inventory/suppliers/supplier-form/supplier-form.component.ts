@@ -9,13 +9,13 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SupplierService } from '../../services/supplier.service';
-import { SupplierRequest } from '../../models/request/supplier-request';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { JwtUtilService } from '../../../../utils/jwt-util.service';
+import { SupplierRequest } from '../../models/supplier';
 
 @Component({
   selector: 'app-supplier-form',
@@ -51,7 +51,7 @@ export class SupplierFormComponent implements OnInit {
       phoneNumber: ['', Validators.required],
       address: ['', Validators.required],
       website: ['', Validators.required],
-      status: [true, Validators.required],
+      enabled: [true, Validators.required],
       userId: [jwtUtilService.getId()],
     });
   }
@@ -80,15 +80,15 @@ export class SupplierFormComponent implements OnInit {
 
   loadSupplier(id: number): void {
     this.supplierService.findById(id).subscribe({
-      next: (supplier) => {
+      next: (response) => {
         this.supplierForm.patchValue({
-          name: supplier.name,
-          contactName: supplier.contactName,
-          contactEmail: supplier.contactEmail,
-          phoneNumber: supplier.phoneNumber,
-          address: supplier.address,
-          website: supplier.website,
-          status: supplier.status,
+          name: response.data.name,
+          contactName: response.data.contactName,
+          contactEmail: response.data.contactEmail,
+          phoneNumber: response.data.phoneNumber,
+          address: response.data.address,
+          website: response.data.website,
+          enabled: response.data.enabled,
         });
       },
       error: (err) => {

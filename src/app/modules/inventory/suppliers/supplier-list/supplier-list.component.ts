@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { SupplierService } from '../../services/supplier.service';
-import { Supplier } from '../../models/supplier';
+import { SupplierRequest } from '../../models/supplier';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 import { ProductService } from '../../services/product.service';
 import { NotificationUtilService } from '../../../../utils/notification-util.service';
@@ -30,10 +30,10 @@ export class SupplierListComponent implements OnInit {
     { field: 'contactName', header: 'Nombre del contacto' },
     { field: 'contactEmail', header: 'Correo de contacto', hidden: true },
     { field: 'phoneNumber', header: 'Teléfono', hidden: true },
-    { field: 'status', header: 'Estado' },
+    { field: 'enabled', header: 'Estado' },
   ];
 
-  suppliersData: Supplier[] = [];
+  suppliersData: SupplierRequest[] = [];
   total: number = 0;
 
   createSupplier() {
@@ -46,9 +46,9 @@ export class SupplierListComponent implements OnInit {
 
   loadSuppliers(page: number, size: number) {
     this.supplierService.findAll(page, size).subscribe({
-      next: (data) => {
-        this.suppliersData = data.content;
-        this.total = data.totalElements;
+      next: (response) => {
+        this.suppliersData = response.data.content;
+        this.total = response.data.totalElements;
       },
       error: (err) => {
         console.log('ERROR: ', err);
@@ -56,11 +56,11 @@ export class SupplierListComponent implements OnInit {
     });
   }
 
-  onEdit(supplier: Supplier) {
+  onEdit(supplier: SupplierRequest) {
     this.router.navigateByUrl(`management/suppliers/${supplier.id}/edit`);
   }
 
-  onDelete(supplier: Supplier) {
+  onDelete(supplier: SupplierRequest) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
@@ -87,27 +87,27 @@ export class SupplierListComponent implements OnInit {
     });
   }
 
-  onToggleStatus(supplier: Supplier) {
+  onToggleEnabled(supplier: SupplierRequest) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
         title: 'Confirmación',
         message: `¿Estás seguro de ${
-          supplier.status ? 'desactivar' : 'activar'
+          supplier.enabled ? 'desactivar' : 'activar'
         } el proveedor ${supplier.name}?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.supplierService.toggleStatus(supplier.id).subscribe({
+        this.supplierService.toggleEnabled(supplier.id).subscribe({
           next: (response) => {
             this.notificationUtilService.showMessage(response.message);
             const supplierToUpdate = this.suppliersData.find(
               (s) => s.id === supplier.id
             );
             if (supplierToUpdate) {
-              if (supplierToUpdate.status) {
+              if (supplierToUpdate.enabled) {
                 this.productService
                   .deleteRelationships(supplierToUpdate.id, 'suppliers')
                   .subscribe({
@@ -124,7 +124,7 @@ export class SupplierListComponent implements OnInit {
                     },
                   });
               }
-              supplierToUpdate.status = !supplierToUpdate.status;
+              supplierToUpdate.enabled = !supplierToUpdate.enabled;
             }
           },
           error: (err) => {
