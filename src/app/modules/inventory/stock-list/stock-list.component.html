@@ -1,0 +1,27 @@
+<h2>Inventario de Productos</h2>
+
+<app-dynamic-table [columns]="columns" [data]="data" [total]="total" [page]="page" [actionsTemplate]="customActions"
+    (pageChange)="onPageChange($event)">
+</app-dynamic-table>
+
+<!-- Plantilla de acciones personalizadas -->
+<ng-template #customActions let-row>
+    <button mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #actionsMenu="matMenu">
+        <button mat-menu-item (click)="onEdit(row)">
+            <mat-icon>edit</mat-icon>
+            <span>Editar stock</span>
+        </button>
+        <button mat-menu-item (click)="onTransfer(row)">
+            <mat-icon>swap_horiz</mat-icon>
+            <span>Transferir stock</span>
+        </button>
+        <button mat-menu-item (click)="onViewMovements(row)">
+            <mat-icon>history</mat-icon>
+            <span>Ver movimientos</span>
+        </button>
+    </mat-menu>
+</ng-template>

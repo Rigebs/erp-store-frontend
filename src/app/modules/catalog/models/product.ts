@@ -4,7 +4,7 @@ import { LineResponse } from './line';
 import { SupplierResponse } from './supplier';
 import { UnitMeasureResponse } from './unit-measure';
 
-export interface ProductRequest {
+export interface ProductResponse {
   id: number;
   name: string;
   quantity: number;
@@ -21,7 +21,7 @@ export interface ProductRequest {
   supplier: SupplierResponse;
 }
 
-export interface ProductRequest {
+export interface ProductResponse {
   name: string;
   description: string;
   purchasePrice: number;

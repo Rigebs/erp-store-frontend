@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ProductSelectorComponent } from '../components/product-selector/product-selector.component';
 import { SummaryComponent } from '../components/summary/summary.component';
 import { SelectedProductsComponent } from '../components/selected-products/selected-products.component';
-import { ProductRequest } from '../../inventory/models/product';
-import { ProductService } from '../../inventory/services/product.service';
+import { ProductResponse } from '../../catalog/models/product';
+import { ProductService } from '../../catalog/services/product.service';
 import { SaleDetailRequest } from '../models/request/sale-detail-request';
 import { SaleDetail } from '../models/sale-detail';
 import { FormatUtilService } from '../../../utils/format-util.service';
@@ -29,7 +29,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class NewSaleComponent implements OnInit {
   selectedProducts: SaleDetail[] = [];
   discount = 0;
-  products: ProductRequest[] = [];
+  products: ProductResponse[] = [];
   saleDetails: SaleDetailRequest[] = [];
 
   subtotal: number = 0;

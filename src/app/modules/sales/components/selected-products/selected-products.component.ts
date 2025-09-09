@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { ProductRequest } from '../../../inventory/models/product';
+import { ProductResponse } from '../../../catalog/models/product';
 import { SaleDetail } from '../../models/sale-detail';
 import { FormatUtilService } from '../../../../utils/format-util.service';
 
@@ -28,15 +28,15 @@ export class SelectedProductsComponent {
     'actions',
   ];
 
-  remove(product: ProductRequest) {
+  remove(product: ProductResponse) {
     this.productRemoved.emit(product);
   }
 
-  add(product: ProductRequest) {
+  add(product: ProductResponse) {
     this.productAdd.emit(product);
   }
 
-  deduct(product: ProductRequest) {
+  deduct(product: ProductResponse) {
     this.productDeduct.emit(product);
   }
 }

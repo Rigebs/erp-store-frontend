@@ -5,6 +5,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  TemplateRef,
 } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
@@ -15,11 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
-import {
-  MatPaginator,
-  MatPaginatorModule,
-  PageEvent,
-} from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -46,6 +43,8 @@ export class DynamicTableComponent implements OnInit {
   @Input() total: number = 0;
   @Input() page: number = 0;
 
+  @Input() actionsTemplate?: TemplateRef<any>;
+
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
   @Output() toggleEnabled = new EventEmitter<any>();
@@ -62,6 +61,19 @@ export class DynamicTableComponent implements OnInit {
   ngOnInit(): void {
     this.updateDisplayedColumns();
     this.dataSource.data = this.data;
+
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const lowerFilter = filter.trim().toLowerCase();
+
+      return this.columns
+        .filter((col) => !col.hidden)
+        .some((col) => {
+          const value = this.getNestedValue(data, col.field);
+          return value !== undefined && value !== null
+            ? value.toString().toLowerCase().includes(lowerFilter)
+            : false;
+        });
+    };
   }
 
   onPageChange(event: PageEvent) {
@@ -86,9 +98,14 @@ export class DynamicTableComponent implements OnInit {
     }
   }
 
+  getNestedValue(obj: any, path: string): any {
+    return path
+      .split('.')
+      .reduce((prev, curr) => (prev ? prev[curr] : undefined), obj);
+  }
+
   updateDisplayedColumns(): void {
     this.displayedColumns = [
-      'index',
       ...this.columns.filter((col) => !col.hidden).map((col) => col.field),
       'actions',
     ];

@@ -5,7 +5,7 @@ import { BrandRequest, BrandResponse } from '../models/brand';
 import { ApiResponse } from '../../../models/api-response';
 import { JwtUtilService } from '../../../utils/jwt-util.service';
 import { environment } from '../../../../environments/environment';
-import { Pageable } from '../../../models/pageable';
+import { Page } from '../../../models/pageable';
 
 @Injectable({
   providedIn: 'root',
@@ -21,15 +21,14 @@ export class BrandService {
   findAll(
     page: number,
     size: number
-  ): Observable<ApiResponse<Pageable<BrandResponse>>> {
+  ): Observable<ApiResponse<Page<BrandResponse>>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<ApiResponse<Pageable<BrandResponse>>>(
-      `${this.baseUrl}`,
-      { params }
-    );
+    return this.http.get<ApiResponse<Page<BrandResponse>>>(`${this.baseUrl}`, {
+      params,
+    });
   }
 
   findById(id: number): Observable<ApiResponse<BrandResponse>> {

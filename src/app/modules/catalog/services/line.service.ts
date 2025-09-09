@@ -1,50 +1,44 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CategoryRequest, CategoryResponse } from '../models/category';
+import { LineRequest, LineResponse } from '../models/line';
 import { ApiResponse } from '../../../models/api-response';
 import { environment } from '../../../../environments/environment';
-import { Pageable } from '../../../models/pageable';
+import { Page } from '../../../models/pageable';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CategoryService {
-  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/categories`;
+export class LineService {
+  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/lines`;
 
   constructor(private http: HttpClient) {}
 
   findAll(
     page: number,
     size: number
-  ): Observable<ApiResponse<Pageable<CategoryResponse>>> {
+  ): Observable<ApiResponse<Page<LineResponse>>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<ApiResponse<Pageable<CategoryResponse>>>(
-      this.baseUrl,
-      { params }
-    );
+    return this.http.get<ApiResponse<Page<LineResponse>>>(this.baseUrl, {
+      params,
+    });
   }
 
-  findById(id: number): Observable<ApiResponse<CategoryResponse>> {
-    return this.http.get<ApiResponse<CategoryResponse>>(
-      `${this.baseUrl}/${id}`
-    );
+  findById(id: number): Observable<ApiResponse<LineResponse>> {
+    return this.http.get<ApiResponse<LineResponse>>(`${this.baseUrl}/${id}`);
   }
 
-  save(categoryRequest: CategoryRequest): Observable<ApiResponse<void>> {
-    return this.http.post<ApiResponse<void>>(this.baseUrl, categoryRequest);
+  save(lineRequest: LineRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.baseUrl, lineRequest);
   }
 
-  update(
-    id: number,
-    categoryRequest: CategoryRequest
-  ): Observable<ApiResponse<void>> {
+  update(id: number, lineRequest: LineRequest): Observable<ApiResponse<void>> {
     return this.http.put<ApiResponse<void>>(
       `${this.baseUrl}/${id}`,
-      categoryRequest
+      lineRequest
     );
   }
 

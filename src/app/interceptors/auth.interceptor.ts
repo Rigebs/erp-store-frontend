@@ -15,8 +15,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token: string | null = jwtUtilService.getToken();
 
   if (token) {
-    console.log(token);
-
     req = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
@@ -38,7 +36,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           duration: 3000,
         }
       );
-      console.log('error');
 
       return throwError(() => error);
     }),

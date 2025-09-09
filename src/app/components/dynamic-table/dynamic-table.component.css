@@ -1,5 +1,5 @@
 .table-container {
-  max-height: 340px;
+  max-height: 50vh;
   overflow: auto;
 }
 
@@ -15,7 +15,7 @@ th.mat-header-cell {
 .actions {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .column-visibility-controls {

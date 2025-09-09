@@ -27,7 +27,7 @@ import { ProductService } from '../../services/product.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ImageService } from '../../services/image.service';
 import { JwtUtilService } from '../../../../utils/jwt-util.service';
-import { ProductRequest } from '../../models/product';
+import { ProductResponse } from '../../models/product';
 
 @Component({
   selector: 'app-product-form',
@@ -56,7 +56,7 @@ export class ProductFormComponent implements OnInit {
 
   isEditMode = false;
   productId: string | null = null;
-  productEdit: ProductRequest | undefined;
+  productEdit: ProductResponse | undefined;
 
   fileError: string | null = null;
   imagePreview: string | ArrayBuffer | null = null;
@@ -148,6 +148,9 @@ export class ProductFormComponent implements OnInit {
         });
         if (response.data.imageUrl) {
           this.imagePreview = response.data.imageUrl;
+          this.productForm.patchValue({
+            imageUrl: response.data.imageUrl,
+          });
         }
       },
       error: (err) => {
@@ -212,7 +215,7 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
-  save(product: ProductRequest) {
+  save(product: ProductResponse) {
     console.log(product);
 
     this.productService.save(product).subscribe({
@@ -230,7 +233,7 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
-  update(id: number, product: ProductRequest) {
+  update(id: number, product: ProductResponse) {
     this.productService.update(id, product).subscribe({
       next: (response) => {
         this.snackBar.open(`${response.message}`, 'Cerrar', {

@@ -47,6 +47,11 @@ export class ManagementLayoutComponent {
     },
     {
       label: 'Inventario',
+      icon: 'inventory',
+      route: 'management/inventory',
+    },
+    {
+      label: 'Catálogo',
       icon: 'storefront',
       children: [
         {

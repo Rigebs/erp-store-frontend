@@ -1,53 +1,49 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-  UnitMeasureRequest,
-  UnitMeasureResponse,
-} from '../models/unit-measure';
+import { CategoryRequest, CategoryResponse } from '../models/category';
 import { ApiResponse } from '../../../models/api-response';
 import { environment } from '../../../../environments/environment';
-import { Pageable } from '../../../models/pageable';
+import { Page } from '../../../models/pageable';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UnitMeasureService {
-  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/units-measure`;
+export class CategoryService {
+  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/categories`;
 
   constructor(private http: HttpClient) {}
 
   findAll(
     page: number,
     size: number
-  ): Observable<ApiResponse<Pageable<UnitMeasureResponse>>> {
+  ): Observable<ApiResponse<Page<CategoryResponse>>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<ApiResponse<Pageable<UnitMeasureResponse>>>(
-      this.baseUrl,
-      { params }
-    );
+    return this.http.get<ApiResponse<Page<CategoryResponse>>>(this.baseUrl, {
+      params,
+    });
   }
 
-  findById(id: number): Observable<ApiResponse<UnitMeasureResponse>> {
-    return this.http.get<ApiResponse<UnitMeasureResponse>>(
+  findById(id: number): Observable<ApiResponse<CategoryResponse>> {
+    return this.http.get<ApiResponse<CategoryResponse>>(
       `${this.baseUrl}/${id}`
     );
   }
 
-  save(unitMeasureRequest: UnitMeasureRequest): Observable<ApiResponse<void>> {
-    return this.http.post<ApiResponse<void>>(this.baseUrl, unitMeasureRequest);
+  save(categoryRequest: CategoryRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.baseUrl, categoryRequest);
   }
 
   update(
     id: number,
-    unitMeasureRequest: UnitMeasureRequest
+    categoryRequest: CategoryRequest
   ): Observable<ApiResponse<void>> {
     return this.http.put<ApiResponse<void>>(
       `${this.baseUrl}/${id}`,
-      unitMeasureRequest
+      categoryRequest
     );
   }
 

@@ -1,10 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ProductRequest } from '../models/product';
+import { ProductResponse } from '../models/product';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../../models/api-response';
 import { environment } from '../../../../environments/environment';
-import { Pageable } from '../../../models/pageable';
+import { Page } from '../../../models/pageable';
 
 @Injectable({
   providedIn: 'root',
@@ -17,27 +17,27 @@ export class ProductService {
   findAll(
     page: number,
     size: number
-  ): Observable<ApiResponse<Pageable<ProductRequest>>> {
+  ): Observable<ApiResponse<Page<ProductResponse>>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<ApiResponse<Pageable<ProductRequest>>>(this.baseUrl, {
+    return this.http.get<ApiResponse<Page<ProductResponse>>>(this.baseUrl, {
       params,
     });
   }
 
-  findById(id: number): Observable<ApiResponse<ProductRequest>> {
-    return this.http.get<ApiResponse<ProductRequest>>(`${this.baseUrl}/${id}`);
+  findById(id: number): Observable<ApiResponse<ProductResponse>> {
+    return this.http.get<ApiResponse<ProductResponse>>(`${this.baseUrl}/${id}`);
   }
 
-  save(productRequest: ProductRequest): Observable<ApiResponse<void>> {
+  save(productRequest: ProductResponse): Observable<ApiResponse<void>> {
     return this.http.post<ApiResponse<void>>(this.baseUrl, productRequest);
   }
 
   update(
     id: number,
-    productRequest: ProductRequest
+    productRequest: ProductResponse
   ): Observable<ApiResponse<void>> {
     return this.http.put<ApiResponse<void>>(
       `${this.baseUrl}/${id}`,

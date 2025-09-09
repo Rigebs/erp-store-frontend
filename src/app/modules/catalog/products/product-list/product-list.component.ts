@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationUtilService } from '../../../../utils/notification-util.service';
-import { ProductRequest } from '../../models/product';
+import { ProductResponse } from '../../models/product';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,15 +38,7 @@ export class ProductListComponent {
     { field: 'supplierName', header: 'Proveedor', hidden: true },
   ];
 
-  columnsProduct = [
-    { key: 'name', label: 'Nombre' },
-    { key: 'salePrice', label: 'Precio venta' },
-    { key: 'enabled', label: 'Estado' },
-    { key: 'categoryName', label: 'Categoría' },
-    { key: 'brandName', label: 'Marca' },
-  ];
-
-  productsData: ProductRequest[] = [];
+  productsData: ProductResponse[] = [];
   total: number = 0;
 
   createProduct() {
@@ -80,11 +72,11 @@ export class ProductListComponent {
     });
   }
 
-  onEdit(product: ProductRequest) {
+  onEdit(product: ProductResponse) {
     this.router.navigateByUrl(`management/products/${product.id}/edit`);
   }
 
-  onDelete(product: ProductRequest) {
+  onDelete(product: ProductResponse) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {
@@ -111,7 +103,7 @@ export class ProductListComponent {
     });
   }
 
-  onToggleEnabled(product: ProductRequest) {
+  onToggleEnabled(product: ProductResponse) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '300px',
       data: {

@@ -1,50 +1,52 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import {
+  UnitMeasureRequest,
+  UnitMeasureResponse,
+} from '../models/unit-measure';
 import { ApiResponse } from '../../../models/api-response';
 import { environment } from '../../../../environments/environment';
-import { Pageable } from '../../../models/pageable';
-import { SupplierRequest, SupplierResponse } from '../models/supplier';
+import { Page } from '../../../models/pageable';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SupplierService {
-  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/suppliers`;
+export class UnitMeasureService {
+  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/units-measure`;
 
   constructor(private http: HttpClient) {}
 
   findAll(
     page: number,
     size: number
-  ): Observable<ApiResponse<Pageable<SupplierResponse>>> {
+  ): Observable<ApiResponse<Page<UnitMeasureResponse>>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<ApiResponse<Pageable<SupplierResponse>>>(
-      this.baseUrl,
-      { params }
-    );
+    return this.http.get<ApiResponse<Page<UnitMeasureResponse>>>(this.baseUrl, {
+      params,
+    });
   }
 
-  findById(id: number): Observable<ApiResponse<SupplierResponse>> {
-    return this.http.get<ApiResponse<SupplierResponse>>(
+  findById(id: number): Observable<ApiResponse<UnitMeasureResponse>> {
+    return this.http.get<ApiResponse<UnitMeasureResponse>>(
       `${this.baseUrl}/${id}`
     );
   }
 
-  save(supplierRequest: SupplierRequest): Observable<ApiResponse<void>> {
-    return this.http.post<ApiResponse<void>>(this.baseUrl, supplierRequest);
+  save(unitMeasureRequest: UnitMeasureRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.baseUrl, unitMeasureRequest);
   }
 
   update(
     id: number,
-    supplierRequest: SupplierRequest
+    unitMeasureRequest: UnitMeasureRequest
   ): Observable<ApiResponse<void>> {
     return this.http.put<ApiResponse<void>>(
       `${this.baseUrl}/${id}`,
-      supplierRequest
+      unitMeasureRequest
     );
   }
 

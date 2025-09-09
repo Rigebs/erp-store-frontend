@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductService } from '../../services/product.service';
 import { NotificationUtilService } from '../../../../utils/notification-util.service';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-brand-list',
@@ -49,7 +50,7 @@ export class BrandListComponent implements OnInit {
         this.total = response.data.totalElements;
       },
       error: (err) => {
-        console.log('ERROR: ', err);
+        throwError(() => err);
       },
     });
   }
@@ -74,7 +75,7 @@ export class BrandListComponent implements OnInit {
             this.brandsData = this.brandsData.filter((b) => b.id !== brand.id);
           },
           error: (err) => {
-            console.log('Error: ', err);
+            throwError(() => err);
           },
         });
       } else {

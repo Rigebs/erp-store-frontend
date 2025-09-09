@@ -1,44 +1,49 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LineRequest, LineResponse } from '../models/line';
 import { ApiResponse } from '../../../models/api-response';
 import { environment } from '../../../../environments/environment';
-import { Pageable } from '../../../models/pageable';
+import { Page } from '../../../models/pageable';
+import { SupplierRequest, SupplierResponse } from '../models/supplier';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LineService {
-  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/lines`;
+export class SupplierService {
+  private readonly baseUrl = `${environment.NG_APP_URL_API_GENERAL}/suppliers`;
 
   constructor(private http: HttpClient) {}
 
   findAll(
     page: number,
     size: number
-  ): Observable<ApiResponse<Pageable<LineResponse>>> {
+  ): Observable<ApiResponse<Page<SupplierResponse>>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<ApiResponse<Pageable<LineResponse>>>(this.baseUrl, {
+    return this.http.get<ApiResponse<Page<SupplierResponse>>>(this.baseUrl, {
       params,
     });
   }
 
-  findById(id: number): Observable<ApiResponse<LineResponse>> {
-    return this.http.get<ApiResponse<LineResponse>>(`${this.baseUrl}/${id}`);
+  findById(id: number): Observable<ApiResponse<SupplierResponse>> {
+    return this.http.get<ApiResponse<SupplierResponse>>(
+      `${this.baseUrl}/${id}`
+    );
   }
 
-  save(lineRequest: LineRequest): Observable<ApiResponse<void>> {
-    return this.http.post<ApiResponse<void>>(this.baseUrl, lineRequest);
+  save(supplierRequest: SupplierRequest): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.baseUrl, supplierRequest);
   }
 
-  update(id: number, lineRequest: LineRequest): Observable<ApiResponse<void>> {
+  update(
+    id: number,
+    supplierRequest: SupplierRequest
+  ): Observable<ApiResponse<void>> {
     return this.http.put<ApiResponse<void>>(
       `${this.baseUrl}/${id}`,
-      lineRequest
+      supplierRequest
     );
   }
 
