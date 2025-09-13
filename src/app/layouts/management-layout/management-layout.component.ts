@@ -37,99 +37,61 @@ export class ManagementLayoutComponent {
 
   menuItems: MenuItem[] = [
     {
-      label: 'Registrar venta',
-      icon: 'shopping_cart',
-      route: 'management/sales/new',
-    },
-    {
-      label: 'Ver ventas',
-      icon: 'fact_check',
-      route: 'management/sales/list',
+      label: 'Ventas',
+      isSection: true,
+      children: [
+        {
+          label: 'Registrar venta',
+          icon: 'shopping_cart',
+          route: 'management/sales/new',
+        },
+        {
+          label: 'Ver ventas',
+          icon: 'fact_check',
+          route: 'management/sales/list',
+        },
+      ],
     },
     {
       label: 'Inventario',
-      icon: 'inventory',
+      isSection: true,
       children: [
         {
-          label: 'Stock',
-          route: 'management/inventory/stock',
-        },
-        {
-          label: 'Movimientos',
-          route: 'management/inventory/movements',
+          label: 'Inventario',
+          icon: 'inventory',
+          children: [
+            { label: 'Stock', route: 'management/inventory/stock' },
+            { label: 'Movimientos', route: 'management/inventory/movements' },
+          ],
         },
       ],
     },
     {
       label: 'Clientes',
-      icon: 'group',
+      isSection: true,
       children: [
         {
           label: 'Clientes',
-          route: 'management/customers',
+          icon: 'group',
+          children: [{ label: 'Clientes', route: 'management/customers' }],
         },
       ],
     },
     {
       label: 'Catálogo',
-      icon: 'storefront',
+      isSection: true,
       children: [
         {
-          label: 'Productos',
-          route: 'management/products',
-        },
-        {
-          label: 'Categorías',
-          route: 'management/categories',
-        },
-        {
-          label: 'Proveedores',
-          route: 'management/suppliers',
-        },
-        {
-          label: 'Lineas',
-          route: 'management/lines',
-        },
-        {
-          label: 'Marcas',
-          route: 'management/brands',
-        },
-        {
-          label: 'Unid. de medida',
-          route: 'management/units-measure',
-        },
-      ],
-    },
-
-    {
-      label: 'Reportes',
-      icon: 'assessment',
-      children: [
-        {
-          label: 'Ventas',
-          route: '/reportes/ventas',
-        },
-        {
-          label: 'Inventario',
-          route: '/reportes/inventario',
-        },
-        {
-          label: 'Clientes',
-          route: '/reportes/clientes',
-        },
-      ],
-    },
-    {
-      label: 'Configuración',
-      icon: 'settings',
-      children: [
-        {
-          label: 'Usuarios',
-          route: '/configuracion/usuarios',
-        },
-        {
-          label: 'Preferencias',
-          route: '/configuracion/preferencias',
+          label: 'Catálogo',
+          icon: 'storefront',
+          children: [
+            { label: 'Productos', route: 'management/products' },
+            { label: 'Categorías', route: 'management/categories' },
+            { label: 'Proveedores', route: 'management/suppliers' },
+            { label: 'Lineas', route: 'management/lines' },
+            { label: 'Marcas', route: 'management/brands' },
+            { label: 'Unid. de medida', route: 'management/units-measure' },
+          ],
         },
       ],
     },

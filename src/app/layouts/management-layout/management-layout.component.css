@@ -4,6 +4,29 @@
   height: 100dvh; /* ocupar todo el viewport */
 }
 
+/* Subtítulos */
+.mat-subheader {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  padding: 4px 16px 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0;
+}
+
+.mat-mdc-list-item.mdc-list-item--with-leading-avatar.mdc-list-item--with-one-line,
+.mat-mdc-list-item.mdc-list-item--with-leading-checkbox.mdc-list-item--with-one-line,
+.mat-mdc-list-item.mdc-list-item--with-leading-icon.mdc-list-item--with-one-line:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+}
+
+.mat-mdc-nav-list .mat-mdc-list-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+}
+
 .content {
   padding: 1rem;
   height: 100%;

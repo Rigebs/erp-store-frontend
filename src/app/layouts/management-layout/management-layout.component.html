@@ -25,37 +25,48 @@
     <mat-sidenav [opened]="isOpen" [mode]="getSidenavMode()" (closed)="onSidenavClosed()">
       <mat-nav-list>
         <ng-container *ngFor="let item of menuItems">
-          <!-- Ítems sin hijos -->
-          <ng-container *ngIf="!item.children">
-            <a mat-list-item (click)="navigateTo(item.route ?? '')">
-              <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-              <span matListItemTitle>{{ item.label }}</span>
-            </a>
-          </ng-container>
+          <!-- Sección -->
+          <ng-container *ngIf="item.isSection">
+            <h3 class="mat-subheader">{{ item.label }}</h3>
 
-          <ng-container *ngIf="item.children">
-            <a mat-list-item (click)="toggleSection(item.label)">
-              <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-              <div class="parent-item">
-                <span>{{ item.label }}</span>
-                <mat-icon class="arrow-icon">
-                  {{ isSectionOpen(item.label) ? "expand_less" : "expand_more" }}
-                </mat-icon>
-              </div>
-            </a>
-            <div class="nested-item" *ngIf="isSectionOpen(item.label)">
-              <div class="item-child-container">
-                <a mat-list-item *ngFor="let child of item.children" class="nested-item"
-                  (click)="navigateTo(child.route || '')">
-                  <mat-icon matListItemIcon *ngIf="child.icon">{{ child.icon }}</mat-icon>
-                  <span matListItemTitle>{{ child.label }}</span>
-                </a>
-              </div>
-            </div>
+            <!-- Render recursivo de hijos -->
+            <ng-container *ngFor="let child of item.children">
+              <ng-container *ngTemplateOutlet="renderItem; context: { $implicit: child }"></ng-container>
+            </ng-container>
           </ng-container>
-
         </ng-container>
       </mat-nav-list>
+
+      <!-- Template recursivo -->
+      <ng-template #renderItem let-item>
+        <!-- Ítem simple -->
+        <a *ngIf="!item.children" mat-list-item (click)="navigateTo(item.route ?? '')">
+          <mat-icon matListItemIcon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+
+        <!-- Ítem desplegable -->
+        <ng-container *ngIf="item.children">
+          <a mat-list-item (click)="toggleSection(item.label)">
+            <mat-icon matListItemIcon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+            <div class="parent-item">
+              <span>{{ item.label }}</span>
+              <mat-icon class="arrow-icon">
+                {{ isSectionOpen(item.label) ? "expand_less" : "expand_more" }}
+              </mat-icon>
+            </div>
+          </a>
+          <div class="nested-item" *ngIf="isSectionOpen(item.label)">
+            <div class="item-child-container">
+              <ng-container *ngFor="let child of item.children">
+                <ng-container *ngTemplateOutlet="renderItem; context: { $implicit: child }"></ng-container>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </ng-template>
+
+
     </mat-sidenav>
     <mat-sidenav-content>
       <div class="container content">

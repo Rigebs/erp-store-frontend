@@ -1,6 +1,7 @@
 export interface MenuItem {
   label: string;
-  route?: string;
   icon?: string;
-  children?: MenuItem[];
+  route?: string;
+  children?: MenuItem[]; // permite anidación
+  isSection?: boolean; // para marcar un padre "sección"
 }
