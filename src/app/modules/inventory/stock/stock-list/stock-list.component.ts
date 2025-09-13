@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { DynamicTableComponent } from '../../../components/dynamic-table/dynamic-table.component';
-import { StockResponse } from '../models/stock';
-import { StockService } from '../services/stock.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDialog } from '@angular/material/dialog';
+import { StockResponse } from '../../models/stock';
+import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
+import { ExportService } from '../../../../services/export.service';
+import { StockService } from '../../services/stock.service';
+import { EditStockDialogComponent } from '../../components/edit-stock-dialog/edit-stock-dialog.component';
 
 @Component({
   selector: 'app-stock-list',
@@ -13,6 +17,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
+    MatFormFieldModule,
   ],
   templateUrl: './stock-list.component.html',
   styleUrl: './stock-list.component.css',
@@ -32,7 +37,11 @@ export class StockListComponent implements OnInit {
   total = 0;
   page = 0;
 
-  constructor(private stockService: StockService) {}
+  constructor(
+    private stockService: StockService,
+    private exportService: ExportService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.loadStock(this.page, 10);
@@ -51,7 +60,21 @@ export class StockListComponent implements OnInit {
   }
 
   onEdit(row: StockResponse) {
-    console.log('Editar stock', row);
+    const dialogRef = this.dialog.open(EditStockDialogComponent, {
+      width: '300px',
+      data: row,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.stockService
+          .manageStock({
+            ...result,
+            action: 'ADJUSTMENT',
+          })
+          .subscribe(() => this.loadStock(this.page, 10));
+      }
+    });
   }
 
   onTransfer(row: StockResponse) {
@@ -64,5 +87,9 @@ export class StockListComponent implements OnInit {
 
   onPageChange(event: any) {
     this.loadStock(event.page, event.items);
+  }
+
+  onExport(format: 'excel' | 'pdf') {
+    this.exportService.exportStock(this.data, format);
   }
 }

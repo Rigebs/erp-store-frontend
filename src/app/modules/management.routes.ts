@@ -15,156 +15,59 @@ export default [
     children: [
       {
         path: 'products',
-        loadComponent: () =>
-          import('./catalog/products/product-list/product-list.component').then(
-            (m) => m.ProductListComponent
-          ),
-      },
-      {
-        path: 'products/new',
-        loadComponent: () =>
-          import('./catalog/products/product-form/product-form.component').then(
-            (m) => m.ProductFormComponent
-          ),
-      },
-      {
-        path: 'products/:id/edit',
-        loadComponent: () =>
-          import('./catalog/products/product-form/product-form.component').then(
-            (m) => m.ProductFormComponent
+        loadChildren: () =>
+          import('./catalog/routes/product.routes').then(
+            (m) => m.PRODUCT_ROUTES
           ),
       },
       {
         path: 'categories',
-        loadComponent: () =>
-          import(
-            './catalog/categories/category-list/category-list.component'
-          ).then((m) => m.CategoryListComponent),
-      },
-      {
-        path: 'categories/new',
-        loadComponent: () =>
-          import(
-            './catalog/categories/category-form/category-form.component'
-          ).then((m) => m.CategoryFormComponent),
-      },
-      {
-        path: 'categories/:id/edit',
-        loadComponent: () =>
-          import(
-            './catalog/categories/category-form/category-form.component'
-          ).then((m) => m.CategoryFormComponent),
+        loadChildren: () =>
+          import('./catalog/routes/category.routes').then(
+            (m) => m.CATEGORY_ROUTES
+          ),
       },
       {
         path: 'suppliers',
-        loadComponent: () =>
-          import(
-            './catalog/suppliers/supplier-list/supplier-list.component'
-          ).then((m) => m.SupplierListComponent),
-      },
-      {
-        path: 'suppliers/new',
-        loadComponent: () =>
-          import(
-            './catalog/suppliers/supplier-form/supplier-form.component'
-          ).then((m) => m.SupplierFormComponent),
-      },
-      {
-        path: 'suppliers/:id/edit',
-        loadComponent: () =>
-          import(
-            './catalog/suppliers/supplier-form/supplier-form.component'
-          ).then((m) => m.SupplierFormComponent),
+        loadChildren: () =>
+          import('./catalog/routes/supplier.routes').then(
+            (m) => m.SUPPLIER_ROUTES
+          ),
       },
       {
         path: 'lines',
-        loadComponent: () =>
-          import('./catalog/lines/line-list/line-list.component').then(
-            (m) => m.LineListComponent
-          ),
-      },
-      {
-        path: 'lines/new',
-        loadComponent: () =>
-          import('./catalog/lines/line-form/line-form.component').then(
-            (m) => m.LineFormComponent
-          ),
-      },
-      {
-        path: 'lines/:id/edit',
-        loadComponent: () =>
-          import('./catalog/lines/line-form/line-form.component').then(
-            (m) => m.LineFormComponent
-          ),
+        loadChildren: () =>
+          import('./catalog/routes/line.routes').then((m) => m.LINE_ROUTES),
       },
       {
         path: 'brands',
-        loadComponent: () =>
-          import('./catalog/brands/brand-list/brand-list.component').then(
-            (m) => m.BrandListComponent
-          ),
-      },
-      {
-        path: 'brands/new',
-        loadComponent: () =>
-          import('./catalog/brands/brand-form/brand-form.component').then(
-            (m) => m.BrandFormComponent
-          ),
-      },
-      {
-        path: 'brands/:id/edit',
-        loadComponent: () =>
-          import('./catalog/brands/brand-form/brand-form.component').then(
-            (m) => m.BrandFormComponent
-          ),
+        loadChildren: () =>
+          import('./catalog/routes/brand.routes').then((m) => m.BRAND_ROUTES),
       },
       {
         path: 'units-measure',
-        loadComponent: () =>
-          import(
-            './catalog/units-measure/unit-measure-list/unit-measure-list.component'
-          ).then((m) => m.UnitMeasureListComponent),
-      },
-      {
-        path: 'units-measure/new',
-        loadComponent: () =>
-          import(
-            './catalog/units-measure/unit-measure-form/unit-measure-form.component'
-          ).then((m) => m.UnitMeasureFormComponent),
-      },
-      {
-        path: 'units-measure/:id/edit',
-        loadComponent: () =>
-          import(
-            './catalog/units-measure/unit-measure-form/unit-measure-form.component'
-          ).then((m) => m.UnitMeasureFormComponent),
-      },
-      {
-        path: 'sales/new',
-        loadComponent: () =>
-          import('./sales/new-sale/new-sale.component').then(
-            (m) => m.NewSaleComponent
+        loadChildren: () =>
+          import('./catalog/routes/unit-measure.routes').then(
+            (m) => m.UNIT_MEASURE_ROUTES
           ),
       },
       {
-        path: 'sales/list',
-        loadComponent: () =>
-          import('./sales/sales-list/sales-list.component').then(
-            (m) => m.SalesListComponent
-          ),
-      },
-      {
-        path: 'sales/find/:saleId',
-        loadComponent: () =>
-          import('./sales/sale-details/sale-details.component').then(
-            (m) => m.SaleDetailsComponent
-          ),
+        path: 'sales',
+        loadChildren: () =>
+          import('./sales/routes/sale.routes').then((m) => m.SALE_ROUTES),
       },
       {
         path: 'inventory',
-        loadComponent: () =>
-          import('./inventory/stock-list/stock-list.component').then(
-            (m) => m.StockListComponent
+        loadChildren: () =>
+          import('./inventory/routes/inventory.routes').then(
+            (m) => m.INVENTORY_ROUTES
+          ),
+      },
+      {
+        path: 'customers',
+        loadChildren: () =>
+          import('./customers/routes/customer.routes').then(
+            (m) => m.CUSTOMER_ROUTES
           ),
       },
     ],

@@ -1,5 +1,13 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh; /* ocupar todo el viewport */
+}
+
 .content {
   padding: 1rem;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .toolbar {
@@ -8,17 +16,17 @@
 }
 
 mat-toolbar {
-  position: relative;
   z-index: 5;
   height: 64px;
+  flex-shrink: 0; /* no se achica */
 }
 
 mat-sidenav-container {
-  height: calc(100dvh - 64px);
+  flex: 1; /* ocupa el resto del espacio */
 }
 
 mat-sidenav {
-  width: 250px;
+  width: 230px;
 }
 
 .nested-item {
@@ -50,4 +58,8 @@ mat-progress-bar {
   left: 0;
   width: 100%;
   z-index: 10;
+}
+
+.mdc-list-item--with-leading-icon .mdc-list-item__start {
+  margin-right: 12px;
 }

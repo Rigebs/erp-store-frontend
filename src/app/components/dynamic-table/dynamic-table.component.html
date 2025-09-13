@@ -9,12 +9,17 @@
     </button>
   </mat-menu>
 </div>
-
 <!-- Filter Input -->
-<mat-form-field>
-  <mat-label>Filtrar productos</mat-label>
-  <input matInput (keyup)="applyFilter($event)" #input />
-</mat-form-field>
+<div class="filter-wrapper" [class.no-actions]="!filterActionsTemplate">
+  <mat-form-field class="filter-field">
+    <mat-label>Filtrar productos</mat-label>
+    <input matInput (keyup)="applyFilter($event)" #input />
+  </mat-form-field>
+
+  <ng-container *ngIf="filterActionsTemplate" [ngTemplateOutlet]="filterActionsTemplate">
+  </ng-container>
+</div>
+
 
 <!-- Table -->
 <div class="table-container">
@@ -37,9 +42,9 @@
         <ng-template #defaultCell>
           <!-- enabled -->
           <ng-container *ngIf="column.field === 'enabled'; else otherFields">
-            <div class="estado" [ngClass]="getNestedValue(element, column.field) ? 'activo' : 'inactivo'">
+            <span class="badge" [ngClass]="getNestedValue(element, column.field) ? 'badge-activo' : 'badge-inactivo'">
               {{ getNestedValue(element, column.field) ? 'Activo' : 'Inactivo' }}
-            </div>
+            </span>
           </ng-container>
 
           <ng-template #otherFields>

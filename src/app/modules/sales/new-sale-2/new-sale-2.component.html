@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="left">
+        <input type="text" placeholder="Buscar..." [(ngModel)]="search" />
+
+        <div class="chips">
+            <span (click)="setCategory('')" [class.active]="!selectedCategory">Todos</span>
+            <span (click)="setCategory('Cat1')" [class.active]="selectedCategory==='Cat1'">Cat1</span>
+            <span (click)="setCategory('Cat2')" [class.active]="selectedCategory==='Cat2'">Cat2</span>
+        </div>
+
+        <div class="products" *ngIf="products$ | async as products">
+            <app-product-card *ngFor="let p of filterProducts(products)" [product]="p"></app-product-card>
+        </div>
+    </div>
+
+    <!-- Desktop: resumen a la derecha -->
+    <div class="right desktop-only">
+        <app-cart-summary></app-cart-summary>
+    </div>
+
+    <!-- Mobile: barra resumen abajo -->
+    <!-- Mobile: barra resumen abajo -->
+    <div class="mobile-summary mobile-only" *ngIf="cart$ | async as cart">
+        <div class="summary-bar">
+            <div class="summary-text">
+                <span>{{ cart.length }} items</span>
+                <span>Total: S/ {{ total(cart) }}</span>
+            </div>
+            <button class="toggle-btn" (click)="toggleMobileSummary()">
+                {{ showMobileSummary ? '▼' : '▲' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay para mobile -->
+    <!-- Overlay para mobile -->
+    <div class="mobile-overlay" *ngIf="showMobileSummary">
+        <div class="overlay-content">
+            <button class="close-btn" (click)="toggleMobileSummary()">✕</button>
+            <app-cart-summary></app-cart-summary>
+        </div>
+    </div>
+
+</div>

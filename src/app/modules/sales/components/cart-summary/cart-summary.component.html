@@ -1,0 +1,25 @@
+<div *ngIf="cart$ | async as cart" class="cart-summary">
+    <h2>Resumen</h2>
+
+    <div class="items-list">
+        <div *ngFor="let item of cart" class="item">
+            <div class="item-info">
+                <span class="item-name">{{ item.product.name }}</span>
+                <span class="item-price">S/ {{ item.product.price }}</span>
+            </div>
+            <div class="controls">
+                <button class="btn-control" (click)="decrease(item.product.id)">-</button>
+                <span class="quantity">{{ item.quantity }}</span>
+                <button class="btn-control" (click)="increase(item.product.id)">+</button>
+                <button class="btn-remove" (click)="remove(item.product.id)">×</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="totals">
+        <p><span>Total:</span> <strong>S/ {{ total(cart) }}</strong></p>
+        <p><span>IGV (18%):</span> <strong>S/ {{ igv(cart) }}</strong></p>
+    </div>
+
+    <button class="btn-generate" (click)="generarVenta()">Generar Venta</button>
+</div>

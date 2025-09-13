@@ -1,0 +1,8 @@
+<div class="card">
+    <div class="image-container">
+        <img [src]="product.image" [alt]="product.name" />
+    </div>
+    <h3>{{ product.name }}</h3>
+    <p>S/ {{ product.price }}</p>
+    <button (click)="add()">Agregar</button>
+</div>

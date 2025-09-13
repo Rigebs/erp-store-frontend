@@ -1,7 +1,7 @@
 <h2>Inventario de Productos</h2>
 
 <app-dynamic-table [columns]="columns" [data]="data" [total]="total" [page]="page" [actionsTemplate]="customActions"
-    (pageChange)="onPageChange($event)">
+    [filterActionsTemplate]="extraFilterButtons" (pageChange)="onPageChange($event)">
 </app-dynamic-table>
 
 <!-- Plantilla de acciones personalizadas -->
@@ -22,6 +22,24 @@
         <button mat-menu-item (click)="onViewMovements(row)">
             <mat-icon>history</mat-icon>
             <span>Ver movimientos</span>
+        </button>
+    </mat-menu>
+</ng-template>
+
+<ng-template #extraFilterButtons>
+    <button mat-flat-button color="primary" [matMenuTriggerFor]="exportMenu">
+        <mat-icon fontSet="material-symbols-outlined">file_export</mat-icon>
+        Exportar
+    </button>
+
+    <mat-menu #exportMenu="matMenu">
+        <button mat-menu-item (click)="onExport('excel')">
+            <mat-icon>table_view</mat-icon>
+            Excel
+        </button>
+        <button mat-menu-item (click)="onExport('pdf')">
+            <mat-icon>picture_as_pdf</mat-icon>
+            PDF
         </button>
     </mat-menu>
 </ng-template>

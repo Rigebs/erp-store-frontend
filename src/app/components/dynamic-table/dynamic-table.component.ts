@@ -44,6 +44,7 @@ export class DynamicTableComponent implements OnInit {
   @Input() page: number = 0;
 
   @Input() actionsTemplate?: TemplateRef<any>;
+  @Input() filterActionsTemplate?: TemplateRef<any>;
 
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();

@@ -11,6 +11,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingService } from '../../services/loading.service';
 import { CommonModule } from '@angular/common';
+import { MenuItem } from '../../models/menu-item';
 
 @Component({
   selector: 'app-management-layout',
@@ -34,7 +35,7 @@ export class ManagementLayoutComponent {
   isLoading: boolean = false;
   openedSections: { [key: string]: boolean } = {};
 
-  menuItems = [
+  menuItems: MenuItem[] = [
     {
       label: 'Registrar venta',
       icon: 'shopping_cart',
@@ -48,7 +49,26 @@ export class ManagementLayoutComponent {
     {
       label: 'Inventario',
       icon: 'inventory',
-      route: 'management/inventory',
+      children: [
+        {
+          label: 'Stock',
+          route: 'management/inventory/stock',
+        },
+        {
+          label: 'Movimientos',
+          route: 'management/inventory/movements',
+        },
+      ],
+    },
+    {
+      label: 'Clientes',
+      icon: 'group',
+      children: [
+        {
+          label: 'Clientes',
+          route: 'management/customers',
+        },
+      ],
     },
     {
       label: 'Catálogo',
@@ -56,32 +76,26 @@ export class ManagementLayoutComponent {
       children: [
         {
           label: 'Productos',
-          icon: 'inventory',
           route: 'management/products',
         },
         {
           label: 'Categorías',
-          icon: 'category',
           route: 'management/categories',
         },
         {
           label: 'Proveedores',
-          icon: 'local_shipping',
           route: 'management/suppliers',
         },
         {
           label: 'Lineas',
-          icon: 'align_horizontal_right',
           route: 'management/lines',
         },
         {
           label: 'Marcas',
-          icon: 'workspace_premium',
           route: 'management/brands',
         },
         {
           label: 'Unid. de medida',
-          icon: 'square_foot',
           route: 'management/units-measure',
         },
       ],
@@ -93,17 +107,14 @@ export class ManagementLayoutComponent {
       children: [
         {
           label: 'Ventas',
-          icon: 'bar_chart',
           route: '/reportes/ventas',
         },
         {
           label: 'Inventario',
-          icon: 'inventory',
           route: '/reportes/inventario',
         },
         {
           label: 'Clientes',
-          icon: 'people',
           route: '/reportes/clientes',
         },
       ],
@@ -114,12 +125,10 @@ export class ManagementLayoutComponent {
       children: [
         {
           label: 'Usuarios',
-          icon: 'manage_accounts',
           route: '/configuracion/usuarios',
         },
         {
           label: 'Preferencias',
-          icon: 'tune',
           route: '/configuracion/preferencias',
         },
       ],
