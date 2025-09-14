@@ -1,0 +1,51 @@
+.filter-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1px 8px;
+  background-color: #fff;
+}
+
+.icon-left {
+  font-size: 16px;
+  margin-right: 6px;
+  margin-top: 2px;
+  color: #888;
+  margin-top: 6px;
+}
+
+.filter-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  padding: 6px;
+  /* importante para que no se superponga con el botón */
+  padding-right: 28px;
+}
+
+.clear-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: opacity 0.2s;
+  opacity: 0;
+  pointer-events: none; /* no clickeable si está oculto */
+}
+
+.clear-btn.visible {
+  opacity: 1;
+  pointer-events: auto; /* clickeable cuando hay texto */
+}
+
+.clear-btn:hover {
+  background: #f0f0f0;
+}

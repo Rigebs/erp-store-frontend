@@ -17,6 +17,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { FilterInputComponent } from '../filter-input/filter-input.component';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -32,6 +33,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
     MatChipsModule,
     MatPaginatorModule,
     MatButtonModule,
+    FilterInputComponent,
   ],
   templateUrl: './dynamic-table.component.html',
   styleUrl: './dynamic-table.component.css',
@@ -90,9 +92,8 @@ export class DynamicTableComponent implements OnInit {
     }
   }
 
-  applyFilter(event: KeyboardEvent) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  applyFilter(value: string) {
+    this.dataSource.filter = value.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();

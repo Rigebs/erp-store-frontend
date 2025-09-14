@@ -50,6 +50,11 @@ export class ManagementLayoutComponent {
           icon: 'fact_check',
           route: 'management/sales/list',
         },
+        {
+          label: 'Clientes',
+          icon: 'group',
+          children: [{ label: 'Clientes', route: 'management/customers' }],
+        },
       ],
     },
     {
@@ -64,23 +69,6 @@ export class ManagementLayoutComponent {
             { label: 'Movimientos', route: 'management/inventory/movements' },
           ],
         },
-      ],
-    },
-    {
-      label: 'Clientes',
-      isSection: true,
-      children: [
-        {
-          label: 'Clientes',
-          icon: 'group',
-          children: [{ label: 'Clientes', route: 'management/customers' }],
-        },
-      ],
-    },
-    {
-      label: 'Catálogo',
-      isSection: true,
-      children: [
         {
           label: 'Catálogo',
           icon: 'storefront',

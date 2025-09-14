@@ -11,15 +11,12 @@
 </div>
 <!-- Filter Input -->
 <div class="filter-wrapper" [class.no-actions]="!filterActionsTemplate">
-  <mat-form-field class="filter-field">
-    <mat-label>Filtrar productos</mat-label>
-    <input matInput (keyup)="applyFilter($event)" #input />
-  </mat-form-field>
-
+  <div class="filter-field">
+    <app-filter-input (filterChange)="applyFilter($event)"></app-filter-input>
+  </div>
   <ng-container *ngIf="filterActionsTemplate" [ngTemplateOutlet]="filterActionsTemplate">
   </ng-container>
 </div>
-
 
 <!-- Table -->
 <div class="table-container">

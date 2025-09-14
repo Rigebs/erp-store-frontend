@@ -7,6 +7,16 @@ table {
   width: 100%;
 }
 
+.table-container {
+  overflow-x: auto; /* 👈 permite scroll horizontal */
+  overflow-y: auto; /* 👈 mantiene scroll vertical */
+}
+
+.table-container table {
+  table-layout: fixed;
+  width: max-content; /* 👈 tabla se expande lo que necesite */
+}
+
 th.mat-header-cell {
   background-color: #f5f5f5;
   font-weight: bold;
@@ -88,6 +98,7 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  margin-bottom: 12px;
 }
 
 .filter-field {

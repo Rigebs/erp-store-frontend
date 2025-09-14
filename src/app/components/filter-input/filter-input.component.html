@@ -1,0 +1,15 @@
+<div class="filter-input-container">
+    <!-- Icono de lupa -->
+    <span class="icon-left">
+        <mat-icon>search</mat-icon>
+    </span>
+
+    <!-- Campo de entrada -->
+    <input #inputField type="text" class="filter-input" [value]="value" (input)="onInput($event)"
+        placeholder="Filtrar..." />
+
+    <!-- Botón de limpiar -->
+    <button class="clear-btn" (click)="clearInput()" [class.visible]="value" aria-label="Limpiar búsqueda">
+        ✖
+    </button>
+</div>
