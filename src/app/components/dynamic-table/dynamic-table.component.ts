@@ -2,6 +2,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
   SimpleChanges,
@@ -18,6 +19,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FilterInputComponent } from '../filter-input/filter-input.component';
+import { TableColumn } from '../../models/table-column';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -38,10 +40,9 @@ import { FilterInputComponent } from '../filter-input/filter-input.component';
   templateUrl: './dynamic-table.component.html',
   styleUrl: './dynamic-table.component.css',
 })
-export class DynamicTableComponent implements OnInit {
-  @Input() columns: { field: string; header: string; hidden?: boolean }[] = [];
+export class DynamicTableComponent implements OnInit, OnChanges {
+  @Input() columns: TableColumn[] = [];
   @Input() data: any[] = [];
-
   @Input() total: number = 0;
   @Input() page: number = 0;
 
@@ -51,11 +52,13 @@ export class DynamicTableComponent implements OnInit {
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
   @Output() toggleEnabled = new EventEmitter<any>();
-
   @Output() pageChange = new EventEmitter<{ items: number; page: number }>();
 
   displayedColumns: string[] = [];
   dataSource: MatTableDataSource<any>;
+
+  /** Lista de acciones disponibles dinámicamente */
+  availableActions: string[] = [];
 
   constructor() {
     this.dataSource = new MatTableDataSource<any>(this.data);
@@ -64,6 +67,13 @@ export class DynamicTableComponent implements OnInit {
   ngOnInit(): void {
     this.updateDisplayedColumns();
     this.dataSource.data = this.data;
+
+    // Detectar acciones disponibles
+    this.availableActions = [];
+    if (this.toggleEnabled.observed)
+      this.availableActions.push('toggleEnabled');
+    if (this.edit.observed) this.availableActions.push('edit');
+    if (this.delete.observed) this.availableActions.push('delete');
 
     this.dataSource.filterPredicate = (data: any, filter: string) => {
       const lowerFilter = filter.trim().toLowerCase();

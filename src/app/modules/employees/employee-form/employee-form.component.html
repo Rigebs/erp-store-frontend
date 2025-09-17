@@ -1,0 +1,60 @@
+<div class="form-container">
+    <button mat-button class="arrow-back" (click)="goBack()">
+        <mat-icon color="primary">arrow_back</mat-icon>Volver
+    </button>
+
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+        <app-person-form [form]="personGroup"></app-person-form>
+
+        <div class="employee-fields">
+            <mat-form-field>
+                <mat-label>Fecha de contratación</mat-label>
+                <input matInput [matDatepicker]="picker1" formControlName="hireDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Fecha de terminación</mat-label>
+                <input matInput [matDatepicker]="picker2" formControlName="terminationDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Cargo</mat-label>
+                <input matInput formControlName="jobTitle" />
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Salario</mat-label>
+                <input matInput type="number" formControlName="salary" />
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Estado laboral</mat-label>
+                <mat-select formControlName="employmentStatus">
+                    <mat-option *ngFor="let status of employmentStatuses" [value]="status">
+                        {{ status }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Tipo de empleo</mat-label>
+                <mat-select formControlName="employmentType">
+                    <mat-option *ngFor="let type of employmentTypes" [value]="type">
+                        {{ type }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div>
+            <button mat-raised-button color="primary" type="submit" [disabled]="employeeForm.invalid">
+                Guardar
+            </button>
+        </div>
+    </form>
+
+</div>

@@ -1,0 +1,25 @@
+﻿### Implementación de la funcionalidad 'Nueva Venta 2'
+Archivos: src/app/modules/sales/new-sale-2/new-sale-2.component.css, src/app/modules/sales/new-sale-2/new-sale-2.component.html, src/app/modules/sales/services/sale-2.service.ts
+Commit: Remove unused import statements for data analysis and machine learning.
+
+
+### Actualización del módulo de Clientes: Lista de Clientes
+Archivos: src/app/modules/customers/customers/customer-list/customer-list.component.ts
+Commit: Refactor customer list columns for unified display. Implement `valueFn` to dynamically show name, email, and phone from either person or company details, improving data consistency regardless of customer type.
+
+
+### Actualización del componente Dynamic Table
+Archivos: src/app/components/dynamic-table/dynamic-table.component.html, src/app/components/dynamic-table/dynamic-table.component.ts
+Commit: Refactor: Modularize routes.
+Extracted root and user endpoints into dedicated route files (`index.js`, `user.js`) for better organization and maintainability. The main application now imports and uses these route modules.
+
+
+### Ajustes de Layout y Rutas para la sección de Gestión
+Archivos: src/app/layouts/management-layout/management-layout.component.css, src/app/layouts/management-layout/management-layout.component.ts, src/app/modules/management.routes.ts
+Commit: Add trailing newline to README.
+
+
+### Actualización de la configuración global de la aplicación
+Archivos: src/app/app.config.ts
+Commit: Add `provideNativeDateAdapter` to app config for Angular Material date picker compatibility.
+

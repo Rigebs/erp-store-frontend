@@ -70,6 +70,13 @@ export default [
             (m) => m.CUSTOMER_ROUTES
           ),
       },
+      {
+        path: 'employees',
+        loadChildren: () =>
+          import('./employees/routes/employee.routes').then(
+            (m) => m.EMPLOYEE_ROUTES
+          ),
+      },
     ],
   },
 ] as Routes;

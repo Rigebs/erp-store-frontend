@@ -1,20 +1,21 @@
 .container {
   display: flex;
   gap: 20px;
-  height: 100%;
+  height: calc(100vh - 96px); /* altura total de la pantalla */
 }
 
 .left {
-  flex: 2;
+  width: 65%; /* reemplaza flex:2 */
   display: flex;
   flex-direction: column;
-  min-height: 0; /* importante para que el flex child con overflow funcione */
+  min-height: 0; /* importante para overflow */
 }
 
 .right {
-  flex: 1;
+  width: 35%; /* reemplaza flex:1 */
   border-left: 1px solid #ddd;
   padding-left: 10px;
+  max-height: calc(100vh - 91px);
   overflow-y: auto;
 }
 
@@ -32,13 +33,14 @@
 }
 
 .products {
-  flex: 1;
-  overflow-y: auto;
+  margin-top: 10px;
+  padding-right: 6px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 10px;
-  margin-top: 10px;
-  padding-right: 6px;
+  /* Definimos altura y scroll */
+  height: calc(100vh - 100px); /* ajustar según la altura del input + chips */
+  overflow-y: auto;
 }
 
 /* --- MOBILE SUMMARY --- */
@@ -46,7 +48,7 @@
   background: #1976d2;
   color: #fff;
   padding: 10px 16px;
-  margin-top: 12px; /* se separa un poco de los productos */
+  margin-top: 12px;
 }
 
 .summary-bar {
@@ -89,7 +91,7 @@
 }
 
 .overlay-content {
-  position: relative; /* necesario para que la X se posicione relativa al contenedor */
+  position: relative;
   background: #fff;
   width: 100%;
   max-height: 80%;
@@ -157,5 +159,11 @@
   }
   .mobile-only {
     display: block;
+  }
+  .products {
+    height: auto;
+  }
+  .left {
+    width: 100%;
   }
 }

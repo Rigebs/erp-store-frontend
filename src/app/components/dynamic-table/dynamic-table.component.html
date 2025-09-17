@@ -58,37 +58,52 @@
 
               <!-- Texto por defecto -->
               <ng-template #defaultText>
-                {{ getNestedValue(element, column.field) || '-' }}
+                <ng-container *ngIf="column.cellTemplate; else plainValue" [ngTemplateOutlet]="column.cellTemplate"
+                  [ngTemplateOutletContext]="{ $implicit: element }">
+                </ng-container>
+
+                <ng-template #plainValue>
+                  {{
+                  column.valueFn
+                  ? column.valueFn(element)
+                  : getNestedValue(element, column.field) || '-'
+                  }}
+                </ng-template>
               </ng-template>
+
             </ng-template>
           </ng-template>
         </ng-template>
       </td>
     </ng-container>
 
-    <!-- Acciones (opcional via ng-template) -->
+    <!-- Acciones -->
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
-        <ng-container *ngIf="actionsTemplate; else fallbackActions">
-          <ng-container *ngTemplateOutlet="actionsTemplate; context: {$implicit: element}"></ng-container>
-        </ng-container>
+        <div class="actions">
+          <!-- Botones estándar -->
+          <button *ngIf="availableActions.includes('toggleEnabled')" mat-icon-button color="accent"
+            (click)="onToggleEnabled(element)">
+            <mat-icon>{{ element.enabled ? 'block' : 'check_circle' }}</mat-icon>
+          </button>
 
-        <ng-template #fallbackActions>
-          <div class="actions">
-            <button mat-icon-button color="accent" (click)="onToggleEnabled(element)">
-              <mat-icon>{{ element.enabled ? 'block' : 'check_circle' }}</mat-icon>
-            </button>
-            <button mat-icon-button color="primary" (click)="onEdit(element)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="onDelete(element)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-        </ng-template>
+          <button *ngIf="availableActions.includes('edit')" mat-icon-button color="primary" (click)="onEdit(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          <button *ngIf="availableActions.includes('delete')" mat-icon-button color="warn" (click)="onDelete(element)">
+            <mat-icon>delete</mat-icon>
+          </button>
+
+          <!-- Custom actions extra -->
+          <ng-container *ngIf="actionsTemplate">
+            <ng-container *ngTemplateOutlet="actionsTemplate; context: {$implicit: element}"></ng-container>
+          </ng-container>
+        </div>
       </td>
     </ng-container>
+
 
     <!-- Header & Rows -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

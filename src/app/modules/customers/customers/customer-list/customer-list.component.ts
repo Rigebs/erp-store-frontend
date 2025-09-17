@@ -9,6 +9,7 @@ import { CustomerResponse } from '../../models/customer';
 import { NotificationUtilService } from '../../../../utils/notification-util.service';
 import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
 import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
+import { TableColumn } from '../../../../models/table-column';
 
 @Component({
   selector: 'app-customer-list',
@@ -25,9 +26,28 @@ export class CustomerListComponent {
   ) {}
 
   columns = [
-    { field: 'displayName', header: 'Nombre' },
-    { field: 'displayEmail', header: 'Email' },
-    { field: 'displayPhone', header: 'Teléfono' },
+    {
+      field: 'name',
+      header: 'Nombre',
+      valueFn: (c: CustomerResponse) =>
+        c.person
+          ? `${c.person.name} ${c.person.paternalName || ''} ${
+              c.person.maternalName || ''
+            }`.trim()
+          : c.company?.name || '-',
+    },
+    {
+      field: 'email',
+      header: 'Email',
+      valueFn: (c: CustomerResponse) =>
+        c.person?.email || c.company?.email || '-',
+    },
+    {
+      field: 'phone',
+      header: 'Teléfono',
+      valueFn: (c: CustomerResponse) =>
+        c.person?.phone || c.company?.phone || '-',
+    },
     { field: 'enabled', header: 'Estado' },
   ];
 
@@ -41,16 +61,7 @@ export class CustomerListComponent {
   loadCustomers(page: number, size: number) {
     this.customerService.findAll(page, size).subscribe({
       next: (response) => {
-        this.customersData = response.data.content.map((c) => ({
-          ...c,
-          displayName: c.person
-            ? `${c.person.name} ${c.person.paternalName || ''} ${
-                c.person.maternalName || ''
-              }`.trim()
-            : c.company?.name,
-          displayEmail: c.person?.email || c.company?.email,
-          displayPhone: c.person?.phone || c.company?.phone,
-        }));
+        this.customersData = response.data.content;
         this.total = response.data.totalElements;
       },
       error: (err) => {

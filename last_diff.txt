@@ -1,0 +1,561 @@
+﻿diff --git a/src/app/app.config.ts b/src/app/app.config.ts
+index fcc5f56..30aaec3 100644
+--- a/src/app/app.config.ts
++++ b/src/app/app.config.ts
+@@ -9,12 +9,15 @@ import {
+   withInterceptors,
+ } from '@angular/common/http';
+ import { authInterceptor } from './interceptors/auth.interceptor';
++import { provideNativeDateAdapter } from '@angular/material/core';
+ 
+ export const appConfig: ApplicationConfig = {
+   providers: [
+     provideZoneChangeDetection({ eventCoalescing: true }),
+     provideRouter(routes),
+     provideAnimationsAsync(),
+-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])), provideAnimationsAsync(),
++    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
++    provideAnimationsAsync(),
++    provideNativeDateAdapter(),
+   ],
+ };
+diff --git a/src/app/components/dynamic-table/dynamic-table.component.html b/src/app/components/dynamic-table/dynamic-table.component.html
+index f4504d7..7d50422 100644
+--- a/src/app/components/dynamic-table/dynamic-table.component.html
++++ b/src/app/components/dynamic-table/dynamic-table.component.html
+@@ -58,38 +58,53 @@
+ 
+               <!-- Texto por defecto -->
+               <ng-template #defaultText>
+-                {{ getNestedValue(element, column.field) || '-' }}
++                <ng-container *ngIf="column.cellTemplate; else plainValue" [ngTemplateOutlet]="column.cellTemplate"
++                  [ngTemplateOutletContext]="{ $implicit: element }">
++                </ng-container>
++
++                <ng-template #plainValue>
++                  {{
++                  column.valueFn
++                  ? column.valueFn(element)
++                  : getNestedValue(element, column.field) || '-'
++                  }}
++                </ng-template>
+               </ng-template>
++
+             </ng-template>
+           </ng-template>
+         </ng-template>
+       </td>
+     </ng-container>
+ 
+-    <!-- Acciones (opcional via ng-template) -->
++    <!-- Acciones -->
+     <ng-container matColumnDef="actions">
+       <th mat-header-cell *matHeaderCellDef></th>
+       <td mat-cell *matCellDef="let element">
+-        <ng-container *ngIf="actionsTemplate; else fallbackActions">
+-          <ng-container *ngTemplateOutlet="actionsTemplate; context: {$implicit: element}"></ng-container>
+-        </ng-container>
++        <div class="actions">
++          <!-- Botones est├índar -->
++          <button *ngIf="availableActions.includes('toggleEnabled')" mat-icon-button color="accent"
++            (click)="onToggleEnabled(element)">
++            <mat-icon>{{ element.enabled ? 'block' : 'check_circle' }}</mat-icon>
++          </button>
+ 
+-        <ng-template #fallbackActions>
+-          <div class="actions">
+-            <button mat-icon-button color="accent" (click)="onToggleEnabled(element)">
+-              <mat-icon>{{ element.enabled ? 'block' : 'check_circle' }}</mat-icon>
+-            </button>
+-            <button mat-icon-button color="primary" (click)="onEdit(element)">
+-              <mat-icon>edit</mat-icon>
+-            </button>
+-            <button mat-icon-button color="warn" (click)="onDelete(element)">
+-              <mat-icon>delete</mat-icon>
+-            </button>
+-          </div>
+-        </ng-template>
++          <button *ngIf="availableActions.includes('edit')" mat-icon-button color="primary" (click)="onEdit(element)">
++            <mat-icon>edit</mat-icon>
++          </button>
++
++          <button *ngIf="availableActions.includes('delete')" mat-icon-button color="warn" (click)="onDelete(element)">
++            <mat-icon>delete</mat-icon>
++          </button>
++
++          <!-- Custom actions extra -->
++          <ng-container *ngIf="actionsTemplate">
++            <ng-container *ngTemplateOutlet="actionsTemplate; context: {$implicit: element}"></ng-container>
++          </ng-container>
++        </div>
+       </td>
+     </ng-container>
+ 
++
+     <!-- Header & Rows -->
+     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+diff --git a/src/app/components/dynamic-table/dynamic-table.component.ts b/src/app/components/dynamic-table/dynamic-table.component.ts
+index ee74b3d..26a8c14 100644
+--- a/src/app/components/dynamic-table/dynamic-table.component.ts
++++ b/src/app/components/dynamic-table/dynamic-table.component.ts
+@@ -2,6 +2,7 @@ import {
+   Component,
+   EventEmitter,
+   Input,
++  OnChanges,
+   OnInit,
+   Output,
+   SimpleChanges,
+@@ -18,6 +19,7 @@ import { MatMenuModule } from '@angular/material/menu';
+ import { MatChipsModule } from '@angular/material/chips';
+ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+ import { FilterInputComponent } from '../filter-input/filter-input.component';
++import { TableColumn } from '../../models/table-column';
+ 
+ @Component({
+   selector: 'app-dynamic-table',
+@@ -38,10 +40,9 @@ import { FilterInputComponent } from '../filter-input/filter-input.component';
+   templateUrl: './dynamic-table.component.html',
+   styleUrl: './dynamic-table.component.css',
+ })
+-export class DynamicTableComponent implements OnInit {
+-  @Input() columns: { field: string; header: string; hidden?: boolean }[] = [];
++export class DynamicTableComponent implements OnInit, OnChanges {
++  @Input() columns: TableColumn[] = [];
+   @Input() data: any[] = [];
+-
+   @Input() total: number = 0;
+   @Input() page: number = 0;
+ 
+@@ -51,12 +52,14 @@ export class DynamicTableComponent implements OnInit {
+   @Output() edit = new EventEmitter<any>();
+   @Output() delete = new EventEmitter<any>();
+   @Output() toggleEnabled = new EventEmitter<any>();
+-
+   @Output() pageChange = new EventEmitter<{ items: number; page: number }>();
+ 
+   displayedColumns: string[] = [];
+   dataSource: MatTableDataSource<any>;
+ 
++  /** Lista de acciones disponibles din├ímicamente */
++  availableActions: string[] = [];
++
+   constructor() {
+     this.dataSource = new MatTableDataSource<any>(this.data);
+   }
+@@ -65,6 +68,13 @@ export class DynamicTableComponent implements OnInit {
+     this.updateDisplayedColumns();
+     this.dataSource.data = this.data;
+ 
++    // Detectar acciones disponibles
++    this.availableActions = [];
++    if (this.toggleEnabled.observed)
++      this.availableActions.push('toggleEnabled');
++    if (this.edit.observed) this.availableActions.push('edit');
++    if (this.delete.observed) this.availableActions.push('delete');
++
+     this.dataSource.filterPredicate = (data: any, filter: string) => {
+       const lowerFilter = filter.trim().toLowerCase();
+ 
+diff --git a/src/app/layouts/management-layout/management-layout.component.css b/src/app/layouts/management-layout/management-layout.component.css
+index 644d7d6..50a511a 100644
+--- a/src/app/layouts/management-layout/management-layout.component.css
++++ b/src/app/layouts/management-layout/management-layout.component.css
+@@ -29,8 +29,6 @@
+ 
+ .content {
+   padding: 1rem;
+-  height: 100%;
+-  box-sizing: border-box;
+ }
+ 
+ .toolbar {
+diff --git a/src/app/layouts/management-layout/management-layout.component.ts b/src/app/layouts/management-layout/management-layout.component.ts
+index e6eeabb..c722ec8 100644
+--- a/src/app/layouts/management-layout/management-layout.component.ts
++++ b/src/app/layouts/management-layout/management-layout.component.ts
+@@ -83,6 +83,17 @@ export class ManagementLayoutComponent {
+         },
+       ],
+     },
++    {
++      label: 'RR.HH',
++      isSection: true,
++      children: [
++        {
++          label: 'Empleados',
++          icon: 'group',
++          route: 'management/employees',
++        },
++      ],
++    },
+   ];
+ 
+   constructor(
+diff --git a/src/app/modules/customers/customers/customer-list/customer-list.component.ts b/src/app/modules/customers/customers/customer-list/customer-list.component.ts
+index 4240df7..c4cd8b8 100644
+--- a/src/app/modules/customers/customers/customer-list/customer-list.component.ts
++++ b/src/app/modules/customers/customers/customer-list/customer-list.component.ts
+@@ -9,6 +9,7 @@ import { CustomerResponse } from '../../models/customer';
+ import { NotificationUtilService } from '../../../../utils/notification-util.service';
+ import { ConfirmationDialogComponent } from '../../../../components/confirmation-dialog/confirmation-dialog.component';
+ import { DynamicTableComponent } from '../../../../components/dynamic-table/dynamic-table.component';
++import { TableColumn } from '../../../../models/table-column';
+ 
+ @Component({
+   selector: 'app-customer-list',
+@@ -25,9 +26,28 @@ export class CustomerListComponent {
+   ) {}
+ 
+   columns = [
+-    { field: 'displayName', header: 'Nombre' },
+-    { field: 'displayEmail', header: 'Email' },
+-    { field: 'displayPhone', header: 'Tel├®fono' },
++    {
++      field: 'name',
++      header: 'Nombre',
++      valueFn: (c: CustomerResponse) =>
++        c.person
++          ? `${c.person.name} ${c.person.paternalName || ''} ${
++              c.person.maternalName || ''
++            }`.trim()
++          : c.company?.name || '-',
++    },
++    {
++      field: 'email',
++      header: 'Email',
++      valueFn: (c: CustomerResponse) =>
++        c.person?.email || c.company?.email || '-',
++    },
++    {
++      field: 'phone',
++      header: 'Tel├®fono',
++      valueFn: (c: CustomerResponse) =>
++        c.person?.phone || c.company?.phone || '-',
++    },
+     { field: 'enabled', header: 'Estado' },
+   ];
+ 
+@@ -41,16 +61,7 @@ export class CustomerListComponent {
+   loadCustomers(page: number, size: number) {
+     this.customerService.findAll(page, size).subscribe({
+       next: (response) => {
+-        this.customersData = response.data.content.map((c) => ({
+-          ...c,
+-          displayName: c.person
+-            ? `${c.person.name} ${c.person.paternalName || ''} ${
+-                c.person.maternalName || ''
+-              }`.trim()
+-            : c.company?.name,
+-          displayEmail: c.person?.email || c.company?.email,
+-          displayPhone: c.person?.phone || c.company?.phone,
+-        }));
++        this.customersData = response.data.content;
+         this.total = response.data.totalElements;
+       },
+       error: (err) => {
+diff --git a/src/app/modules/management.routes.ts b/src/app/modules/management.routes.ts
+index 86b5fe3..5dd43e1 100644
+--- a/src/app/modules/management.routes.ts
++++ b/src/app/modules/management.routes.ts
+@@ -70,6 +70,13 @@ export default [
+             (m) => m.CUSTOMER_ROUTES
+           ),
+       },
++      {
++        path: 'employees',
++        loadChildren: () =>
++          import('./employees/routes/employee.routes').then(
++            (m) => m.EMPLOYEE_ROUTES
++          ),
++      },
+     ],
+   },
+ ] as Routes;
+diff --git a/src/app/modules/sales/new-sale-2/new-sale-2.component.css b/src/app/modules/sales/new-sale-2/new-sale-2.component.css
+index 236b055..32ae932 100644
+--- a/src/app/modules/sales/new-sale-2/new-sale-2.component.css
++++ b/src/app/modules/sales/new-sale-2/new-sale-2.component.css
+@@ -1,20 +1,21 @@
+ .container {
+   display: flex;
+   gap: 20px;
+-  height: 100%;
++  height: calc(100vh - 96px); /* altura total de la pantalla */
+ }
+ 
+ .left {
+-  flex: 2;
++  width: 65%; /* reemplaza flex:2 */
+   display: flex;
+   flex-direction: column;
+-  min-height: 0; /* importante para que el flex child con overflow funcione */
++  min-height: 0; /* importante para overflow */
+ }
+ 
+ .right {
+-  flex: 1;
++  width: 35%; /* reemplaza flex:1 */
+   border-left: 1px solid #ddd;
+   padding-left: 10px;
++  max-height: calc(100vh - 91px);
+   overflow-y: auto;
+ }
+ 
+@@ -32,13 +33,14 @@
+ }
+ 
+ .products {
+-  flex: 1;
+-  overflow-y: auto;
++  margin-top: 10px;
++  padding-right: 6px;
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+   gap: 10px;
+-  margin-top: 10px;
+-  padding-right: 6px;
++  /* Definimos altura y scroll */
++  height: calc(100vh - 100px); /* ajustar seg├║n la altura del input + chips */
++  overflow-y: auto;
+ }
+ 
+ /* --- MOBILE SUMMARY --- */
+@@ -46,7 +48,7 @@
+   background: #1976d2;
+   color: #fff;
+   padding: 10px 16px;
+-  margin-top: 12px; /* se separa un poco de los productos */
++  margin-top: 12px;
+ }
+ 
+ .summary-bar {
+@@ -89,7 +91,7 @@
+ }
+ 
+ .overlay-content {
+-  position: relative; /* necesario para que la X se posicione relativa al contenedor */
++  position: relative;
+   background: #fff;
+   width: 100%;
+   max-height: 80%;
+@@ -158,4 +160,10 @@
+   .mobile-only {
+     display: block;
+   }
++  .products {
++    height: auto;
++  }
++  .left {
++    width: 100%;
++  }
+ }
+diff --git a/src/app/modules/sales/new-sale-2/new-sale-2.component.html b/src/app/modules/sales/new-sale-2/new-sale-2.component.html
+index 91b58bd..51dbf33 100644
+--- a/src/app/modules/sales/new-sale-2/new-sale-2.component.html
++++ b/src/app/modules/sales/new-sale-2/new-sale-2.component.html
+@@ -18,7 +18,6 @@
+         <app-cart-summary></app-cart-summary>
+     </div>
+ 
+-    <!-- Mobile: barra resumen abajo -->
+     <!-- Mobile: barra resumen abajo -->
+     <div class="mobile-summary mobile-only" *ngIf="cart$ | async as cart">
+         <div class="summary-bar">
+@@ -32,7 +31,6 @@
+         </div>
+     </div>
+ 
+-    <!-- Overlay para mobile -->
+     <!-- Overlay para mobile -->
+     <div class="mobile-overlay" *ngIf="showMobileSummary">
+         <div class="overlay-content">
+diff --git a/src/app/modules/sales/services/sale-2.service.ts b/src/app/modules/sales/services/sale-2.service.ts
+index fbee345..e2b17bf 100644
+--- a/src/app/modules/sales/services/sale-2.service.ts
++++ b/src/app/modules/sales/services/sale-2.service.ts
+@@ -82,101 +82,131 @@ export class SaleService {
+         category: 'Cat2',
+       },
+       {
+-        id: '1',
+-        name: 'Producto A',
++        id: '5',
++        name: 'Producto E',
+         image:
+-          'https://th.bing.com/th/id/OIP.8sDF7uml2zp2CXT0m2HUiQHaFj?w=234&h=180&c=7&r=0&o=7&pid=1.7&rm=3',
+-        price: 10,
+-        category: 'Cat1',
++          'https://http2.mlstatic.com/D_NQ_NP_689046-MPE72466443365_102023-O.webp',
++        price: 15,
++        category: 'Cat3',
+       },
+       {
+-        id: '2',
+-        name: 'Producto B',
++        id: '6',
++        name: 'Producto F',
+         image:
+-          'https://production-tailoy-repo-magento-statics.s3.amazonaws.com/imagenes/872x872/productos/i/f/a/faber-castell-lapiz-tecnico-f-16152014-default-1.jpg',
+-        price: 20,
+-        category: 'Cat2',
++          'https://www.galeriadelcoleccionista.com/medias/Smartwatch-Fitness-300-negro.jpg?context=bWFzdGVyfGltYWdlc3w2Mzc2NHxpbWFnZS9qcGVnfGhiMi9oZDIvMTA1ODI0NjMxNTgxOTAuanBnfDkxNTc3MjI5NDgwNDg5ZWFlZjExNDM2ZTE0ZThlYmVhMTZkYjA5MzYwZGRjYzY5NTg1ZTAwZDhiZGY2MzdlOWU',
++        price: 50,
++        category: 'Cat1',
+       },
+       {
+-        id: '3',
+-        name: 'Producto C',
++        id: '7',
++        name: 'Producto G',
+         image:
+-          'https://casadorita.com.uy/wp-content/uploads/2024/05/Photoroom_004_20240509_155832.jpeg',
+-        price: 30,
+-        category: 'Cat1',
++          'https://img10.naventcdn.com/avisos/11/00/90/79/55/56/720x532/328211759.jpg',
++        price: 60,
++        category: 'Cat2',
+       },
+       {
+-        id: '4',
+-        name: 'Producto D',
++        id: '8',
++        name: 'Producto H',
+         image:
+-          'https://d2o812a6k13pkp.cloudfront.net/fit-in/1200x1200/filters:quality(100)/Categorias/Gaseosas.jpeg20211006144131.jpg',
+-        price: 40,
+-        category: 'Cat2',
++          'https://m.media-amazon.com/images/I/61v36u4CvjL._AC_SL1500_.jpg',
++        price: 25,
++        category: 'Cat3',
+       },
+       {
+-        id: '1',
+-        name: 'Producto A',
++        id: '9',
++        name: 'Producto I',
+         image:
+-          'https://th.bing.com/th/id/OIP.8sDF7uml2zp2CXT0m2HUiQHaFj?w=234&h=180&c=7&r=0&o=7&pid=1.7&rm=3',
+-        price: 10,
++          'https://www.megatone.net/Images/Articulos/zoom2x/200/0/400047.jpg',
++        price: 35,
+         category: 'Cat1',
+       },
+       {
+-        id: '2',
+-        name: 'Producto B',
++        id: '10',
++        name: 'Producto J',
+         image:
+-          'https://production-tailoy-repo-magento-statics.s3.amazonaws.com/imagenes/872x872/productos/i/f/a/faber-castell-lapiz-tecnico-f-16152014-default-1.jpg',
+-        price: 20,
++          'https://www.libreriasdeletras.com.ar/wp-content/uploads/2023/01/cuaderno-a4-rayado-tapas-duras.jpg',
++        price: 12,
+         category: 'Cat2',
+       },
+       {
+-        id: '3',
+-        name: 'Producto C',
++        id: '11',
++        name: 'Producto K',
++        image: 'https://m.media-amazon.com/images/I/51cXzyLqM5L._AC_SX425_.jpg',
++        price: 80,
++        category: 'Cat3',
++      },
++      {
++        id: '12',
++        name: 'Producto L',
+         image:
+-          'https://casadorita.com.uy/wp-content/uploads/2024/05/Photoroom_004_20240509_155832.jpeg',
+-        price: 30,
++          'https://www.lacuracao.pe/media/catalog/product/cache/926507dc7f93631a094422215b778fe0/a/l/alienwarex17r2.jpg',
++        price: 1500,
+         category: 'Cat1',
+       },
+       {
+-        id: '4',
+-        name: 'Producto D',
++        id: '13',
++        name: 'Producto M',
+         image:
+-          'https://d2o812a6k13pkp.cloudfront.net/fit-in/1200x1200/filters:quality(100)/Categorias/Gaseosas.jpeg20211006144131.jpg',
+-        price: 40,
++          'https://m.media-amazon.com/images/I/81zgkt+y5qL._AC_SL1500_.jpg',
++        price: 200,
+         category: 'Cat2',
+       },
+       {
+-        id: '1',
+-        name: 'Producto A',
++        id: '14',
++        name: 'Producto N',
+         image:
+-          'https://th.bing.com/th/id/OIP.8sDF7uml2zp2CXT0m2HUiQHaFj?w=234&h=180&c=7&r=0&o=7&pid=1.7&rm=3',
+-        price: 10,
++          'https://tiendamia.com/pe/media/catalog/product/cache/1/image/1800x/040ec09b1e35df139433887a97daa66f/m/p/mp8q3am_a-1_2.jpg',
++        price: 100,
++        category: 'Cat3',
++      },
++      {
++        id: '15',
++        name: 'Producto O',
++        image:
++          'https://oechsle.vteximg.com.br/arquivos/ids/16593855-1000-1000/image-8b9fc77d5e4c4db58b8f96f0505cb85b.jpg?v=637928821980570000',
++        price: 250,
+         category: 'Cat1',
+       },
+       {
+-        id: '2',
+-        name: 'Producto B',
++        id: '16',
++        name: 'Producto P',
+         image:
+-          'https://production-tailoy-repo-magento-statics.s3.amazonaws.com/imagenes/872x872/productos/i/f/a/faber-castell-lapiz-tecnico-f-16152014-default-1.jpg',
+-        price: 20,
++          'https://plazavea.vteximg.com.br/arquivos/ids/21464669-512-512/20207048.jpg',
++        price: 8,
+         category: 'Cat2',
+       },
+       {
+-        id: '3',
+-        name: 'Producto C',
++        id: '17',
++        name: 'Producto Q',
++        image: 'https://m.media-amazon.com/images/I/71D9ImsvEtL._AC_SX466_.jpg',
++        price: 300,
++        category: 'Cat3',
++      },
++      {
++        id: '18',
++        name: 'Producto R',
+         image:
+-          'https://casadorita.com.uy/wp-content/uploads/2024/05/Photoroom_004_20240509_155832.jpeg',
+-        price: 30,
++          'https://http2.mlstatic.com/D_NQ_NP_663688-MLA71717079862_092023-O.webp',
++        price: 20,
+         category: 'Cat1',
+       },
+       {
+-        id: '4',
+-        name: 'Producto D',
++        id: '19',
++        name: 'Producto S',
+         image:
+-          'https://d2o812a6k13pkp.cloudfront.net/fit-in/1200x1200/filters:quality(100)/Categorias/Gaseosas.jpeg20211006144131.jpg',
+-        price: 40,
++          'https://http2.mlstatic.com/D_NQ_NP_808674-MLA69364446936_052023-O.webp',
++        price: 18,
+         category: 'Cat2',
+       },
++      {
++        id: '20',
++        name: 'Producto T',
++        image:
++          'https://www.lacuracao.pe/media/catalog/product/cache/926507dc7f93631a094422215b778fe0/s/m/smarttv-uhd-4k-55-55uq8050psb-lg-01.jpg',
++        price: 1200,
++        category: 'Cat3',
++      },
+     ];
+   }
+ }

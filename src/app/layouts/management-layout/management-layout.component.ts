@@ -83,6 +83,17 @@ export class ManagementLayoutComponent {
         },
       ],
     },
+    {
+      label: 'RR.HH',
+      isSection: true,
+      children: [
+        {
+          label: 'Empleados',
+          icon: 'group',
+          route: 'management/employees',
+        },
+      ],
+    },
   ];
 
   constructor(

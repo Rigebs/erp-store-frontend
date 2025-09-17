@@ -1,0 +1,24 @@
+/* Contenedor principal */
+.form-container {
+  height: 100%;
+}
+/* Grid de campos */
+.employee-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  padding: 16px;
+  padding-top: 0;
+}
+
+/* Ajustar mat-form-field al 100% del contenedor */
+.employee-fields mat-form-field {
+  width: 100%;
+}
+
+/* En mobile: 1 columna */
+@media (max-width: 768px) {
+  .employee-fields {
+    grid-template-columns: 1fr;
+  }
+}
