@@ -27,15 +27,17 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
         jwtUtilService.removeToken();
-      }
-      router.navigate(['/auth/login']);
-      snackBar.open(
-        'Tu sesión ha expirado. Por favor, inicia sesión nuevamente',
-        'cerrar',
-        {
+        router.navigate(['/auth/login']);
+        snackBar.open(
+          'Tu sesión ha expirado. Por favor, inicia sesión nuevamente',
+          'cerrar',
+          { duration: 3000 }
+        );
+      } else if (error.status === 500) {
+        snackBar.open('Ha ocurrido un error. Inténtalo más tarde', 'cerrar', {
           duration: 3000,
-        }
-      );
+        });
+      }
 
       return throwError(() => error);
     }),

@@ -5,7 +5,7 @@ export interface SaleRequest {
   total: number;
   tax: number;
   discount: number;
-  customerId?: number;
-  cashierId: number | undefined;
+  customerId?: number | null;
+  cashierId?: number | null;
   saleDetails: SaleDetailRequest[];
 }

@@ -7,13 +7,6 @@ export const SALE_ROUTES: Routes = [
       import('../new-sale/new-sale.component').then((m) => m.NewSaleComponent),
   },
   {
-    path: 'new2',
-    loadComponent: () =>
-      import('../new-sale-2/new-sale-2.component').then(
-        (m) => m.NewSale2Component
-      ),
-  },
-  {
     path: 'list',
     loadComponent: () =>
       import('../sales-list/sales-list.component').then(

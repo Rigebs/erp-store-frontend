@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { ApiResponse } from '../../../models/api-response';
 import { environment } from '../../../../environments/environment';
 import { Page } from '../../../models/pageable';
+import { ProductFilter } from '../models/product-filter';
 
 @Injectable({
   providedIn: 'root',
@@ -16,11 +17,25 @@ export class ProductService {
 
   findAll(
     page: number,
-    size: number
+    size: number,
+    sort: string[] = ['id,desc'],
+    filter?: ProductFilter
   ): Observable<ApiResponse<Page<ProductResponse>>> {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
+
+    sort.forEach((s) => {
+      params = params.append('sort', s);
+    });
+
+    if (filter) {
+      Object.entries(filter).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          params = params.set(key, value.toString());
+        }
+      });
+    }
 
     return this.http.get<ApiResponse<Page<ProductResponse>>>(this.baseUrl, {
       params,

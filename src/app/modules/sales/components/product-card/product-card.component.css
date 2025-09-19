@@ -1,40 +1,69 @@
 .card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px;
-  text-align: center;
   background: #fff;
+  border-radius: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* sombra sutil */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .image-container {
   width: 100%;
-  height: 150px;
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  margin-bottom: 8px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: #f5f5f5; /* da sensación de "placeholder" */
 }
 
 .image-container img {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 4px;
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: #333;
+  text-align: center;
+}
+
+p {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1976d2;
+  margin: 0 0 12px;
 }
 
 button {
-  margin-top: 8px;
-  padding: 6px 12px;
+  padding: 8px 16px;
   background: #1976d2;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 20px; /* más material-like */
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
+
 button:hover {
-  background: #125a9c;
+  background: #1565c0;
+}
+
+button:active {
+  transform: scale(0.96);
 }

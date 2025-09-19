@@ -1,0 +1,75 @@
+<div mat-dialog-title>Asignar cliente</div>
+
+<mat-dialog-content>
+    <mat-form-field class="full-width">
+        <input matInput placeholder="Buscar cliente por nombre, teléfono o doc" [formControl]="searchCtrl" />
+        <button mat-icon-button matSuffix *ngIf="(searchCtrl.value)" (click)="onClean()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <div *ngIf="(customers$ | async) as customers">
+        <mat-selection-list [multiple]="false" *ngIf="!showCreate">
+            <mat-list-option *ngFor="let c of customers" (click)="selectCustomer(c)"
+                [selected]="selectedCustomer?.id === c.id">
+                <div class="item-row">
+                    <div class="item-main">{{ c.person?.name || c.company?.name }}</div>
+                    <div class="item-sub">{{ c.person?.phone || c.company?.phone }}</div>
+                </div>
+            </mat-list-option>
+        </mat-selection-list>
+
+        <div class="no-results" *ngIf="customers.length === 0 && (searchCtrl.value) && !showCreate">
+            <p>No se encontraron clientes.</p>
+            <button mat-button color="primary" (click)="toggleCreate()">
+                Crear cliente
+            </button>
+        </div>
+
+    </div>
+
+    <div class="create-form" *ngIf="showCreate">
+        <h3>Crear cliente rápido</h3>
+
+        <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+            <!-- Person -->
+            <mat-tab label="Persona">
+                <form [formGroup]="personForm">
+                    <mat-form-field class="full-width">
+                        <input matInput formControlName="name" placeholder="Nombre" />
+                    </mat-form-field>
+                    <mat-form-field class="full-width">
+                        <input matInput formControlName="paternalName" placeholder="Apellido paterno" />
+                    </mat-form-field>
+                    <mat-form-field class="full-width">
+                        <input matInput formControlName="phone" placeholder="Teléfono" />
+                    </mat-form-field>
+                </form>
+            </mat-tab>
+
+            <!-- Company -->
+            <mat-tab label="Empresa">
+                <form [formGroup]="companyForm">
+                    <mat-form-field class="full-width">
+                        <input matInput formControlName="name" placeholder="Razón social" />
+                    </mat-form-field>
+                    <mat-form-field class="full-width">
+                        <input matInput formControlName="phone" placeholder="Teléfono" />
+                    </mat-form-field>
+                </form>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <button mat-flat-button color="primary" [disabled]="
+      (showCreate &&
+        ((selectedTabIndex === 0 && personForm.invalid) ||
+          (selectedTabIndex === 1 && companyForm.invalid))) ||
+      (!showCreate && !selectedCustomer && !justAssigned)
+    " (click)="showCreate ? createCustomer() : onAssign()">
+        {{ showCreate ? 'Crear y asignar' : 'Asignar cliente' }}
+    </button>
+</mat-dialog-actions>

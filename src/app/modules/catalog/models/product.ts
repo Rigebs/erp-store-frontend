@@ -7,7 +7,6 @@ import { UnitMeasureResponse } from './unit-measure';
 export interface ProductResponse {
   id: number;
   name: string;
-  quantity: number;
   description: string;
   purchasePrice: number;
   salePrice: number;
@@ -21,7 +20,7 @@ export interface ProductResponse {
   supplier: SupplierResponse;
 }
 
-export interface ProductResponse {
+export interface ProductRequest {
   name: string;
   description: string;
   purchasePrice: number;

@@ -25,17 +25,16 @@ export class ProductListComponent {
 
   columns = [
     { field: 'name', header: 'Nombre' },
-    { field: 'quantity', header: 'Cantidad' },
     { field: 'description', header: 'Descripción', hidden: true },
     { field: 'purchasePrice', header: 'Precio compra', hidden: true },
     { field: 'salePrice', header: 'Precio venta' },
     { field: 'enabled', header: 'Estado' },
     { field: 'imageUrl', header: 'Imagen' },
-    { field: 'categoryName', header: 'Categoría' },
-    { field: 'brandName', header: 'Marca' },
-    { field: 'unitMeasureAbbreviation', header: 'U/M', hidden: true },
-    { field: 'lineName', header: 'Línea', hidden: true },
-    { field: 'supplierName', header: 'Proveedor', hidden: true },
+    { field: 'category.name', header: 'Categoría' },
+    { field: 'brand.name', header: 'Marca' },
+    { field: 'unitMeasure.abbreviation', header: 'U/M', hidden: true },
+    { field: 'line.name', header: 'Línea', hidden: true },
+    { field: 'supplier.name', header: 'Proveedor', hidden: true },
   ];
 
   productsData: ProductResponse[] = [];

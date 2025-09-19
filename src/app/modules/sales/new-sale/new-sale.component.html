@@ -1,31 +1,63 @@
-<div class="container new-sale-container">
-  <app-product-selector
-    (productSelected)="addProduct($event)"
-    [products]="products"
-  ></app-product-selector>
+<div class="container">
+    <div class="left">
+        <div class="client-area">
+            <button mat-stroked-button color="primary" *ngIf="!selectedCustomer" (click)="openAssignCustomer()"
+                aria-label="Asignar cliente">
+                <mat-icon>person</mat-icon>
+                <span>Asignar cliente</span>
+            </button>
 
-  <div class="details-container">
-    <app-selected-products
-      [selectedProducts]="selectedProducts"
-      (productRemoved)="removeProduct($event)"
-      (productAdd)="addProduct($event)"
-      (productDeduct)="deductProduct($event)"
-    >
-    </app-selected-products>
-    <app-summary
-      [selectedProducts]="selectedProducts"
-      [discount]="discount"
-      [subtotal]="subtotal"
-      [total]="total"
-    >
-    </app-summary>
-    <button
-      mat-raised-button
-      color="accent"
-      (click)="generateSale()"
-      [disabled]="disabled"
-    >
-      <mat-icon>shopping_cart_checkout</mat-icon>Generar venta
-    </button>
-  </div>
+            <div class="client-info" *ngIf="selectedCustomer; else noClient">
+                <div class="client-name"><strong>Cliente:</strong> {{ selectedCustomer.person?.name ||
+                    selectedCustomer.company?.name}}
+                </div>
+                <div class="client-meta">{{ selectedCustomer.person?.phone || selectedCustomer.company?.phone }}</div>
+                <button class="close-btn-customer" (click)="clearCustomer()" aria-label="Quitar cliente">
+                    ✕
+                </button>
+            </div>
+
+            <ng-template #noClient>
+                <div class="no-client">Clientes varios</div>
+            </ng-template>
+        </div>
+        <input type="text" placeholder="Buscar..." [(ngModel)]="search" (ngModelChange)="onSearchChange($event)" />
+
+        <div class="chips" *ngIf="categories$ | async as categories">
+            <span (click)="setCategory()" [class.active]="!selectedCategoryId">Todos</span>
+            <span *ngFor="let cat of categories" (click)="setCategory(cat.id)"
+                [class.active]="selectedCategoryId === cat.id">
+                {{ cat.name }}
+            </span>
+        </div>
+
+        <div class="products" (scroll)="onScroll($event)">
+            <app-product-card *ngFor="let p of products" [product]="p">
+            </app-product-card>
+            <div class="loading" *ngIf="loading">Cargando...</div>
+        </div>
+    </div>
+
+    <div class="right desktop-only">
+        <app-cart-summary (saleGenerated)="onSaleGenerated($event)"></app-cart-summary>
+    </div>
+
+    <div class="mobile-summary mobile-only" *ngIf="cart$ | async as cart">
+        <div class="summary-bar">
+            <div class="summary-text">
+                <span>{{ cart.length }} items</span>
+                <span>Total: S/ {{ total(cart) }}</span>
+            </div>
+            <button class="toggle-btn" (click)="toggleMobileSummary()">
+                {{ showMobileSummary ? '▼' : '▲' }}
+            </button>
+        </div>
+    </div>
+
+    <div class="mobile-overlay" *ngIf="showMobileSummary">
+        <div class="overlay-content">
+            <button class="close-btn" (click)="toggleMobileSummary()">✕</button>
+            <app-cart-summary (saleGenerated)="onSaleGenerated($event)"></app-cart-summary>
+        </div>
+    </div>
 </div>

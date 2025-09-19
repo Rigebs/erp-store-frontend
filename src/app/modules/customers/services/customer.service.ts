@@ -16,9 +16,21 @@ export class CustomerService {
 
   findAll(
     page: number,
-    size: number
+    size: number,
+    query?: string,
+    enabled?: boolean
   ): Observable<ApiResponse<Page<CustomerResponse>>> {
-    const params = new HttpParams().set('page', page).set('size', size);
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (query) {
+      params = params.set('query', query);
+    }
+
+    if (enabled !== undefined && enabled !== null) {
+      params = params.set('enabled', enabled);
+    }
 
     return this.http.get<ApiResponse<Page<CustomerResponse>>>(this.baseUrl, {
       params,
@@ -31,8 +43,8 @@ export class CustomerService {
     );
   }
 
-  save(request: CustomerRequest): Observable<ApiResponse<void>> {
-    return this.http.post<ApiResponse<void>>(this.baseUrl, request);
+  save(request: CustomerRequest): Observable<ApiResponse<CustomerResponse>> {
+    return this.http.post<ApiResponse<CustomerResponse>>(this.baseUrl, request);
   }
 
   update(id: number, request: CustomerRequest): Observable<ApiResponse<void>> {

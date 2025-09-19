@@ -57,7 +57,6 @@ export class DynamicTableComponent implements OnInit, OnChanges {
   displayedColumns: string[] = [];
   dataSource: MatTableDataSource<any>;
 
-  /** Lista de acciones disponibles dinámicamente */
   availableActions: string[] = [];
 
   constructor() {
@@ -68,7 +67,6 @@ export class DynamicTableComponent implements OnInit, OnChanges {
     this.updateDisplayedColumns();
     this.dataSource.data = this.data;
 
-    // Detectar acciones disponibles
     this.availableActions = [];
     if (this.toggleEnabled.observed)
       this.availableActions.push('toggleEnabled');
@@ -117,10 +115,13 @@ export class DynamicTableComponent implements OnInit, OnChanges {
   }
 
   updateDisplayedColumns(): void {
-    this.displayedColumns = [
-      ...this.columns.filter((col) => !col.hidden).map((col) => col.field),
-      'actions',
-    ];
+    this.displayedColumns = this.columns
+      .filter((col) => !col.hidden)
+      .map((col) => col.field);
+
+    if (this.availableActions.length > 0 || this.actionsTemplate) {
+      this.displayedColumns.push('actions');
+    }
   }
 
   toggleColumnVisibility(column: { field: string; hidden?: boolean }): void {

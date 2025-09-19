@@ -1,208 +1,170 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductSelectorComponent } from '../components/product-selector/product-selector.component';
-import { SummaryComponent } from '../components/summary/summary.component';
-import { SelectedProductsComponent } from '../components/selected-products/selected-products.component';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  Observable,
+  Subject,
+} from 'rxjs';
+import { ProductCardComponent } from '../components/product-card/product-card.component';
+import { CartSummaryComponent } from '../components/cart-summary/cart-summary.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ProductResponse } from '../../catalog/models/product';
+import { CategoryResponse } from '../../catalog/models/category';
+import { CategoryService } from '../../catalog/services/category.service';
+import { CartService } from '../services/cart.service';
 import { ProductService } from '../../catalog/services/product.service';
-import { SaleDetailRequest } from '../models/request/sale-detail-request';
-import { SaleDetail } from '../models/sale-detail';
-import { FormatUtilService } from '../../../utils/format-util.service';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { CartItem } from '../models/cart-item';
 import { SaleRequest } from '../models/request/sale-request';
-import { JwtUtilService } from '../../../utils/jwt-util.service';
 import { SaleService } from '../services/sale.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { CustomerResponse } from '../../customers/models/customer';
+import { MatDialog } from '@angular/material/dialog';
+import { AssignCustomerDialogComponent } from '../components/assign-customer-dialog/assign-customer-dialog.component';
 
 @Component({
   selector: 'app-new-sale',
+  standalone: true,
   imports: [
-    ProductSelectorComponent,
-    SummaryComponent,
-    SelectedProductsComponent,
-    MatButtonModule,
+    ProductCardComponent,
+    CartSummaryComponent,
+    CommonModule,
+    FormsModule,
     MatIconModule,
+    MatButtonModule,
   ],
   templateUrl: './new-sale.component.html',
   styleUrl: './new-sale.component.css',
 })
 export class NewSaleComponent implements OnInit {
-  selectedProducts: SaleDetail[] = [];
-  discount = 0;
   products: ProductResponse[] = [];
-  saleDetails: SaleDetailRequest[] = [];
+  productsPage = 0;
+  productsSize = 10;
+  loading = false;
+  allLoaded = false;
 
-  subtotal: number = 0;
-  taxRate: number = 0.18;
-  total: number = 0;
+  cart$: Observable<CartItem[]>;
+  categories$: Observable<CategoryResponse[]>;
+  search = '';
+  searchSubject = new Subject<string>();
+  selectedCategoryId?: number;
+  showMobileSummary = false;
 
-  disabled: boolean = true;
+  selectedCustomer: CustomerResponse | null = null;
 
   constructor(
+    private cartService: CartService,
+    private categoryService: CategoryService,
     private productService: ProductService,
-    private formatUtilService: FormatUtilService,
-    private jwtUtilService: JwtUtilService,
     private saleService: SaleService,
-    private snackBar: MatSnackBar
-  ) {}
+    private dialog: MatDialog
+  ) {
+    this.cart$ = this.cartService.cart$;
+    this.categories$ = this.categoryService
+      .findAll(0, 50)
+      .pipe(map((res) => res.data.content));
+  }
 
-  ngOnInit(): void {
-    this.productService.findAll(0, 10).subscribe({
-      next: (response) => {
-        this.products = response.data.content;
-      },
-      error: (err) => {
-        console.log(err);
-      },
+  ngOnInit() {
+    this.loadMoreProducts();
+    this.searchSubject
+      .pipe(debounceTime(1000), distinctUntilChanged())
+      .subscribe(() => this.resetAndLoad());
+  }
+
+  openAssignCustomer(): void {
+    const ref = this.dialog.open(AssignCustomerDialogComponent, {
+      width: '520px',
+      data: { selectedCustomer: this.selectedCustomer },
     });
+
+    ref
+      .afterClosed()
+      .subscribe((result: CustomerResponse | null | undefined) => {
+        if (result === undefined) {
+          return;
+        }
+        this.selectedCustomer = result;
+        console.log(result);
+      });
   }
 
-  addProduct(product: any) {
-    this.disabled = false;
-    const existingProduct = this.saleDetails.find(
-      (p) => p.productId === (product.id | product.productId)
-    );
+  clearCustomer(): void {
+    this.selectedCustomer = null; // sale customerId = null
+  }
 
-    if (existingProduct) {
-      this.saleDetails = this.saleDetails.map((item) =>
-        item.productId === (product.id | product.productId)
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-              subtotal: (item.quantity + 1) * item.price,
-            }
-          : item
-      );
+  loadMoreProducts() {
+    if (this.loading || this.allLoaded) return;
 
-      this.selectedProducts = this.selectedProducts.map((item) =>
-        item.productId === (product.id | product.productId)
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-              subtotal: (item.quantity + 1) * item.price,
+    this.loading = true;
+
+    this.productService
+      .findAll(this.productsPage, this.productsSize, ['id,desc'], {
+        query: this.search,
+        categoryId: this.selectedCategoryId,
+      })
+      .pipe(map((res) => res.data))
+      .subscribe({
+        next: (page) => {
+          if (page.content.length === 0) {
+            this.allLoaded = true;
+          } else {
+            this.products = [...this.products, ...page.content];
+            this.productsPage++;
+
+            if (this.products.length >= page.totalElements) {
+              this.allLoaded = true;
             }
-          : item
-      );
-    } else {
-      const formattedPrice = this.formatUtilService.formatPrice(
-        product.salePrice
-      );
-      this.selectedProducts = [
-        ...this.selectedProducts,
-        {
-          productId: product.id,
-          quantity: 1,
-          price: formattedPrice,
-          subtotal: formattedPrice,
-          productName: product.name,
+          }
+          this.loading = false;
         },
-      ];
-      this.saleDetails = [
-        ...this.saleDetails,
-        {
-          productId: product.id,
-          quantity: 1,
-          price: formattedPrice,
-          subtotal: formattedPrice,
-        },
-      ];
-    }
-
-    this.calculateSaleData();
+        error: () => (this.loading = false),
+      });
   }
 
-  deductProduct(product: any) {
-    const existingProduct = this.selectedProducts.find(
-      (p) => p.productId === (product.id | product.productId)
-    );
-
-    if (existingProduct!.quantity > 1) {
-      this.selectedProducts = this.selectedProducts.map((item) =>
-        item.productId === (product.id | product.productId)
-          ? {
-              ...item,
-              quantity: item.quantity - 1,
-              subtotal: (item.quantity - 1) * item.price,
-            }
-          : item
-      );
-
-      this.saleDetails = this.saleDetails.map((item) =>
-        item.productId === product.id
-          ? {
-              ...item,
-              quantity: item.quantity - 1,
-              subtotal: (item.quantity - 1) * item.price,
-            }
-          : item
-      );
-    }
-
-    this.calculateSaleData(); // Actualizar cálculos después de deducir producto
+  onScroll(e: Event) {
+    const target = e.target as HTMLElement;
+    const atBottom =
+      target.scrollTop + target.clientHeight >= target.scrollHeight - 50;
+    if (atBottom) this.loadMoreProducts();
   }
 
-  removeProduct(product: any) {
-    this.selectedProducts = this.selectedProducts.filter(
-      (p) => p.productId !== (product.id | product.productId)
-    );
-
-    this.saleDetails = this.saleDetails.filter(
-      (p) => p.productId !== (product.id | product.productId)
-    );
-
-    this.calculateSaleData();
-    if (this.saleDetails.length == 0) {
-      this.disabled = true;
-    }
+  setCategory(catId?: number) {
+    this.selectedCategoryId = catId;
+    this.resetAndLoad();
   }
 
-  calculateSaleData() {
-    // Calcular el subtotal
-    this.subtotal = this.selectedProducts.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
-    );
-
-    // Calcular el total
-    const tax = this.subtotal * this.taxRate;
-    this.total = this.subtotal + tax - this.discount;
+  onSearchChange(value: string) {
+    this.searchSubject.next(value);
   }
 
-  generateSale() {
-    this.calculateSaleData();
-    const sale: SaleRequest = {
-      subtotal: this.subtotal,
-      tax: this.formatUtilService.formatPrice(this.subtotal * this.taxRate),
-      discount: this.formatUtilService.formatPrice(this.discount),
-      total: this.formatUtilService.formatPrice(this.total),
-      cashierId: this.jwtUtilService.getId(),
+  private resetAndLoad() {
+    this.products = [];
+    this.productsPage = 0;
+    this.allLoaded = false;
+    this.loadMoreProducts();
+  }
 
-      saleDetails: this.saleDetails,
-    };
+  total(items: CartItem[]): number {
+    return items.reduce((acc, i) => acc + i.product.salePrice * i.quantity, 0);
+  }
+
+  toggleMobileSummary() {
+    this.showMobileSummary = !this.showMobileSummary;
+  }
+
+  onSaleGenerated(sale: SaleRequest) {
+    sale.customerId = this.selectedCustomer ? this.selectedCustomer.id : null;
+
     this.saleService.save(sale).subscribe({
-      next: (response) => {
-        this.snackBar.open(response.message, 'cerrar', {
-          duration: 3000,
-        });
-        this.cleanData();
+      next: (data) => {
+        console.log('se generó la venta', data);
       },
       error: (err) => {
-        console.log(err);
+        console.error(err);
       },
     });
-  }
-
-  cleanData() {
-    // Vaciar los arrays de productos seleccionados y detalles de venta
-    this.selectedProducts = [];
-    this.saleDetails = [];
-
-    // Resetear los cálculos
-    this.subtotal = 0;
-    this.total = 0;
-
-    // Reiniciar el estado de otros datos, si es necesario
-    this.discount = 0;
-    this.disabled = true;
   }
 }

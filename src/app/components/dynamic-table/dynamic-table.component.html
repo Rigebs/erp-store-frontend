@@ -1,4 +1,3 @@
-<!-- Column Visibility Controls -->
 <div class="column-visibility-controls">
   <button mat-button [matMenuTriggerFor]="menu">
     <mat-icon>toggle_on</mat-icon> Config. columnas
@@ -9,7 +8,6 @@
     </button>
   </mat-menu>
 </div>
-<!-- Filter Input -->
 <div class="filter-wrapper" [class.no-actions]="!filterActionsTemplate">
   <div class="filter-field">
     <app-filter-input (filterChange)="applyFilter($event)"></app-filter-input>
@@ -18,15 +16,12 @@
   </ng-container>
 </div>
 
-<!-- Table -->
 <div class="table-container">
   <table mat-table [dataSource]="dataSource" matSort>
 
-    <!-- Columnas dinámicas -->
     <ng-container *ngFor="let column of columns" [matColumnDef]="column.field">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column.header }}</th>
       <td mat-cell *matCellDef="let element">
-        <!-- Soporte para imageUrl -->
         <ng-container *ngIf="column.field === 'imageUrl'; else defaultCell">
           <div class="image-container">
             <img
@@ -35,9 +30,7 @@
           </div>
         </ng-container>
 
-        <!-- Default Cell -->
         <ng-template #defaultCell>
-          <!-- enabled -->
           <ng-container *ngIf="column.field === 'enabled'; else otherFields">
             <span class="badge" [ngClass]="getNestedValue(element, column.field) ? 'badge-activo' : 'badge-inactivo'">
               {{ getNestedValue(element, column.field) ? 'Activo' : 'Inactivo' }}
@@ -45,18 +38,15 @@
           </ng-container>
 
           <ng-template #otherFields>
-            <!-- salePrice -->
             <ng-container *ngIf="column.field.includes('salePrice'); else descriptionField">
               s/ {{ getNestedValue(element, column.field) || '-' }}
             </ng-container>
 
-            <!-- description -->
             <ng-template #descriptionField>
               <ng-container *ngIf="column.field === 'description'; else defaultText">
                 <p>{{ getNestedValue(element, column.field) || '-' }}</p>
               </ng-container>
 
-              <!-- Texto por defecto -->
               <ng-template #defaultText>
                 <ng-container *ngIf="column.cellTemplate; else plainValue" [ngTemplateOutlet]="column.cellTemplate"
                   [ngTemplateOutletContext]="{ $implicit: element }">
@@ -77,12 +67,10 @@
       </td>
     </ng-container>
 
-    <!-- Acciones -->
-    <ng-container matColumnDef="actions">
+    <ng-container *ngIf="displayedColumns.includes('actions')" matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
         <div class="actions">
-          <!-- Botones estándar -->
           <button *ngIf="availableActions.includes('toggleEnabled')" mat-icon-button color="accent"
             (click)="onToggleEnabled(element)">
             <mat-icon>{{ element.enabled ? 'block' : 'check_circle' }}</mat-icon>
@@ -96,7 +84,6 @@
             <mat-icon>delete</mat-icon>
           </button>
 
-          <!-- Custom actions extra -->
           <ng-container *ngIf="actionsTemplate">
             <ng-container *ngTemplateOutlet="actionsTemplate; context: {$implicit: element}"></ng-container>
           </ng-container>
@@ -105,11 +92,9 @@
     </ng-container>
 
 
-    <!-- Header & Rows -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 </div>
 
-<!-- Paginator -->
 <mat-paginator [pageSizeOptions]="[10, 20, 30]" [length]="total" (page)="onPageChange($event)"></mat-paginator>
