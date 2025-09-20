@@ -79,7 +79,18 @@ export class DynamicTableComponent implements OnInit, OnChanges {
       return this.columns
         .filter((col) => !col.hidden)
         .some((col) => {
-          const value = this.getNestedValue(data, col.field);
+          let value: any;
+
+          if (col.valueFn) {
+            try {
+              value = col.valueFn(data);
+            } catch {
+              value = null;
+            }
+          } else {
+            value = this.getNestedValue(data, col.field);
+          }
+
           return value !== undefined && value !== null
             ? value.toString().toLowerCase().includes(lowerFilter)
             : false;

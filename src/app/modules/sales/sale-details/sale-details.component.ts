@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDivider } from '@angular/material/divider';
 import { MatTableModule } from '@angular/material/table';
-import { Sale } from '../models/sale';
+import { SaleResponse } from '../models/sale';
 import { SaleService } from '../services/sale.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,7 +26,7 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './sale-details.component.css',
 })
 export class SaleDetailsComponent implements OnInit {
-  sale: Sale | undefined;
+  sale: SaleResponse | undefined;
   displayedColumns: string[] = ['productName', 'quantity', 'price', 'subtotal'];
 
   constructor(

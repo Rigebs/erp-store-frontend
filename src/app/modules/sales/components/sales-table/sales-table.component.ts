@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Sale } from '../../models/sale';
+import { SaleResponse } from '../../models/sale';
 import { MatTableModule } from '@angular/material/table';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +19,7 @@ import { Router } from '@angular/router';
   styleUrl: './sales-table.component.css',
 })
 export class SalesTableComponent {
-  @Input() sales: Sale[] = [];
+  @Input() sales: SaleResponse[] = [];
 
   constructor(private route: Router) {}
 

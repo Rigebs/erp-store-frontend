@@ -22,9 +22,4 @@ export const EMPLOYEE_ROUTES: Routes = [
         (m) => m.EmployeeFormComponent
       ),
   },
-  {
-    path: 'test',
-    loadComponent: () =>
-      import('../div/div.component').then((m) => m.DivComponent),
-  },
 ];
