@@ -67,10 +67,10 @@ export class EmployeeListComponent {
   }
 
   createEmployee() {
-    this.router.navigateByUrl('management/employees/new');
+    this.router.navigateByUrl('employees/new');
   }
 
   onEdit(employee: EmployeeResponse) {
-    this.router.navigateByUrl(`management/employees/${employee.id}/edit`);
+    this.router.navigateByUrl(`employees/${employee.id}/edit`);
   }
 }

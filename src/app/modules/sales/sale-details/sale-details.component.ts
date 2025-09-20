@@ -48,6 +48,6 @@ export class SaleDetailsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigateByUrl('management/sales/list');
+    this.router.navigateByUrl('sales/list');
   }
 }

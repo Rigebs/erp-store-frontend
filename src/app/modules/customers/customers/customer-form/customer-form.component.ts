@@ -138,6 +138,6 @@ export class CustomerFormComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigateByUrl('management/customers');
+    this.router.navigateByUrl('customers');
   }
 }

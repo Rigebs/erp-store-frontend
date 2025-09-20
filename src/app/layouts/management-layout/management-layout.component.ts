@@ -37,23 +37,28 @@ export class ManagementLayoutComponent {
 
   menuItems: MenuItem[] = [
     {
+      label: 'Dashboard',
+      icon: 'dashboard',
+      route: 'dashboard',
+    },
+    {
       label: 'Ventas',
       isSection: true,
       children: [
         {
           label: 'Registrar venta',
           icon: 'shopping_cart',
-          route: 'management/sales/new',
+          route: 'sales/new',
         },
         {
           label: 'Ver ventas',
           icon: 'fact_check',
-          route: 'management/sales/list',
+          route: 'sales/list',
         },
         {
           label: 'Clientes',
           icon: 'group',
-          children: [{ label: 'Clientes', route: 'management/customers' }],
+          children: [{ label: 'Clientes', route: 'customers' }],
         },
       ],
     },
@@ -65,20 +70,20 @@ export class ManagementLayoutComponent {
           label: 'Inventario',
           icon: 'inventory',
           children: [
-            { label: 'Stock', route: 'management/inventory/stock' },
-            { label: 'Movimientos', route: 'management/inventory/movements' },
+            { label: 'Stock', route: 'inventory/stock' },
+            { label: 'Movimientos', route: 'inventory/movements' },
           ],
         },
         {
           label: 'Catálogo',
           icon: 'storefront',
           children: [
-            { label: 'Productos', route: 'management/products' },
-            { label: 'Categorías', route: 'management/categories' },
-            { label: 'Proveedores', route: 'management/suppliers' },
-            { label: 'Lineas', route: 'management/lines' },
-            { label: 'Marcas', route: 'management/brands' },
-            { label: 'Unid. de medida', route: 'management/units-measure' },
+            { label: 'Productos', route: 'products' },
+            { label: 'Categorías', route: 'categories' },
+            { label: 'Proveedores', route: 'suppliers' },
+            { label: 'Lineas', route: 'lines' },
+            { label: 'Marcas', route: 'brands' },
+            { label: 'Unid. de medida', route: 'units-measure' },
           ],
         },
       ],
@@ -90,7 +95,7 @@ export class ManagementLayoutComponent {
         {
           label: 'Empleados',
           icon: 'group',
-          route: 'management/employees',
+          route: 'employees',
         },
       ],
     },

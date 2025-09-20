@@ -10,7 +10,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   const token = jwtUtilService.getToken();
 
   if (token && jwtUtilService.isValidToken()) {
-    router.navigate(['/management/products']);
+    router.navigate(['/dashboard']);
     return false;
   }
 

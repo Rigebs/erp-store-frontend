@@ -4,11 +4,11 @@ import { tokenGuard } from './guards/token.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'management/products',
+    redirectTo: '/dashboard',
     pathMatch: 'full',
   },
   {
-    path: 'management',
+    path: '',
     loadChildren: () => import('./modules/management.routes'),
     canActivate: [tokenGuard],
   },

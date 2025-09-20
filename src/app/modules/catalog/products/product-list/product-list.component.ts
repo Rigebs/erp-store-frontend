@@ -41,7 +41,7 @@ export class ProductListComponent {
   total: number = 0;
 
   createProduct() {
-    this.router.navigateByUrl('management/products/new');
+    this.router.navigateByUrl('products/new');
   }
 
   ngOnInit(): void {
@@ -72,7 +72,7 @@ export class ProductListComponent {
   }
 
   onEdit(product: ProductResponse) {
-    this.router.navigateByUrl(`management/products/${product.id}/edit`);
+    this.router.navigateByUrl(`products/${product.id}/edit`);
   }
 
   onDelete(product: ProductResponse) {

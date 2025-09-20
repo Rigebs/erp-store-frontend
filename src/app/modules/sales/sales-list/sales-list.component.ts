@@ -38,7 +38,7 @@ export class SalesListComponent implements OnInit {
   total: number = 0;
 
   createSale() {
-    this.router.navigateByUrl('management/sales/new');
+    this.router.navigateByUrl('sales/new');
   }
 
   ngOnInit(): void {

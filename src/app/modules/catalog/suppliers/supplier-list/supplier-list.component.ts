@@ -37,7 +37,7 @@ export class SupplierListComponent implements OnInit {
   total: number = 0;
 
   createSupplier() {
-    this.router.navigateByUrl('management/suppliers/new');
+    this.router.navigateByUrl('suppliers/new');
   }
 
   ngOnInit(): void {
@@ -57,7 +57,7 @@ export class SupplierListComponent implements OnInit {
   }
 
   onEdit(supplier: SupplierRequest) {
-    this.router.navigateByUrl(`management/suppliers/${supplier.id}/edit`);
+    this.router.navigateByUrl(`suppliers/${supplier.id}/edit`);
   }
 
   onDelete(supplier: SupplierRequest) {

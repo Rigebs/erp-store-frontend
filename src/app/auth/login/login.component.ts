@@ -44,7 +44,7 @@ export class LoginComponent {
       next: (response) => {
         this.jwtUtilService.saveToken(response.data.token);
         this.showNotification('Inicio de sesión exitoso', 'Cerrar', 3000);
-        this.router.navigate(['/management/products']);
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         if (err.error.details === 'Bad credentials') {

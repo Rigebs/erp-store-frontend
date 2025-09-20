@@ -75,7 +75,7 @@ export class SupplierFormComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigateByUrl('management/suppliers');
+    this.router.navigateByUrl('suppliers');
   }
 
   loadSupplier(id: number): void {

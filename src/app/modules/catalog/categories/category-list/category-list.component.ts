@@ -35,7 +35,7 @@ export class CategoryListComponent implements OnInit {
   total: number = 0;
 
   createCategory() {
-    this.router.navigateByUrl('management/categories/new');
+    this.router.navigateByUrl('categories/new');
   }
 
   ngOnInit(): void {
@@ -55,7 +55,7 @@ export class CategoryListComponent implements OnInit {
   }
 
   onEdit(category: CategoryResponse) {
-    this.router.navigateByUrl(`management/categories/${category.id}/edit`);
+    this.router.navigateByUrl(`categories/${category.id}/edit`);
   }
 
   onDelete(category: CategoryResponse) {

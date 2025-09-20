@@ -70,7 +70,7 @@ export class LineFormComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigateByUrl('management/lines');
+    this.router.navigateByUrl('lines');
   }
 
   loadLine(id: number): void {

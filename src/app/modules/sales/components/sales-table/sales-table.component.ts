@@ -33,6 +33,6 @@ export class SalesTableComponent {
   ];
 
   goToSale(saleId: number) {
-    this.route.navigateByUrl(`/management/sales/find/${saleId}`);
+    this.route.navigateByUrl(`/sales/find/${saleId}`);
   }
 }

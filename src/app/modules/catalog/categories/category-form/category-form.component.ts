@@ -70,7 +70,7 @@ export class CategoryFormComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigateByUrl('management/categories');
+    this.router.navigateByUrl('categories');
   }
 
   loadCategory(id: number): void {

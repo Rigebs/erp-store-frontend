@@ -36,7 +36,7 @@ export class BrandListComponent implements OnInit {
   total: number = 0;
 
   createBrand() {
-    this.router.navigateByUrl('management/brands/new');
+    this.router.navigateByUrl('brands/new');
   }
 
   ngOnInit(): void {
@@ -56,7 +56,7 @@ export class BrandListComponent implements OnInit {
   }
 
   onEdit(brand: BrandResponse) {
-    this.router.navigateByUrl(`management/brands/${brand.id}/edit`);
+    this.router.navigateByUrl(`brands/${brand.id}/edit`);
   }
 
   onDelete(brand: BrandResponse) {

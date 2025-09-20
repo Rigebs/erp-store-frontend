@@ -129,7 +129,7 @@ export class ProductFormComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigateByUrl('management/products');
+    this.router.navigateByUrl('products');
   }
 
   loadProduct(id: number): void {

@@ -35,7 +35,7 @@ export class LineListComponent implements OnInit {
   total: number = 0;
 
   createLine() {
-    this.router.navigateByUrl('management/lines/new');
+    this.router.navigateByUrl('lines/new');
   }
 
   ngOnInit(): void {
@@ -55,7 +55,7 @@ export class LineListComponent implements OnInit {
   }
 
   onEdit(line: LineResponse) {
-    this.router.navigateByUrl(`management/lines/${line.id}/edit`);
+    this.router.navigateByUrl(`lines/${line.id}/edit`);
   }
 
   onDelete(line: LineResponse) {

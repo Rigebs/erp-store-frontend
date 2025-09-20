@@ -82,11 +82,11 @@ export class CustomerListComponent {
   }
 
   createCustomer() {
-    this.router.navigateByUrl('management/customers/new');
+    this.router.navigateByUrl('customers/new');
   }
 
   onEdit(customer: CustomerResponse) {
-    this.router.navigateByUrl(`management/customers/${customer.id}/edit`);
+    this.router.navigateByUrl(`customers/${customer.id}/edit`);
   }
 
   onToggleEnabled(customer: CustomerResponse) {

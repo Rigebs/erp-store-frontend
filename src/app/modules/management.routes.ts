@@ -77,6 +77,13 @@ export default [
             (m) => m.EMPLOYEE_ROUTES
           ),
       },
+      {
+        path: 'dashboard',
+        loadChildren: () =>
+          import('./dashboard/routes/dashboard.routes').then(
+            (m) => m.DASHBOARD_ROUTES
+          ),
+      },
     ],
   },
 ] as Routes;

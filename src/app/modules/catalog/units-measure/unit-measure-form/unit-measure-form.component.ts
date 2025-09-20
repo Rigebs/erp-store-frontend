@@ -71,7 +71,7 @@ export class UnitMeasureFormComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigateByUrl('management/units-measure');
+    this.router.navigateByUrl('units-measure');
   }
 
   loadUnitMeasure(id: number): void {

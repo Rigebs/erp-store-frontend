@@ -70,7 +70,7 @@ export class BrandFormComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigateByUrl('management/brands');
+    this.router.navigateByUrl('brands');
   }
 
   loadBrand(id: number): void {

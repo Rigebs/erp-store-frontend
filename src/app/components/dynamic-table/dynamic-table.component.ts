@@ -67,20 +67,12 @@ export class DynamicTableComponent implements OnInit, OnChanges {
     this.updateDisplayedColumns();
     this.dataSource.data = this.data;
 
-    this.availableActions = [];
-    if (this.toggleEnabled.observed)
-      this.availableActions.push('toggleEnabled');
-    if (this.edit.observed) this.availableActions.push('edit');
-    if (this.delete.observed) this.availableActions.push('delete');
-
     this.dataSource.filterPredicate = (data: any, filter: string) => {
       const lowerFilter = filter.trim().toLowerCase();
-
       return this.columns
         .filter((col) => !col.hidden)
         .some((col) => {
           let value: any;
-
           if (col.valueFn) {
             try {
               value = col.valueFn(data);
@@ -90,12 +82,17 @@ export class DynamicTableComponent implements OnInit, OnChanges {
           } else {
             value = this.getNestedValue(data, col.field);
           }
-
-          return value !== undefined && value !== null
-            ? value.toString().toLowerCase().includes(lowerFilter)
-            : false;
+          return (
+            value != null &&
+            value.toString().toLowerCase().includes(lowerFilter)
+          );
         });
     };
+  }
+
+  ngAfterViewInit(): void {
+    this.updateAvailableActions();
+    this.updateDisplayedColumns();
   }
 
   onPageChange(event: PageEvent) {
@@ -133,6 +130,14 @@ export class DynamicTableComponent implements OnInit, OnChanges {
     if (this.availableActions.length > 0 || this.actionsTemplate) {
       this.displayedColumns.push('actions');
     }
+  }
+
+  private updateAvailableActions(): void {
+    this.availableActions = [];
+    if (this.toggleEnabled.observed)
+      this.availableActions.push('toggleEnabled');
+    if (this.edit.observed) this.availableActions.push('edit');
+    if (this.delete.observed) this.availableActions.push('delete');
   }
 
   toggleColumnVisibility(column: { field: string; hidden?: boolean }): void {

@@ -25,16 +25,21 @@
     <mat-sidenav [opened]="isOpen" [mode]="getSidenavMode()" (closed)="onSidenavClosed()">
       <mat-nav-list>
         <ng-container *ngFor="let item of menuItems">
+          <!-- Ítem independiente -->
+          <a *ngIf="!item.isSection" mat-list-item (click)="navigateTo(item.route ?? '')">
+            <mat-icon matListItemIcon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.label }}</span>
+          </a>
+
           <!-- Sección -->
           <ng-container *ngIf="item.isSection">
             <h3 class="mat-subheader">{{ item.label }}</h3>
-
-            <!-- Render recursivo de hijos -->
             <ng-container *ngFor="let child of item.children">
               <ng-container *ngTemplateOutlet="renderItem; context: { $implicit: child }"></ng-container>
             </ng-container>
           </ng-container>
         </ng-container>
+
       </mat-nav-list>
 
       <!-- Template recursivo -->

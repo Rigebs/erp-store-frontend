@@ -118,6 +118,6 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigateByUrl('management/employees');
+    this.router.navigateByUrl('employees');
   }
 }
