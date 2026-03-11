@@ -1,0 +1,45 @@
+<app-modal-container (close)="close()">
+    <div modal-header>
+        <h2 class="modal-title">Filtros Avanzados</h2>
+        <p class="modal-subtitle">Ajusta los criterios de búsqueda</p>
+    </div>
+
+    <div class="modal-body">
+        <div class="filter-group">
+            <label>Tipo de Movimiento</label>
+            <div class="select-wrapper">
+                <select [value]="type()" (change)="updateType($event)">
+                    <option value="Todos">Todos los tipos</option>
+                    <option value="IN">Entrada (Compra)</option>
+                    <option value="OUT">Salida (Venta)</option>
+                    <option value="TRANSFER">Transferencia</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label>Almacén Específico</label>
+            <div class="select-wrapper">
+                <select [value]="warehouseId() || ''" (change)="updateWarehouse($event)">
+                    <option value="">Todos los almacenes</option>
+                    @for (w of warehouses(); track w.id) {
+                    <option [value]="w.id">{{ w.name }}</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label>Desde la Fecha</label>
+            <input type="date" [value]="dateFrom()" (change)="updateDate($event)">
+        </div>
+    </div>
+
+    <div modal-footer>
+        <button class="btn-clear" (click)="reset()">Limpiar filtros</button>
+        <div class="footer-btns">
+            <button class="btn-secondary" (click)="close()">Cancelar</button>
+            <button class="btn-primary" (click)="apply()">Aplicar Filtros</button>
+        </div>
+    </div>
+</app-modal-container>

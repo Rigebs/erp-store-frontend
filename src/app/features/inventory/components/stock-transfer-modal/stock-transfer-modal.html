@@ -1,0 +1,39 @@
+<app-modal-container (close)="close()">
+    <div modal-header>
+        <h2 class="modal-title">Transferencia de Stock</h2>
+        <p class="origin-label">Desde: <strong>{{ originWarehouse().name }}</strong></p>
+    </div>
+
+    <form [formGroup]="transferForm" class="transfer-form">
+        <div class="field">
+            <label>Almacén Destino</label>
+            <app-select-searchable formControlName="destination" [options]="warehouses()" labelKey="name"
+                placeholder="Seleccione destino..." />
+        </div>
+
+        <div class="field">
+            <label>Producto a Transferir</label>
+            <app-select-searchable formControlName="product" [options]="products()" labelKey="name"
+                placeholder="Buscar producto por nombre o SKU..." />
+        </div>
+
+        <div class="field">
+            <label>
+                Cantidad (Disponibles:
+                <span [class.text-error]="isStockLow()">{{ originWarehouse().productsCount }}</span>)
+            </label>
+            <input type="number" formControlName="quantity" placeholder="0" [class.input-error]="isStockLow()" />
+
+            @if (isStockLow()) {
+            <p class="error-msg">⚠️ No hay suficiente stock disponible.</p>
+            }
+        </div>
+    </form>
+
+    <div modal-footer>
+        <button type="button" class="btn-cancel" (click)="close()">Cancelar</button>
+        <button type="submit" class="btn-save" [disabled]="transferForm.invalid || isStockLow()" (click)="confirm()">
+            Confirmar Transferencia
+        </button>
+    </div>
+</app-modal-container>

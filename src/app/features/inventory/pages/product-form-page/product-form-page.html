@@ -1,0 +1,102 @@
+<section class="page-container">
+    <header class="page-header">
+        <div class="header-content">
+            <h1>{{ isEditMode() ? 'Editar' : 'Nuevo' }} Producto</h1>
+            <p class="subtitle">Gestiona la información detallada de tu inventario</p>
+        </div>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="product-form">
+        <div class="form-section">
+            <div class="grid">
+                <label>
+                    Nombre del Producto
+                    <input type="text" formControlName="name" placeholder="Ej. Laptop Pro 15"
+                        [class.invalid]="form.get('name')?.touched && form.get('name')?.invalid">
+                </label>
+
+                <label>
+                    SKU / Código Interno
+                    <input type="text" formControlName="sku" placeholder="SKU-001">
+                </label>
+            </div>
+
+            <label>
+                Descripción Detallada
+                <textarea formControlName="description"
+                    placeholder="Describe las características del producto..."></textarea>
+            </label>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Clasificación</h2>
+            <div class="grid">
+                <div class="field">
+                    <label>Categoría</label>
+                    <app-select-searchable formControlName="category" [options]="categories()" labelKey="name"
+                        placeholder="Seleccionar categoría">
+                    </app-select-searchable>
+                </div>
+
+                <div class="field">
+                    <label>Marca</label>
+                    <app-select-searchable formControlName="brand" [options]="brands()" labelKey="name"
+                        placeholder="Seleccionar marca">
+                    </app-select-searchable>
+                </div>
+
+                <div class="field">
+                    <label>Unidad de Medida</label>
+                    <app-select-searchable formControlName="unitMeasure" [options]="units()" labelKey="name"
+                        placeholder="Seleccionar unidad">
+                    </app-select-searchable>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Precios</h2>
+            <div class="grid">
+                <label>
+                    Precio Compra
+                    <input type="number" formControlName="purchasePrice" step="0.01" placeholder="0.00">
+                </label>
+
+                <label>
+                    Precio Venta
+                    <input type="number" formControlName="salePrice" step="0.01" placeholder="0.00">
+                </label>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Multimedia y Estado</h2>
+            <label>
+                URL de la Imagen
+                <input type="text" formControlName="imageUrl" placeholder="https://example.com/image.jpg">
+            </label>
+
+            @if (form.get('imageUrl')?.value) {
+            <div class="image-preview-container">
+                <img [ngSrc]="form.get('imageUrl')?.value!" width="200" height="200" alt="Vista previa" priority>
+            </div>
+            }
+
+            <div class="status-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" formControlName="enabled">
+                    <span>Producto activo para la venta</span>
+                </label>
+            </div>
+        </div>
+
+        <footer class="form-actions">
+            <button type="button" class="btn-secondary" routerLink="/inventory/products">
+                Cancelar
+            </button>
+            <button type="submit" class="btn-primary" [disabled]="isLoading()">
+                {{ isLoading() ? 'Guardando cambios...' : (isEditMode() ? 'Actualizar Producto' : 'Crear Producto') }}
+            </button>
+        </footer>
+    </form>
+</section>

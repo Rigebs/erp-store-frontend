@@ -1,0 +1,116 @@
+<div class="page-header">
+    <div>
+        <h1>Inventario de Productos</h1>
+        <p>Gestión centralizada de existencias y precios</p>
+    </div>
+    <button class="btn-pri" [routerLink]="['/inventory/products/new']">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14" />
+        </svg>
+        Nuevo Producto
+    </button>
+</div>
+
+<div class="table-container">
+    <div class="table-actions">
+        <div class="search-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input type="text" placeholder="Buscar por nombre o SKU..." [value]="searchTerm()"
+                (input)="updateSearch($event)">
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table [class.loading]="isLoading()">
+            <thead>
+                <tr>
+                    <th style="width: 60px;"></th>
+                    <th>SKU</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Stock</th>
+                    <th>Precio Venta</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (product of filteredProducts(); track product.id; let first = $first) {
+                <tr>
+                    <td>
+                        <div class="product-thumbnail">
+                            @if (product.imageUrl) {
+                            <img [ngSrc]="product.imageUrl" [alt]="product.name" width="40" height="40"
+                                class="thumb-img" [priority]="first">
+                            } @else {
+                            <div class="thumb-placeholder">
+                                {{ product.name.charAt(0) }}
+                            </div>
+                            }
+                        </div>
+                    </td>
+                    <td class="sku">{{ product.sku }}</td>
+                    <td><strong>{{ product.name }}</strong></td>
+                    <td>{{ product.category?.name || 'Sin categoría' }}</td>
+                    <td>
+                        <app-stock-badge [quantity]="product.stock" [minStock]="product.minStock" />
+                    </td>
+                    <td>{{ product.salePrice | currency }}</td>
+                    <td>
+                        <button class="status-pill" [class.active]="product.enabled" (click)="toggleStatus(product.id)">
+                            <span class="status-dot"></span>
+                            {{ product.enabled ? 'Activo' : 'Inactivo' }}
+                        </button>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon" [routerLink]="['/inventory/products', product.id, 'edit']">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                                </svg>
+                            </button>
+
+                            <button class="btn-icon delete" (click)="deleteProduct(product.id)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path
+                                        d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="8" class="empty-state">
+                        {{ isLoading() ? 'Cargando datos...' : 'No se encontraron productos' }}
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <div class="pagination-info">
+            Mostrando {{ filteredProducts().length }} de {{ totalElements() }} productos
+        </div>
+        <div class="pagination-controls">
+            <button class="btn-pag" [disabled]="currentPage() === 0 || isLoading()"
+                (click)="goToPage(currentPage() - 1)">
+                Anterior
+            </button>
+
+            <span class="page-indicator">Página {{ currentPage() + 1 }} de {{ totalPages() }}</span>
+
+            <button class="btn-pag" [disabled]="currentPage() >= totalPages() - 1 || isLoading()"
+                (click)="goToPage(currentPage() + 1)">
+                Siguiente
+            </button>
+        </div>
+    </div>
+</div>

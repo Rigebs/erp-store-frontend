@@ -1,0 +1,102 @@
+<main class="page-container">
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Estructura de Inventario</h1>
+            <p class="subtitle">Gestiona las líneas de productos y sus categorías correspondientes</p>
+        </div>
+        <button type="button" class="btn-primary" (click)="addNewLine()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14" />
+            </svg>
+            Nueva Línea
+        </button>
+    </header>
+
+    <div class="grid-container">
+        @for (line of inventoryLines(); track line.id) {
+        <article class="line-card" [class.inactive]="!line.enabled">
+            <div class="line-header"
+                [style.border-left-color]="line.enabled ? 'var(--primary-color)' : 'var(--text-muted)'">
+                <div class="line-info">
+                    <div class="title-wrapper">
+                        <h2 [style.color]="line.enabled ? 'var(--primary-color)' : 'var(--text-muted)'">{{ line.name }}
+                        </h2>
+                        <span class="status-dot" [class.active]="line.enabled"></span>
+                    </div>
+                    <span class="badge">{{ line.categories.length }} Categorías</span>
+                </div>
+                <button type="button" class="btn-icon" (click)="configureLine(line.id)" title="Configurar Línea">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="line-content">
+                @if (line.categories.length > 0) {
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Categoría</th>
+                                <th>Estado</th>
+                                <th>Productos</th>
+                                <th class="actions-cell">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (cat of line.categories; track cat.id) {
+                            <tr [class.row-inactive]="!cat.enabled">
+                                <td class="font-medium text-nowrap">{{ cat.name }}</td>
+                                <td>
+                                    <span class="status-pill" [class.active]="cat.enabled">
+                                        {{ cat.enabled ? 'Activo' : 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td>{{ cat.productsCount }}</td>
+                                <td class="actions-cell">
+                                    <div class="action-group">
+                                        <button type="button" class="btn-text edit"
+                                            (click)="editCategory(cat.id, line.id)">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                                                <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                } @else {
+                <div class="empty-state">
+                    <p>No hay categorías registradas en esta línea.</p>
+                </div>
+                }
+            </div>
+
+            <div class="line-footer">
+                <button type="button" class="btn-outline btn-sm" (click)="openModal(line.id)"
+                    [disabled]="!line.enabled">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    Agregar Categoría
+                </button>
+            </div>
+        </article>
+        }
+    </div>
+</main>
+
+@if (showModal()) {
+<app-category-form-modal [category]="selectedCategory()" (save)="handleSave($event)" (cancel)="closeModal()" />
+}
+
+@if (showLineModal()) {
+<app-line-form-modal [line]="selectedLine()" (save)="handleLineSave($event)" (cancel)="closeLineModal()" />
+}

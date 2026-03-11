@@ -1,0 +1,77 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #ffffff; /* Fondo blanco para el contenido */
+}
+
+.auth-container {
+  display: flex;
+  flex-direction: column; /* Stack vertical en mobile */
+  min-height: 100vh;
+}
+
+.auth-visual {
+  display: flex; /* Ahora visible en mobile */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* Gradiente similar al de la imagen */
+  background: linear-gradient(180deg, #6e45e2 0%, #2b32b2 100%);
+  color: white;
+
+  /* El truco de la curva */
+  height: 17vh; /* Ocupa el 35% de la pantalla */
+  border-bottom-left-radius: 50% 20%;
+  border-bottom-right-radius: 50% 20%;
+  text-align: center;
+}
+
+/* Ajuste opcional para que la curva sea más orgánica (estilo "Wave") */
+/* .auth-visual {
+  clip-path: ellipse(100% 100% at 50% 0%);
+} 
+*/
+
+.brand-title {
+  font-size: 2rem; /* Más pequeño en mobile */
+  font-weight: 800;
+  margin: 0;
+}
+
+.brand-tagline {
+  font-size: 1rem;
+  opacity: 0.8;
+  display: none; /* Escondemos el texto largo en mobile para ahorrar espacio */
+}
+
+.auth-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Empieza justo debajo de la curva */
+  padding: 2rem;
+}
+
+/* --- Desktop Styles --- */
+@media (min-width: 992px) {
+  .auth-container {
+    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .auth-visual {
+    height: 100vh;
+    border-radius: 0; /* Quitamos la curva en desktop */
+    clip-path: none;
+  }
+
+  .brand-title {
+    font-size: 3.5rem;
+  }
+
+  .brand-tagline {
+    display: block;
+  }
+}

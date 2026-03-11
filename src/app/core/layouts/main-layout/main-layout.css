@@ -1,0 +1,76 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+}
+
+.layout-container {
+  display: flex; /* Alineación horizontal de Sidebar y Content */
+  min-height: 100vh;
+  width: 100%;
+}
+
+app-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 1100;
+  flex-shrink: 0; /* Importante: evita que el sidebar se aplaste */
+  transition:
+    width 0.3s ease,
+    transform 0.3s ease;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Ocupa todo el espacio restante */
+  min-width: 0; /* Evita que el contenido rompa el layout */
+}
+
+app-navbar {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  /* Asegúrate de que el navbar no tenga márgenes externos */
+  margin: 0;
+}
+
+.main-content {
+  flex: 1;
+  padding: var(--spacer);
+}
+
+.page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* --- Responsive (Mobile) --- */
+
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 1050;
+}
+
+@media (max-width: 768px) {
+  app-sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    /* En móvil sí forzamos un ancho para el slide-out */
+    width: 260px !important;
+  }
+
+  app-sidebar.mobile-active {
+    transform: translateX(0);
+  }
+
+  /* Quitamos el espacio del sidebar en móvil */
+  .content-wrapper {
+    margin-left: 0 !important;
+  }
+}

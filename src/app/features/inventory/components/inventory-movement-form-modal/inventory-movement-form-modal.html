@@ -1,0 +1,66 @@
+<app-modal-container (close)="cancel()">
+    <div modal-header>
+        <h2 class="modal-title">Registrar Movimiento</h2>
+    </div>
+
+    <form [formGroup]="movementForm" class="movement-form">
+        <div class="field">
+            <label>Tipo de Movimiento</label>
+            <div class="type-selector">
+                <label class="radio-option">
+                    <input type="radio" formControlName="type" value="IN" />
+                    <span>Entrada</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" formControlName="type" value="OUT" />
+                    <span>Salida</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" formControlName="type" value="TRANSFER" />
+                    <span>Transferencia</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Producto</label>
+            <app-select-searchable formControlName="product" [options]="products()" labelKey="name"
+                placeholder="Buscar producto..." />
+        </div>
+
+        <div class="row">
+            <div class="field">
+                <label>Cantidad</label>
+                <input type="number" formControlName="quantity" step="0.01" placeholder="0.00" />
+            </div>
+
+            @if (movementForm.get('type')?.value === 'IN' || movementForm.get('type')?.value === 'TRANSFER') {
+            <div class="field">
+                <label>Almacén Destino</label>
+                <app-select-searchable formControlName="toWarehouse" [options]="warehouses()" labelKey="name"
+                    placeholder="Seleccionar..." />
+            </div>
+            }
+
+            @if (movementForm.get('type')?.value === 'OUT' || movementForm.get('type')?.value === 'TRANSFER') {
+            <div class="field">
+                <label>Almacén Origen</label>
+                <app-select-searchable formControlName="fromWarehouse" [options]="warehouses()" labelKey="name"
+                    placeholder="Seleccionar..." />
+            </div>
+            }
+        </div>
+
+        <div class="field">
+            <label>Motivo / Razón</label>
+            <textarea formControlName="reason" rows="3" placeholder="Ej: Reposición de stock mensual"></textarea>
+        </div>
+    </form>
+
+    <div modal-footer>
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancelar</button>
+        <button type="submit" class="btn-save" [disabled]="movementForm.invalid" (click)="submit()">
+            Confirmar Movimiento
+        </button>
+    </div>
+</app-modal-container>

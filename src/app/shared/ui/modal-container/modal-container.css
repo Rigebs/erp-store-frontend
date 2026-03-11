@@ -1,0 +1,65 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  padding: var(--spacer); /* Espacio de seguridad para móviles */
+}
+
+.modal-content {
+  background: var(--surface-color);
+  border-radius: var(--radius);
+  min-width: 400px;
+  max-width: 90vw;
+  box-shadow: var(--shadow);
+
+  /* Flexbox para que el body crezca y el scroll funcione */
+  display: flex;
+  flex-direction: column;
+
+  /* Altura máxima para no salirse de la pantalla */
+  max-height: 85vh;
+  overflow: hidden; /* Evita que el contenido desborde los bordes redondeados */
+}
+
+.modal-header {
+  padding: var(--spacer);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0; /* Evita que el header se aplaste */
+  &:empty {
+    display: none;
+  }
+}
+
+.modal-body {
+  padding: var(--spacer);
+  overflow-y: auto; /* Habilita el scroll vertical si el contenido excede el alto */
+  flex-grow: 1; /* Toma todo el espacio disponible entre header y footer */
+}
+
+.modal-footer {
+  padding: var(--spacer);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0; /* Evita que el footer se aplaste */
+  &:empty {
+    display: none;
+  }
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  line-height: 1;
+}

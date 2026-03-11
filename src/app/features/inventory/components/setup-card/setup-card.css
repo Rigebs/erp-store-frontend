@@ -1,0 +1,91 @@
+.setup-card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: calc(var(--spacer) * 1.5);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+}
+
+.setup-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer);
+  margin-bottom: var(--spacer);
+}
+
+.icon-box {
+  width: 40px;
+  height: 40px;
+  background: var(--bg-color);
+  color: var(--primary-color);
+  border-radius: calc(var(--radius) / 2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-title h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.card-content p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: calc(var(--spacer) * 1.5);
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--spacer);
+}
+
+.stats {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--bg-color);
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  color: var(--text-muted);
+}
+
+.btn-manage {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.arrow {
+  transition: transform 0.2s;
+}
+
+.btn-manage:hover {
+  color: var(--primary-dark);
+}
+
+.btn-manage:hover .arrow {
+  transform: translateX(4px);
+}

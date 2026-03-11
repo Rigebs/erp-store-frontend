@@ -1,0 +1,39 @@
+<div class="modal-overlay" (click)="close()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+            <h2>{{ unit() ? 'Configurar Unidad' : 'Nueva Unidad de Medida' }}</h2>
+            <button type="button" class="btn-close" (click)="close()">×</button>
+        </header>
+
+        <form [formGroup]="unitForm" (ngSubmit)="onSubmit()" class="modal-form">
+            <div class="form-row">
+                <div class="form-group flex-3">
+                    <label for="name">Nombre de la Unidad</label>
+                    <input id="name" type="text" formControlName="name" [class.invalid]="isFieldInvalid('name')"
+                        placeholder="Ej. Kilogramos, Metros..." />
+                </div>
+
+                <div class="form-group flex-1">
+                    <label for="abbreviation">Abrev.</label>
+                    <input id="abbreviation" type="text" formControlName="abbreviation"
+                        [class.invalid]="isFieldInvalid('abbreviation')" placeholder="Ej. kg" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Descripción</label>
+                <textarea id="description" formControlName="description" [class.invalid]="isFieldInvalid('description')"
+                    placeholder="Describe el uso de esta unidad de medida" rows="3"></textarea>
+            </div>
+
+            <footer class="modal-actions">
+                <button type="button" class="btn-secondary" (click)="close()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-primary" [disabled]="unitForm.invalid">
+                    {{ unit() ? 'Actualizar' : 'Guardar Unidad' }}
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+<div class="container">
+    <header>
+        <h1>Configuración de Inventario</h1>
+        <p>Gestiona las tablas maestras y parámetros globales para el control de stock.</p>
+    </header>
+
+    <div class="setup-grid">
+        @for (option of menuOptions(); track option.title) {
+        <app-setup-card [icon]="option.icon" [title]="option.title" [description]="option.description"
+            [stats]="option.stats" [link]="option.link" (manage)="navigateTo($event)" />
+        }
+    </div>
+</div>

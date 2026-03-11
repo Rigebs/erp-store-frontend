@@ -1,0 +1,253 @@
+:host {
+  display: block;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  padding: var(--spacer);
+}
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacer);
+  margin-bottom: calc(var(--spacer) * 2);
+  flex-wrap: wrap;
+}
+
+.header-content h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 450px), 1fr));
+  gap: calc(var(--spacer) * 1.5);
+}
+
+.line-card {
+  background: var(--surface-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.line-card.inactive {
+  opacity: 0.7;
+}
+
+.line-header {
+  padding: var(--spacer);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-muted);
+}
+
+.status-dot.active {
+  background-color: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.line-info h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.badge {
+  background: var(--bg-color);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.line-content {
+  flex-grow: 1;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 400px;
+}
+
+.data-table th {
+  text-align: left;
+  background: var(--bg-color);
+  padding: 0.75rem var(--spacer);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+}
+
+.data-table td {
+  padding: 0.75rem var(--spacer);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.row-inactive td {
+  color: var(--text-muted);
+}
+
+.status-pill {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.status-pill.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.text-nowrap {
+  white-space: nowrap;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.actions-cell {
+  text-align: right;
+  width: 60px;
+}
+
+.action-group {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.line-footer {
+  padding: var(--spacer);
+  background: var(--bg-color);
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--border-color);
+}
+
+.empty-state {
+  padding: calc(var(--spacer) * 2);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+button {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.6rem 1.2rem;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.4rem 0.8rem;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: white;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-icon {
+  background: transparent;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.btn-icon:hover {
+  background: var(--bg-color);
+  color: var(--primary-color);
+}
+
+.btn-text.edit {
+  color: var(--primary-color);
+  background: transparent;
+  padding: 4px;
+}
+
+.btn-text.edit:hover {
+  background: rgba(63, 81, 181, 0.1);
+}
+
+.btn-sm {
+  font-size: 0.8rem;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+@media (max-width: 600px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}

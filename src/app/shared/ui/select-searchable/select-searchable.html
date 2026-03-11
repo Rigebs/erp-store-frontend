@@ -1,0 +1,25 @@
+<div class="select-container">
+    <div class="select-trigger" (click)="toggle()" [class.open]="isOpen()">
+        <span [class.placeholder]="!value()">{{ selectedLabel() }}</span>
+        <span class="arrow"></span>
+    </div>
+
+    @if (isOpen()) {
+    <div class="select-dropdown" [ngStyle]="dropdownStyles()">
+        <div class="search-box">
+            <input type="text" [formControl]="searchControl" placeholder="Buscar..." (click)="$event.stopPropagation()"
+                autofocus>
+        </div>
+
+        <ul class="options-list">
+            @for (opt of filteredOptions(); track opt) {
+            <li (click)="selectOption(opt); $event.stopPropagation()" [class.selected]="opt === value()">
+                {{ opt[labelKey()] }}
+            </li>
+            } @empty {
+            <li class="no-results">No hay resultados</li>
+            }
+        </ul>
+    </div>
+    }
+</div>

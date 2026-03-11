@@ -1,0 +1,8 @@
+<div class="toggle-container">
+    <div class="switch" [class.is-checked]="checked()">
+        <div class="handle"></div>
+    </div>
+    @if (label()) {
+    <span class="label">{{ label() }}</span>
+    }
+</div>

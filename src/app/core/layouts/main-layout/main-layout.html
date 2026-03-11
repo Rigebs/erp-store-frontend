@@ -1,0 +1,18 @@
+<div class="layout-container">
+    @if (isMobileOpen()) {
+    <div class="mobile-overlay" (click)="toggleMobileMenu()"></div>
+    }
+
+    <app-sidebar [items]="navItems()" [class.mobile-active]="isMobileOpen()"
+        (collapsedChanged)="onSidebarToggle($event)" />
+
+    <div class="content-wrapper">
+        <app-navbar userDisplayName="Alex Dev" (logout)="handleLogout()" (menuOpened)="toggleMobileMenu()" />
+
+        <main class="main-content">
+            <div class="page-container">
+                <router-outlet />
+            </div>
+        </main>
+    </div>
+</div>
