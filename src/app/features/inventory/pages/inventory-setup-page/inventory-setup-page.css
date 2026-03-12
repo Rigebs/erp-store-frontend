@@ -1,26 +1,15 @@
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: var(--spacer);
-}
-
-header {
-  margin-bottom: calc(var(--spacer) * 2);
-}
-
-header h1 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-header p {
-  color: var(--text-muted);
-  margin-top: 0.5rem;
-}
+@import url('../../../../shared/styles/page-layout.css');
 
 .setup-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: calc(var(--spacer) * 1.5);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+@media (max-width: 640px) {
+  .setup-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }

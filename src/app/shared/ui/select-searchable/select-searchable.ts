@@ -14,6 +14,7 @@ import {
   NG_VALUE_ACCESSOR,
   FormControl,
   ReactiveFormsModule,
+  NgControl,
 } from '@angular/forms';
 import { CommonModule, DOCUMENT } from '@angular/common';
 
@@ -21,13 +22,6 @@ import { CommonModule, DOCUMENT } from '@angular/common';
   selector: 'app-select-searchable',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectSearchable),
-      multi: true,
-    },
-  ],
   templateUrl: './select-searchable.html',
   styleUrl: './select-searchable.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +30,14 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
   options = input<any[]>([]);
   labelKey = input<string>('label');
   placeholder = input<string>('Seleccionar...');
+
+  public ngControl = inject(NgControl, { self: true, optional: true });
+
+  constructor() {
+    if (this.ngControl) {
+      this.ngControl.valueAccessor = this;
+    }
+  }
 
   private el = inject(ElementRef);
   private document = inject(DOCUMENT);
@@ -46,8 +48,11 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
   dropdownStyles = signal<any>({});
 
   searchControl = new FormControl<string>('', { nonNullable: true });
-
   private cleanupListeners: (() => void)[] = [];
+
+  get isError(): boolean {
+    return !!(this.ngControl?.invalid && (this.ngControl?.touched || this.ngControl?.dirty));
+  }
 
   filteredOptions = computed(() => {
     const term = this.searchControl.value.toLowerCase();
@@ -68,8 +73,8 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
   private updateDropdownPosition() {
     const rect = this.el.nativeElement.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-    const dropdownHeight = 300;
-    const margin = 8;
+    const dropdownMaxHeight = 310;
+    const margin = 5;
 
     const spaceBelow = viewportHeight - rect.bottom;
     const spaceAbove = rect.top;
@@ -78,23 +83,18 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
       position: 'fixed',
       left: `${rect.left}px`,
       width: `${rect.width}px`,
-      zIndex: '1100',
+      zIndex: '2000',
+      pointerEvents: 'auto',
     };
 
-    if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
-      styles = {
-        ...styles,
-        bottom: `${viewportHeight - rect.top + margin}px`,
-        top: 'auto',
-        animation: 'fadeInUp 0.15s ease-out',
-      };
+    if (spaceBelow < dropdownMaxHeight && spaceAbove > spaceBelow) {
+      styles.bottom = `${viewportHeight - rect.top + margin}px`;
+      styles.top = 'auto';
+      styles.animation = 'fadeInUp 0.15s ease-out';
     } else {
-      styles = {
-        ...styles,
-        top: `${rect.bottom + margin}px`,
-        bottom: 'auto',
-        animation: 'fadeInDown 0.15s ease-out',
-      };
+      styles.top = `${rect.bottom + margin}px`;
+      styles.bottom = 'auto';
+      styles.animation = 'fadeInDown 0.15s ease-out';
     }
 
     this.dropdownStyles.set(styles);
@@ -109,27 +109,24 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
     if (this.isOpen()) return;
 
     this.searchControl.setValue('');
-    this.updateDropdownPosition();
     this.isOpen.set(true);
 
-    const scrollHandler = (event: Event) => {
-      const isScrollingInside = (event.target as HTMLElement).closest('.options-list');
-      if (!isScrollingInside) this.close();
+    requestAnimationFrame(() => this.updateDropdownPosition());
+
+    const scrollHandler = () => {
+      if (this.isOpen()) this.updateDropdownPosition();
     };
 
-    // Nuevo listener de click global más preciso
     const clickHandler = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      const clickedInsideTrigger = this.el.nativeElement.contains(target);
-      const clickedInsideDropdown = target.closest('.select-dropdown');
-
-      if (!clickedInsideTrigger && !clickedInsideDropdown) {
+      // Si el clic es fuera del componente, cerramos
+      if (!this.el.nativeElement.contains(target) && !target.closest('.select-dropdown')) {
         this.close();
       }
     };
 
     this.document.addEventListener('scroll', scrollHandler, true);
-    this.document.addEventListener('mousedown', clickHandler); // Usamos mousedown para mayor velocidad
+    this.document.addEventListener('mousedown', clickHandler);
     window.addEventListener('resize', scrollHandler);
 
     this.cleanupListeners.push(
@@ -140,19 +137,11 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
   }
 
   close(): void {
+    if (!this.isOpen()) return; // Evitar llamadas dobles
     this.isOpen.set(false);
+    this.onTouched(); // <--- CRITICO: Avisa a Angular que el componente fue "tocado"
     this.cleanupListeners.forEach((fn) => fn());
     this.cleanupListeners = [];
-  }
-
-  onDocumentClick(event: MouseEvent): void {
-    const clickedInside = this.el.nativeElement.contains(event.target);
-
-    const clickedOnDropdown = (event.target as HTMLElement).closest('.select-dropdown');
-
-    if (!clickedInside && !clickedOnDropdown && this.isOpen()) {
-      this.close();
-    }
   }
 
   writeValue(val: any): void {

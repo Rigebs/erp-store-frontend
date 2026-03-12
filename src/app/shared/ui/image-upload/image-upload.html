@@ -1,0 +1,51 @@
+<div class="uploader-container">
+    @if (displayImage()) {
+    <div class="preview-wrapper">
+        <img [src]="displayImage()" alt="Preview" class="preview-img">
+
+        @if (isLoading()) {
+        <div class="loading-overlay">
+            <div class="spinner"></div>
+            <span>Subiendo...</span>
+        </div>
+        }
+
+        @if (selectedFile()) {
+        <div class="actions-overlay">
+            <button type="button" class="btn-action confirm" (click)="confirmUpload()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </button>
+            <button type="button" class="btn-action cancel" (click)="clearSelection()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        } @else {
+        <button type="button" class="remove-badge" (click)="clearSelection()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        }
+    </div>
+    } @else {
+    <label class="drop-zone">
+        <input type="file" [disabled]="isLoading()" class="file-input" accept="image/*"
+            (change)="onFileSelected($event)">
+        <div class="drop-zone-content">
+            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <span class="primary-text">Arrastra una imagen o haz clic</span>
+            <span class="secondary-text">PNG, JPG hasta 5MB</span>
+        </div>
+    </label>
+    }
+</div>

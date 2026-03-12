@@ -12,6 +12,8 @@
     background-color 0.2s ease-in-out,
     transform 0.1s ease;
   user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .success {

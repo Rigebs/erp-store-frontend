@@ -92,6 +92,14 @@ export class ProductService {
     );
   }
 
+  exportToExcel(query: string): Observable<Blob> {
+    const params = { query };
+    return this.http.get(`${this.apiUrl}/export`, {
+      params,
+      responseType: 'blob',
+    });
+  }
+
   toggleEnabled(id: number): Observable<void> {
     return this.http.patch<ApiResponse<void>>(`${this.apiUrl}/${id}`, {}).pipe(
       map(() => {

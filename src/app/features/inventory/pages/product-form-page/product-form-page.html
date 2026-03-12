@@ -1,4 +1,4 @@
-<section class="page-container">
+<main class="page-container">
     <header class="page-header">
         <div class="header-content">
             <h1>{{ isEditMode() ? 'Editar' : 'Nuevo' }} Producto</h1>
@@ -6,25 +6,34 @@
         </div>
     </header>
 
-    <form [formGroup]="form" (ngSubmit)="save()" class="product-form">
+    <form [formGroup]="form" (ngSubmit)="save()" class="standard-form">
         <div class="form-section">
             <div class="grid">
                 <label>
                     Nombre del Producto
                     <input type="text" formControlName="name" placeholder="Ej. Laptop Pro 15"
                         [class.invalid]="form.get('name')?.touched && form.get('name')?.invalid">
+                    <app-form-error [control]="form.get('name')"></app-form-error>
                 </label>
 
                 <label>
                     SKU / Código Interno
-                    <input type="text" formControlName="sku" placeholder="SKU-001">
+                    <input type="text" formControlName="sku" placeholder="SKU-001"
+                        [class.invalid]="form.get('sku')?.touched && form.get('sku')?.invalid">
+                    <app-form-error [control]="form.get('sku')"></app-form-error>
+                </label>
+                <label>
+                    Código de Barras
+                    <input type="text" formControlName="barcode" placeholder="750123456789"
+                        [class.invalid]="isInvalid('barcode')">
+                    <app-form-error [control]="form.get('barcode')"></app-form-error>
                 </label>
             </div>
 
             <label>
                 Descripción Detallada
-                <textarea formControlName="description"
-                    placeholder="Describe las características del producto..."></textarea>
+                <textarea formControlName="description" placeholder="Describe las características..."></textarea>
+                <app-form-error [control]="form.get('description')"></app-form-error>
             </label>
         </div>
 
@@ -33,24 +42,29 @@
             <div class="grid">
                 <div class="field">
                     <label>Categoría</label>
-                    <app-select-searchable formControlName="category" [options]="categories()" labelKey="name"
-                        placeholder="Seleccionar categoría">
+                    <app-select-searchable formControlName="category" [options]="categories()" labelKey="name">
                     </app-select-searchable>
+                    <app-form-error [control]="form.get('category')"></app-form-error>
                 </div>
 
                 <div class="field">
                     <label>Marca</label>
-                    <app-select-searchable formControlName="brand" [options]="brands()" labelKey="name"
-                        placeholder="Seleccionar marca">
+                    <app-select-searchable formControlName="brand" [options]="brands()" labelKey="name">
                     </app-select-searchable>
+                    <app-form-error [control]="form.get('brand')"></app-form-error>
                 </div>
-
                 <div class="field">
                     <label>Unidad de Medida</label>
-                    <app-select-searchable formControlName="unitMeasure" [options]="units()" labelKey="name"
-                        placeholder="Seleccionar unidad">
+                    <app-select-searchable formControlName="unitMeasure" [options]="units()" labelKey="name">
                     </app-select-searchable>
+                    <app-form-error [control]="form.get('unitMeasure')"></app-form-error>
                 </div>
+                <label>
+                    Stock Mínimo (Alerta)
+                    <input type="number" formControlName="minStock" placeholder="0"
+                        [class.invalid]="isInvalid('minStock')">
+                    <app-form-error [control]="form.get('minStock')"></app-form-error>
+                </label>
             </div>
         </div>
 
@@ -59,28 +73,32 @@
             <div class="grid">
                 <label>
                     Precio Compra
-                    <input type="number" formControlName="purchasePrice" step="0.01" placeholder="0.00">
+                    <input type="number" formControlName="purchasePrice" step="0.01" placeholder="0.00"
+                        [class.invalid]="form.get('purchasePrice')?.touched && form.get('purchasePrice')?.invalid">
+                    <app-form-error [control]="form.get('purchasePrice')"></app-form-error>
                 </label>
 
                 <label>
                     Precio Venta
-                    <input type="number" formControlName="salePrice" step="0.01" placeholder="0.00">
+                    <input type="number" formControlName="salePrice" step="0.01" placeholder="0.00"
+                        [class.invalid]="form.get('salePrice')?.touched && form.get('salePrice')?.invalid">
+                    <app-form-error [control]="form.get('salePrice')"></app-form-error>
                 </label>
             </div>
         </div>
 
         <div class="form-section">
             <h2 class="section-title">Multimedia y Estado</h2>
-            <label>
-                URL de la Imagen
-                <input type="text" formControlName="imageUrl" placeholder="https://example.com/image.jpg">
-            </label>
 
-            @if (form.get('imageUrl')?.value) {
-            <div class="image-preview-container">
-                <img [ngSrc]="form.get('imageUrl')?.value!" width="200" height="200" alt="Vista previa" priority>
+            <div class="field">
+                <label>Imagen del Producto</label>
+
+                <app-image-uploader [imageUrl]="form.get('imageUrl')?.value ?? null" [isLoading]="isUploadingImage()"
+                    (upload)="onImageUpload($event)" (remove)="onImageRemove()">
+                </app-image-uploader>
+
+                <app-form-error [control]="form.get('imageUrl')"></app-form-error>
             </div>
-            }
 
             <div class="status-group">
                 <label class="checkbox-label">
@@ -91,12 +109,12 @@
         </div>
 
         <footer class="form-actions">
-            <button type="button" class="btn-secondary" routerLink="/inventory/products">
+            <button type="button" class="btn btn-secondary" routerLink="/inventory/products">
                 Cancelar
             </button>
-            <button type="submit" class="btn-primary" [disabled]="isLoading()">
-                {{ isLoading() ? 'Guardando cambios...' : (isEditMode() ? 'Actualizar Producto' : 'Crear Producto') }}
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
+                {{ isLoading() ? 'Guardando...' : (isEditMode() ? 'Actualizar' : 'Crear') }}
             </button>
         </footer>
     </form>
-</section>
+</main>

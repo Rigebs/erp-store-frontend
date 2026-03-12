@@ -1,0 +1,172 @@
+.uploader-container {
+  height: 200px;
+  position: relative;
+  margin: 0.5rem 0;
+}
+
+.drop-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius);
+  background-color: var(--surface-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+:host.drag-over .drop-zone {
+  border-color: var(--primary-color);
+  background-color: rgba(63, 81, 181, 0.05);
+  transform: scale(1.01);
+}
+
+.file-input {
+  display: none;
+}
+
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+}
+
+.upload-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.primary-text {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.secondary-text {
+  font-size: 0.85rem;
+}
+
+.preview-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Cambia cover por contain */
+  display: block;
+  background-color: #f8f9fa; /* Un fondo sutil para los espacios vacíos */
+}
+
+.actions-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  backdrop-filter: blur(2px);
+}
+
+.btn-action {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: transform 0.2s ease;
+}
+
+.btn-action svg {
+  width: 24px;
+  height: 24px;
+}
+
+.btn-action:hover {
+  transform: scale(1.1);
+}
+
+.confirm {
+  background-color: var(--success);
+}
+.cancel {
+  background-color: var(--error);
+}
+
+.remove-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--error);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.remove-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Estado deshabilitado */
+.is-loading {
+  pointer-events: none;
+  filter: grayscale(0.5);
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  z-index: 20;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Spinner CSS simple */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.drop-zone.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -10,11 +10,13 @@ import { CategoryService } from '../../services/category-service';
 import { LineService } from '../../services/line-service';
 import { ProductService } from '../../services/product-service';
 import { UnitMeasureService } from '../../services/unit-measure-service';
+import { FormError } from '../../../../shared/components/form-error/form-error';
+import { ImageUpload } from '../../../../shared/ui/image-upload/image-upload';
+import { ImageService } from '../../services/image-service';
 
 @Component({
   selector: 'app-product-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, NgOptimizedImage, SelectSearchable],
+  imports: [ReactiveFormsModule, RouterLink, SelectSearchable, FormError, ImageUpload],
   templateUrl: './product-form-page.html',
   styleUrl: './product-form-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,6 +27,7 @@ export class ProductFormPage implements OnInit {
   private readonly brandService = inject(BrandService);
   private readonly categoryService = inject(CategoryService);
   private readonly unitService = inject(UnitMeasureService);
+  private readonly imageService = inject(ImageService);
   private readonly lineService = inject(LineService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -32,6 +35,8 @@ export class ProductFormPage implements OnInit {
   isEditMode = signal(false);
   productId = signal<number | null>(null);
   isLoading = this.productService.isLoading;
+
+  isUploadingImage = signal(false);
 
   brands = toSignal(this.brandService.findAll().pipe(map((r) => r.content)), { initialValue: [] });
   categories = toSignal(this.categoryService.findAll().pipe(map((r) => r.content)), {
@@ -44,7 +49,7 @@ export class ProductFormPage implements OnInit {
     name: ['', [Validators.required, Validators.minLength(3)]],
     description: [''],
     sku: ['', [Validators.required]],
-    barcode: [''],
+    barcode: ['', [Validators.required]],
     purchasePrice: [null as unknown as number, [Validators.required, Validators.min(0)]],
     salePrice: [null as unknown as number, [Validators.required, Validators.min(0)]],
     imageUrl: [''],
@@ -52,7 +57,6 @@ export class ProductFormPage implements OnInit {
     brand: [null as any],
     category: [null as any],
     unitMeasure: [null as any],
-    line: [null as any],
   });
 
   ngOnInit(): void {
@@ -62,6 +66,11 @@ export class ProductFormPage implements OnInit {
       this.productId.set(Number(id));
       this.loadProduct(Number(id));
     }
+  }
+
+  protected isInvalid(controlName: string): boolean {
+    const control = this.form.get(controlName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
   private loadProduct(id: number): void {
@@ -78,6 +87,23 @@ export class ProductFormPage implements OnInit {
     });
   }
 
+  onImageUpload(file: File): void {
+    this.isUploadingImage.set(true);
+    this.imageService.upload(file).subscribe({
+      next: (response) => {
+        this.form.patchValue({ imageUrl: response.imageUrl });
+        this.isUploadingImage.set(false);
+      },
+      error: (err) => {
+        (console.error('Error al subir imagen', err), this.isUploadingImage.set(false));
+      },
+    });
+  }
+
+  onImageRemove(): void {
+    this.form.patchValue({ imageUrl: '' });
+  }
+
   save(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -90,7 +116,6 @@ export class ProductFormPage implements OnInit {
       brandId: rawValues.brand?.id,
       categoryId: rawValues.category?.id,
       unitMeasureId: rawValues.unitMeasure?.id,
-      lineId: rawValues.line?.id,
     };
 
     const request$: Observable<any> = this.isEditMode()
@@ -98,7 +123,7 @@ export class ProductFormPage implements OnInit {
       : this.productService.save(payload);
 
     request$.subscribe({
-      next: () => this.router.navigate(['/products']),
+      next: () => this.router.navigate(['/inventory/products']),
       error: (err: unknown) => console.error(err),
     });
   }

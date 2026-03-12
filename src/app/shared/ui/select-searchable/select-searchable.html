@@ -1,5 +1,5 @@
 <div class="select-container">
-    <div class="select-trigger" (click)="toggle()" [class.open]="isOpen()">
+    <div class="select-trigger" (click)="toggle()" [class.open]="isOpen()" [class.invalid]="isError">
         <span [class.placeholder]="!value()">{{ selectedLabel() }}</span>
         <span class="arrow"></span>
     </div>
@@ -10,7 +10,6 @@
             <input type="text" [formControl]="searchControl" placeholder="Buscar..." (click)="$event.stopPropagation()"
                 autofocus>
         </div>
-
         <ul class="options-list">
             @for (opt of filteredOptions(); track opt) {
             <li (click)="selectOption(opt); $event.stopPropagation()" [class.selected]="opt === value()">

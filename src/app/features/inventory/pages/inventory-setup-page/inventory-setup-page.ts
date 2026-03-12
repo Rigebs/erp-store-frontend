@@ -35,14 +35,6 @@ export class InventorySetupPage {
       stats: '8 unidades',
       link: '/inventory/setup/units-measure',
     },
-    {
-      // Icono: Warehouse / Almacenes
-      icon: 'M3 21h18M3 10l9-7 9 7v11H3V10z M9 21v-6a3 3 0 0 1 6 0v6',
-      title: 'Almacenes',
-      description: 'Configura tus puntos físicos de almacenamiento, tiendas o bodegas.',
-      stats: '3 activos',
-      link: '/inventory/warehouses',
-    },
   ]);
 
   navigateTo(path: string): void {

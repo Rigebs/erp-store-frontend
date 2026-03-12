@@ -52,9 +52,42 @@ export class ProductListPage {
     });
   }
 
+  getRelativePath(fullUrl: string): string {
+    if (!fullUrl) return '';
+    const parts = fullUrl.split('/upload/');
+    if (parts.length > 1) {
+      return parts[1];
+    }
+    return fullUrl;
+  }
+
   updateSearch(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchTerm.set(input.value);
+  }
+
+  exportInventory(): void {
+    const currentQuery = this.searchTerm().trim();
+
+    this.productService.exportToExcel(currentQuery).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        const date = new Date().toISOString().split('T')[0];
+        a.download = `inventario_${date}.xlsx`;
+
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      error: (err) => {
+        console.error('Error al exportar el inventario', err);
+        alert('No se pudo generar el reporte. Intente más tarde.');
+      },
+    });
   }
 
   goToPage(page: number): void {

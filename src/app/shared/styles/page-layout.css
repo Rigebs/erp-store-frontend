@@ -1,0 +1,100 @@
+/* Estructura Base de la Página */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer);
+  padding: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Encabezado Estándar */
+.page-header {
+  display: flex;
+  flex-direction: column; /* Mobile first */
+  gap: var(--spacer);
+  margin-bottom: calc(var(--spacer) * 0.5);
+}
+
+.page-header-titles h1 {
+  color: var(--text-main);
+  margin: 0;
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+.page-header-titles p {
+  color: var(--text-muted);
+  margin: 0.25rem 0 0 0;
+  font-size: 0.95rem;
+}
+
+/* Contenedor de Acciones (Botones al lado del H1) */
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Área de Contenido Variable (Tablas, Formularios, Grillas) */
+.page-content {
+  width: 100%;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Breakpoints */
+@media (min-width: 768px) {
+  .page-container {
+    padding: var(--spacer);
+  }
+  .page-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .page-header-actions {
+    justify-content: flex-end;
+  }
+}
+
+/* Utilidad para botones primarios dentro del header */
+.btn-header-action {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.btn-header-action:hover {
+  background: var(--primary-dark);
+}
+
+.btn-header-action:active {
+  transform: scale(0.98);
+}

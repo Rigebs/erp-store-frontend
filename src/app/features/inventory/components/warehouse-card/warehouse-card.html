@@ -1,0 +1,83 @@
+<div class="card-top">
+    <span class="status-pill" [class.active]="warehouse().enabled">
+        <span class="status-dot"></span>
+        {{ warehouse().type }}
+    </span>
+
+    <div class="top-actions">
+        @if (warehouse().main) {
+        <span class="badge-main">Principal</span>
+        }
+        <div class="menu-container">
+            <button class="btn-icon-dot" (click)="toggleMenu.emit($event)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="1" />
+                    <circle cx="12" cy="5" r="1" />
+                    <circle cx="12" cy="19" r="1" />
+                </svg>
+            </button>
+
+            @if (isMenuOpen()) {
+            <div class="dropdown-floating">
+                <button (click)="edit.emit()">Editar Detalles</button>
+                <button (click)="toggleStatus.emit()">{{ warehouse().enabled ? 'Desactivar' : 'Activar' }}</button>
+                <div class="dropdown-divider"></div>
+                <button class="danger" (click)="delete.emit()">Eliminar Almacén</button>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card-info">
+    <h3>{{ warehouse().name }}</h3>
+    <p class="location-text">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+        </svg>
+        {{ warehouse().location }}
+    </p>
+</div>
+
+<div class="capacity-section">
+    <div class="capacity-label">
+        <span>Ocupación</span>
+        <strong>{{ warehouse().occupation }}%</strong>
+    </div>
+    <div class="progress-bar">
+        <div class="progress-fill" [class.warning]="occupationStatus().warning"
+            [class.danger]="occupationStatus().danger" [style.width.%]="warehouse().occupation">
+        </div>
+    </div>
+</div>
+
+<div class="metrics-grid">
+    <div class="metric-item">
+        <span class="label">SKUs en Stock</span>
+        <span class="value">{{ warehouse().productsCount | number }}</span>
+    </div>
+    <div class="metric-item">
+        <span class="label">Valorización</span>
+        <span class="value">{{ warehouse().valuation | currency }}</span>
+    </div>
+</div>
+
+<div class="card-footer-actions">
+    <button class="btn-card-outline" (click)="viewInventory.emit()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 8V21H3V8M1 3H23V8H1V3ZM10 12H14" />
+        </svg>
+        Inventario
+    </button>
+    <button class="btn-card-outline" (click)="transferStock.emit()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 3 21 3 21 8" />
+            <line x1="4" y1="20" x2="21" y2="3" />
+            <polyline points="21 16 21 21 16 21" />
+            <line x1="15" y1="15" x2="21" y2="21" />
+            <line x1="4" y1="4" x2="9" y2="9" />
+        </svg>
+        Transferir
+    </button>
+</div>

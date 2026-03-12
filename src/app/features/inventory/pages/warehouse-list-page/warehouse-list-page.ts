@@ -1,16 +1,14 @@
 import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { WarehouseService } from '../../services/warehouse-service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ModalService } from '../../../../shared/services/modal-service';
+import { WarehouseCard } from '../../components/warehouse-card/warehouse-card';
 import { StockTransferModal } from '../../components/stock-transfer-modal/stock-transfer-modal';
-import { Warehouse } from '../../../../core/models/inventory.model';
 
 @Component({
   selector: 'app-warehouse-list-page',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule, WarehouseCard],
   templateUrl: './warehouse-list-page.html',
   styleUrls: ['./warehouse-list-page.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,30 +44,17 @@ export class WarehouseListPage implements OnInit {
     this.openMenuId.update((prev) => (prev === id ? null : id));
   }
 
-  openTransferModal(warehouse: Warehouse): void {
+  openTransferModal(warehouse: any): void {
     this.openMenuId.set(null);
-
-    this.modal
-      .open(StockTransferModal, {
-        originWarehouse: warehouse,
-      })
-      .subscribe((payload) => {
-        if (payload) {
-          this.executeTransfer(payload);
-        }
-      });
+    this.modal.open(StockTransferModal, { originWarehouse: warehouse }).subscribe((payload) => {
+      if (payload) this.executeTransfer(payload);
+    });
   }
 
   private executeTransfer(payload: any): void {
-    // 2. Ejecutamos la transferencia mediante el service
     this.warehouseService.transferStock(payload).subscribe({
-      next: () => {
-        console.log('Transferencia completada con éxito');
-        this.loadWarehouses(this.searchControl.value);
-      },
-      error: (err) => {
-        console.error('Error al realizar la transferencia', err);
-      },
+      next: () => this.loadWarehouses(this.searchControl.value),
+      error: (err) => console.error(err),
     });
   }
 
