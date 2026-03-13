@@ -3,11 +3,9 @@
   width: 100%;
 }
 
-/* CORRECCIÓN LÓGICA: Contenedor como referencia de posición */
 .select-container {
   width: 100%;
   position: relative;
-  margin: 0.5rem 0;
 }
 
 .select-trigger {
@@ -36,6 +34,20 @@
   box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
 }
 
+.select-trigger.invalid {
+  border-color: var(--error);
+}
+
+.select-trigger.invalid.open {
+  box-shadow: 0 0 0 3px rgba(214, 48, 49, 0.1);
+}
+
+.select-trigger.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  background: var(--bg-color);
+}
+
 .placeholder {
   color: var(--text-muted);
 }
@@ -53,14 +65,9 @@
   transform: rotate(180deg);
 }
 
-/* CORRECCIÓN LÓGICA: Cambiado de dinámico/fixed a absolute */
 .select-dropdown {
-  position: absolute;
-  top: 100%; /* Se posiciona justo debajo del trigger */
-  left: 0;
-  width: 100%;
-  z-index: 1001; /* Por encima del contenido del modal */
-  margin-top: 4px;
+  position: fixed;
+  z-index: 2000;
   background: var(--surface-color);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -72,20 +79,45 @@
 .search-box {
   padding: 8px;
   border-bottom: 1px solid var(--border-color);
-  background: var(--surface-color);
 }
 
-.search-box input {
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper input {
   width: 100%;
-  padding: 8px;
+  padding: 8px 32px 8px 8px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   outline: none;
   box-sizing: border-box;
+  font-family: inherit;
 }
 
-.search-box input:focus {
+.input-wrapper input:focus {
   border-color: var(--primary-color);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.clear-btn:hover {
+  color: var(--error);
 }
 
 .options-list {
@@ -110,6 +142,7 @@
 
 .options-list li.selected {
   background: var(--bg-color);
+  font-weight: 600;
   color: var(--primary-dark);
 }
 
@@ -129,80 +162,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-:host.disabled {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-/* select-searchable.css */
-
-.select-container {
-  width: 100%;
-  position: relative; /* Esto es vital: define el origen del dropdown */
-}
-
-.select-dropdown {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  z-index: 1100;
-  background: var(--surface-color);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-  margin-top: 4px;
-  top: 100%; /* Por defecto abajo */
-  animation: fadeInDown 0.15s ease-out;
-}
-
-/* Cuando debe abrir hacia arriba */
-.select-dropdown.drop-up {
-  top: auto;
-  bottom: 100%;
-  margin-top: 0;
-  margin-bottom: 4px;
-  animation: fadeInUp 0.15s ease-out;
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Borde rojo cuando hay error */
-.select-trigger.invalid {
-  border-color: #dc3545; /* O var(--error) */
-}
-
-/* Opcional: un leve brillo rojo cuando está abierto y es inválido */
-.select-trigger.invalid.open {
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-}
-
-/* Asegurar que el componente de error que pongas abajo 
-   tenga el mismo margen que en los inputs */
-:host {
-  display: block;
-  width: 100%;
-  margin-bottom: 0; /* El margen lo dará el gap del label en el padre */
 }

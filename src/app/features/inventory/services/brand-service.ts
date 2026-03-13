@@ -19,15 +19,23 @@ export class BrandService {
   totalElements = computed(() => this.#page()?.totalElements ?? 0);
   isLoading = computed(() => this.#loading());
 
-  findAll(page = 0, size = 10): Observable<PageResponse<Brand>> {
+  findAll(page = 0, size = 10, searchTerm = ''): Observable<PageResponse<Brand>> {
     this.#loading.set(true);
-    const params = new HttpParams().set('page', page).set('size', size);
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
+
+    if (searchTerm?.trim()) {
+      params = params.set('search', searchTerm.trim());
+    }
 
     return this.http.get<ApiResponse<PageResponse<Brand>>>(this.apiUrl, { params }).pipe(
       map((res) => res.data),
       tap((data) => this.#page.set(data)),
       finalize(() => this.#loading.set(false)),
     );
+  }
+
+  findById(id: number): Observable<Brand> {
+    return this.http.get<ApiResponse<Brand>>(`${this.apiUrl}/${id}`).pipe(map((res) => res.data));
   }
 
   save(brand: Partial<Brand>): Observable<PageResponse<Brand>> {

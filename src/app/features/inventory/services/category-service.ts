@@ -19,9 +19,13 @@ export class CategoryService {
   totalElements = computed(() => this.#page()?.totalElements ?? 0);
   isLoading = computed(() => this.#loading());
 
-  findAll(page = 0, size = 10): Observable<PageResponse<Category>> {
+  findAll(page = 0, size = 10, searchTerm = ''): Observable<PageResponse<Category>> {
     this.#loading.set(true);
-    const params = new HttpParams().set('page', page).set('size', size);
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
+
+    if (searchTerm?.trim()) {
+      params = params.set('search', searchTerm.trim());
+    }
 
     return this.http.get<ApiResponse<PageResponse<Category>>>(this.apiUrl, { params }).pipe(
       map((res) => res.data),
@@ -70,10 +74,10 @@ export class CategoryService {
       tap(() => {
         this.#page.update((state) => {
           if (!state) return null;
-          return {
-            ...state,
-            content: state.content.map((i) => (i.id === id ? { ...i, enabled: !i.enabled } : i)),
-          };
+          const content = state.content.map((i) =>
+            i.id === id ? { ...i, enabled: !i.enabled } : i,
+          );
+          return { ...state, content };
         });
       }),
       map(() => void 0),

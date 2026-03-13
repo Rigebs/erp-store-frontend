@@ -11,37 +11,35 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, ReactiveFormsModule, NgControl } from '@angular/forms';
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { debounceTime } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-select-searchable',
-  standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './select-searchable.html',
   styleUrl: './select-searchable.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectSearchable implements ControlValueAccessor, OnDestroy {
-  // Inputs
   options = input<any[]>([]);
   labelKey = input<string>('label');
   placeholder = input<string>('Seleccionar...');
 
-  // Evento para que el padre cargue más datos
   onNextPage = output<string>();
+  onSearch = output<string>();
 
-  // Inyecciones
   public ngControl = inject(NgControl, { self: true, optional: true });
   private el = inject(ElementRef);
   private document = inject(DOCUMENT);
 
-  // Estado con Signals
   value = signal<any>(null);
   isOpen = signal(false);
   disabled = signal(false);
-  dropdownStyles = signal<any>({});
+  dropdownStyles = signal<Record<string, string>>({});
 
   searchControl = new FormControl<string>('', { nonNullable: true });
+
   private cleanupListeners: (() => void)[] = [];
 
   constructor() {
@@ -49,28 +47,27 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
       this.ngControl.valueAccessor = this;
     }
 
-    // Escuchar cambios en la búsqueda para notificar al padre o resetear
-    this.searchControl.valueChanges.pipe(debounceTime(300)).subscribe((term) => {
-      // Podrías emitir un evento de 'reset' aquí si fuera necesario
-    });
+    this.searchControl.valueChanges
+      .pipe(takeUntilDestroyed(), debounceTime(600), distinctUntilChanged())
+      .subscribe((term) => {
+        this.onSearch.emit(term);
+      });
   }
 
-  // Lógica de error para el trigger
-  get isError(): boolean {
-    return !!(this.ngControl?.invalid && (this.ngControl?.touched || this.ngControl?.dirty));
-  }
+  isError = computed(() => {
+    const control = this.ngControl?.control;
+    return !!(control?.invalid && (control?.touched || control?.dirty));
+  });
 
-  // Label a mostrar en el trigger
   selectedLabel = computed(() => {
     const current = this.value();
     if (!current) return this.placeholder();
     return typeof current === 'object' ? current[this.labelKey()] : current;
   });
 
-  // Control del scroll infinito
   onScroll(event: Event) {
     const target = event.target as HTMLElement;
-    const threshold = 15; // píxeles antes de llegar al final
+    const threshold = 15;
     const reachedBottom = target.scrollHeight - target.scrollTop <= target.clientHeight + threshold;
 
     if (reachedBottom && !this.disabled()) {
@@ -87,7 +84,7 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
     const spaceBelow = viewportHeight - rect.bottom;
     const spaceAbove = rect.top;
 
-    let styles: any = {
+    let styles: Record<string, string> = {
       position: 'fixed',
       left: `${rect.left}px`,
       width: `${rect.width}px`,
@@ -95,11 +92,11 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
     };
 
     if (spaceBelow < dropdownMaxHeight && spaceAbove > spaceBelow) {
-      styles.bottom = `${viewportHeight - rect.top + margin}px`;
-      styles.top = 'auto';
+      styles['bottom'] = `${viewportHeight - rect.top + margin}px`;
+      styles['top'] = 'auto';
     } else {
-      styles.top = `${rect.bottom + margin}px`;
-      styles.bottom = 'auto';
+      styles['top'] = `${rect.bottom + margin}px`;
+      styles['bottom'] = 'auto';
     }
 
     this.dropdownStyles.set(styles);
@@ -112,7 +109,6 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
 
   open(): void {
     if (this.isOpen()) return;
-    this.searchControl.setValue('', { emitEvent: false });
     this.isOpen.set(true);
 
     requestAnimationFrame(() => this.updateDropdownPosition());
@@ -144,16 +140,25 @@ export class SelectSearchable implements ControlValueAccessor, OnDestroy {
     this.cleanupListeners = [];
   }
 
-  // ControlValueAccessor
+  clearSearch(event: MouseEvent): void {
+    event.stopPropagation();
+    this.searchControl.setValue('', { emitEvent: false });
+    this.onSearch.emit('');
+    this.el.nativeElement.querySelector('input')?.focus();
+  }
+
   writeValue(val: any): void {
     this.value.set(val);
   }
+
   registerOnChange(fn: any): void {
     this.onChange = fn;
   }
+
   registerOnTouched(fn: any): void {
     this.onTouched = fn;
   }
+
   setDisabledState(isDisabled: boolean): void {
     this.disabled.set(isDisabled);
   }

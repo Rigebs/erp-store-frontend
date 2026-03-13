@@ -6,19 +6,22 @@
             <div class="form-group">
                 <label>Categoría</label>
                 <app-select-searchable formControlName="category" [options]="categories()" labelKey="name"
-                    (onNextPage)="handleNextCategories($event)" placeholder="Todas las categorías" />
+                    (onSearch)="handleSearchCategories($event)" (onNextPage)="handleNextCategories()"
+                    placeholder="Todas las categorías" />
             </div>
 
             <div class="form-group">
                 <label>Marca</label>
                 <app-select-searchable formControlName="brand" [options]="brands()" labelKey="name"
-                    (onNextPage)="handleNextBrands($event)" placeholder="Todas las marcas" />
+                    (onSearch)="handleSearchBrands($event)" (onNextPage)="handleNextBrands()"
+                    placeholder="Todas las marcas" />
             </div>
 
             <div class="form-group">
                 <label>Unidad de Medida</label>
                 <app-select-searchable formControlName="unitMeasure" [options]="unitMeasures()" labelKey="name"
-                    (onNextPage)="handleNextUnits($event)" placeholder="Seleccionar unidad" />
+                    (onSearch)="handleSearchUnits($event)" (onNextPage)="handleNextUnits()"
+                    placeholder="Seleccionar unidad" />
             </div>
 
             <div class="form-group">

@@ -1,21 +1,28 @@
 <div class="select-container">
-    <div class="select-trigger" (click)="toggle()" [class.open]="isOpen()" [class.invalid]="isError"
+    <div class="select-trigger" (click)="toggle()" [class.open]="isOpen()" [class.invalid]="isError()"
         [class.disabled]="disabled()">
         <span [class.placeholder]="!value()">{{ selectedLabel() }}</span>
         <span class="arrow"></span>
     </div>
 
     @if (isOpen()) {
-    <div class="select-dropdown" [ngStyle]="dropdownStyles()">
+    <div class="select-dropdown" [style]="dropdownStyles()">
         <div class="search-box">
-            <input type="text" [formControl]="searchControl" [placeholder]="'Buscar...'"
-                (click)="$event.stopPropagation()" autofocus>
+            <div class="input-wrapper">
+                <input type="text" [formControl]="searchControl" [placeholder]="'Buscar...'"
+                    (click)="$event.stopPropagation()" autofocus>
+
+                @if (searchControl.value) {
+                <button type="button" class="clear-btn" (click)="clearSearch($event)">
+                    &times;
+                </button>
+                }
+            </div>
         </div>
 
         <ul class="options-list" (scroll)="onScroll($event)">
-            @for (opt of options(); track opt) {
-            <li (click)="selectOption(opt); $event.stopPropagation()" [class.selected]="opt === value()">
-                {{ opt[labelKey()] }}
+            @for (opt of options(); track opt.id) { <li (click)="selectOption(opt); $event.stopPropagation()"
+                [class.selected]="opt?.id === value()?.id"> {{ opt[labelKey()] }}
             </li>
             } @empty {
             <li class="no-results">No hay resultados</li>
