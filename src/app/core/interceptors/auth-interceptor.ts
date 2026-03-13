@@ -16,8 +16,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error) => {
-      const isAuthError = [0, 401, 403].includes(error.status);
-      if (!isAuthError || req.url.includes('/auth/')) {
+      // SOLO refrescamos si es 401 y NO es una petición de auth
+      if (error.status !== 401 || req.url.includes('/auth/')) {
         return throwError(() => error);
       }
 
@@ -38,12 +38,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         switchMap((res) => {
           const newToken = res?.data?.token;
           if (!newToken) throw new Error('No token');
-
           refreshTokenSubject.next(newToken);
           return next(req.clone({ setHeaders: { Authorization: `Bearer ${newToken}` } }));
         }),
         catchError((err) => {
-          authService.logout();
+          authService.logout(); // Si el refresh falla, ahí sí echamos al usuario
           return throwError(() => err);
         }),
         finalize(() => (isRefreshing = false)),

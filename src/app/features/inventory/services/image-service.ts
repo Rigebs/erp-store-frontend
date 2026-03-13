@@ -10,22 +10,18 @@ import { ApiResponse } from '../../../core/models/api.model';
 export class ImageService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/images`;
-
-  #loading = signal<boolean>(false);
+  #loading = signal(false);
   isLoading = computed(() => this.#loading());
 
   upload(file: File, folder: string = 'products'): Observable<{ imageUrl: string }> {
     this.#loading.set(true);
-
     const formData = new FormData();
     formData.append('file', file);
 
     return this.http
       .post<ApiResponse<{ imageUrl: string }>>(`${this.apiUrl}/upload/${folder}`, formData)
       .pipe(
-        map((res) => ({
-          imageUrl: res.data.imageUrl,
-        })),
+        map((res) => res.data),
         finalize(() => this.#loading.set(false)),
       );
   }

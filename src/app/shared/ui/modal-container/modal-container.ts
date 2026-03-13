@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject, output } from '@angular/cor
 
 @Component({
   selector: 'app-modal-container',
-  standalone: true,
   imports: [],
   templateUrl: './modal-container.html',
   styleUrl: './modal-container.css',

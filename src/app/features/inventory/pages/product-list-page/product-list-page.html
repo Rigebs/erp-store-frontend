@@ -33,9 +33,12 @@
                     (input)="updateSearch($event)">
             </div>
 
-            <div class="results-info">
-                <strong>{{ totalElements() }}</strong> productos encontrados
-            </div>
+            <button class="btn-filter" (click)="openFilters()" title="Filtros avanzados">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 3H2l8 9v7l4 3v-10L22 3z" />
+                </svg>
+                <span>Filtros</span>
+            </button>
         </div>
 
         <div class="table-container">
@@ -54,13 +57,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @for (product of filteredProducts(); track product.id) {
+                        @for (product of products(); track product.id) {
                         <tr>
                             <td>
                                 <div class="product-thumbnail">
                                     @if (product.imageUrl) {
                                     <img [ngSrc]="getRelativePath(product.imageUrl)" [alt]="product.name" fill
-                                        class="thumb-img">
+                                        class="thumb-img" crossorigin="anonymous">
                                     } @else {
                                     <div class="thumb-placeholder">{{ product.name.charAt(0) }}</div>
                                     }
@@ -119,7 +122,7 @@
 
             <div class="pagination-container">
                 <div class="pagination-info">
-                    Mostrando <b>{{ filteredProducts().length }}</b> de {{ totalElements() }}
+                    Mostrando <b>{{ products().length }}</b> de {{ totalElements() }}
                 </div>
 
                 <div class="pagination-controls">

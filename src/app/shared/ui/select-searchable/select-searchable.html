@@ -1,5 +1,6 @@
 <div class="select-container">
-    <div class="select-trigger" (click)="toggle()" [class.open]="isOpen()" [class.invalid]="isError">
+    <div class="select-trigger" (click)="toggle()" [class.open]="isOpen()" [class.invalid]="isError"
+        [class.disabled]="disabled()">
         <span [class.placeholder]="!value()">{{ selectedLabel() }}</span>
         <span class="arrow"></span>
     </div>
@@ -7,11 +8,12 @@
     @if (isOpen()) {
     <div class="select-dropdown" [ngStyle]="dropdownStyles()">
         <div class="search-box">
-            <input type="text" [formControl]="searchControl" placeholder="Buscar..." (click)="$event.stopPropagation()"
-                autofocus>
+            <input type="text" [formControl]="searchControl" [placeholder]="'Buscar...'"
+                (click)="$event.stopPropagation()" autofocus>
         </div>
-        <ul class="options-list">
-            @for (opt of filteredOptions(); track opt) {
+
+        <ul class="options-list" (scroll)="onScroll($event)">
+            @for (opt of options(); track opt) {
             <li (click)="selectOption(opt); $event.stopPropagation()" [class.selected]="opt === value()">
                 {{ opt[labelKey()] }}
             </li>

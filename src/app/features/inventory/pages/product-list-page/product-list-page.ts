@@ -3,8 +3,13 @@ import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductService } from '../../services/product-service';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, forkJoin, map } from 'rxjs';
 import { StockBadge } from '../../components/stock-badge/stock-badge';
+import { ModalService } from '../../../../shared/services/modal-service';
+import { ProductFilterDialog } from '../../components/product-filter-dialog/product-filter-dialog';
+import { CategoryService } from '../../services/category-service';
+import { BrandService } from '../../services/brand-service';
+import { UnitMeasureService } from '../../services/unit-measure-service';
 
 @Component({
   selector: 'app-product-list',
@@ -15,14 +20,34 @@ import { StockBadge } from '../../components/stock-badge/stock-badge';
 })
 export class ProductListPage {
   private readonly productService = inject(ProductService);
+  private readonly categoryService = inject(CategoryService);
+  private readonly brandService = inject(BrandService);
+  private readonly unitService = inject(UnitMeasureService);
+  private readonly modalService = inject(ModalService);
+
+  categoryPage = signal(0);
+  brandPage = signal(0);
+  unitPage = signal(0);
+
+  modalCategories = signal<any[]>([]);
+  modalBrands = signal<any[]>([]);
+  modalUnits = signal<any[]>([]);
+
+  isFetchingCategories = signal(false);
+  hasMoreCategories = signal(true);
+  isFetchingBrands = signal(false);
+  hasMoreBrands = signal(true);
+  isFetchingUnits = signal(false);
+  hasMoreUnits = signal(true);
 
   searchTerm = signal('');
   currentPage = signal(0);
   pageSize = signal(10);
 
   products = this.productService.products;
-  isLoading = this.productService.isLoading;
   totalElements = this.productService.totalElements;
+  isLoading = this.productService.isLoading;
+  currentFilters = signal<any>(null);
 
   private debouncedSearch = toObservable(this.searchTerm).pipe(
     debounceTime(400),
@@ -30,8 +55,6 @@ export class ProductListPage {
   );
 
   totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
-
-  filteredProducts = this.products;
 
   constructor() {
     this.debouncedSearch.subscribe(() => {
@@ -43,22 +66,122 @@ export class ProductListPage {
   fetchProducts(): void {
     const params = {
       query: this.searchTerm().trim(),
+      ...(this.currentFilters() || {}),
     };
 
     this.productService.findAll(params, this.currentPage(), this.pageSize()).subscribe({
-      error: (err) => {
-        console.error('Error fetching products', err);
+      error: (err) => console.error('Error fetching products', err),
+    });
+  }
+
+  openFilters(): void {
+    this.resetModalStates();
+
+    forkJoin({
+      categories: this.categoryService.findAll(0, 20).pipe(map((res) => res.content)),
+      brands: this.brandService.findAll(0, 20).pipe(map((res) => res.content)),
+      units: this.unitService.findAll(0, 20).pipe(map((res) => res.content)),
+    }).subscribe({
+      next: (data) => {
+        this.modalCategories.set(data.categories);
+        this.modalBrands.set(data.brands);
+        this.modalUnits.set(data.units);
+
+        this.modalService
+          .open(ProductFilterDialog, {
+            categories: this.modalCategories(),
+            brands: this.modalBrands(),
+            unitMeasures: this.modalUnits(),
+            initialFilters: this.currentFilters(),
+            onNextCategories: (term: string) => this.loadMoreCategories(term),
+            onNextBrands: (term: string) => this.loadMoreBrands(term),
+            onNextUnits: (term: string) => this.loadMoreUnits(term),
+          })
+          .subscribe((result) => {
+            if (result) {
+              this.currentFilters.set(result);
+              this.currentPage.set(0);
+              this.fetchProducts();
+            }
+          });
       },
+      error: (err) => console.error('Error inicializando filtros', err),
+    });
+  }
+
+  private resetModalStates(): void {
+    this.categoryPage.set(0);
+    this.brandPage.set(0);
+    this.unitPage.set(0);
+    this.hasMoreCategories.set(true);
+    this.hasMoreBrands.set(true);
+    this.hasMoreUnits.set(true);
+    this.isFetchingCategories.set(false);
+    this.isFetchingBrands.set(false);
+    this.isFetchingUnits.set(false);
+  }
+
+  private loadMoreCategories(term: string): void {
+    if (this.isFetchingCategories() || !this.hasMoreCategories()) return;
+
+    this.isFetchingCategories.set(true);
+    const nextPage = this.categoryPage() + 1;
+
+    this.categoryService.findAll(nextPage, 20).subscribe({
+      next: (res) => {
+        if (res.content.length < 20) this.hasMoreCategories.set(false);
+        if (res.content.length > 0) {
+          this.categoryPage.set(nextPage);
+          this.modalCategories.update((current) => [...current, ...res.content]);
+        }
+        this.isFetchingCategories.set(false);
+      },
+      error: () => this.isFetchingCategories.set(false),
+    });
+  }
+
+  private loadMoreBrands(term: string): void {
+    if (this.isFetchingBrands() || !this.hasMoreBrands()) return;
+
+    this.isFetchingBrands.set(true);
+    const nextPage = this.brandPage() + 1;
+
+    this.brandService.findAll(nextPage, 20).subscribe({
+      next: (res) => {
+        if (res.content.length < 20) this.hasMoreBrands.set(false);
+        if (res.content.length > 0) {
+          this.brandPage.set(nextPage);
+          this.modalBrands.update((current) => [...current, ...res.content]);
+        }
+        this.isFetchingBrands.set(false);
+      },
+      error: () => this.isFetchingBrands.set(false),
+    });
+  }
+
+  private loadMoreUnits(term: string): void {
+    if (this.isFetchingUnits() || !this.hasMoreUnits()) return;
+
+    this.isFetchingUnits.set(true);
+    const nextPage = this.unitPage() + 1;
+
+    this.unitService.findAll(nextPage, 20).subscribe({
+      next: (res) => {
+        if (res.content.length < 20) this.hasMoreUnits.set(false);
+        if (res.content.length > 0) {
+          this.unitPage.set(nextPage);
+          this.modalUnits.update((current) => [...current, ...res.content]);
+        }
+        this.isFetchingUnits.set(false);
+      },
+      error: () => this.isFetchingUnits.set(false),
     });
   }
 
   getRelativePath(fullUrl: string): string {
     if (!fullUrl) return '';
     const parts = fullUrl.split('/upload/');
-    if (parts.length > 1) {
-      return parts[1];
-    }
-    return fullUrl;
+    return parts.length > 1 ? parts[1] : fullUrl;
   }
 
   updateSearch(event: Event): void {
@@ -68,16 +191,12 @@ export class ProductListPage {
 
   exportInventory(): void {
     const currentQuery = this.searchTerm().trim();
-
     this.productService.exportToExcel(currentQuery).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-
-        const date = new Date().toISOString().split('T')[0];
-        a.download = `inventario_${date}.xlsx`;
-
+        a.download = `inventario_${new Date().toISOString().split('T')[0]}.xlsx`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -85,7 +204,7 @@ export class ProductListPage {
       },
       error: (err) => {
         console.error('Error al exportar el inventario', err);
-        alert('No se pudo generar el reporte. Intente más tarde.');
+        alert('No se pudo generar el reporte.');
       },
     });
   }

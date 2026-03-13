@@ -52,6 +52,7 @@ export class ProductFormPage implements OnInit {
     barcode: ['', [Validators.required]],
     purchasePrice: [null as unknown as number, [Validators.required, Validators.min(0)]],
     salePrice: [null as unknown as number, [Validators.required, Validators.min(0)]],
+    minStock: [null as unknown as number, [Validators.required, Validators.min(0)]],
     imageUrl: [''],
     enabled: [true],
     brand: [null as any],

@@ -12,11 +12,11 @@ export class WarehouseService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/warehouses`;
 
-  #warehousesPage = signal<PageResponse<Warehouse> | null>(null);
-  #loading = signal<boolean>(false);
+  #page = signal<PageResponse<Warehouse> | null>(null);
+  #loading = signal(false);
 
-  warehouses = computed(() => this.#warehousesPage()?.content ?? []);
-  totalElements = computed(() => this.#warehousesPage()?.totalElements ?? 0);
+  warehouses = computed(() => this.#page()?.content ?? []);
+  totalElements = computed(() => this.#page()?.totalElements ?? 0);
   isLoading = computed(() => this.#loading());
 
   findAll(
@@ -25,8 +25,8 @@ export class WarehouseService {
     size = 10,
   ): Observable<PageResponse<Warehouse>> {
     this.#loading.set(true);
-
     let params = new HttpParams().set('page', page).set('size', size);
+
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== null && value !== undefined && value !== '') {
         params = params.set(key, value.toString());
@@ -35,7 +35,7 @@ export class WarehouseService {
 
     return this.http.get<ApiResponse<PageResponse<Warehouse>>>(this.apiUrl, { params }).pipe(
       map((res) => res.data),
-      tap((data) => this.#warehousesPage.set(data)),
+      tap((data) => this.#page.set(data)),
       finalize(() => this.#loading.set(false)),
     );
   }
@@ -50,7 +50,7 @@ export class WarehouseService {
     return this.http.post<ApiResponse<Warehouse>>(this.apiUrl, warehouse).pipe(
       map((res) => res.data),
       tap((newWarehouse) => {
-        this.#warehousesPage.update((state) => {
+        this.#page.update((state) => {
           if (!state) return null;
           return {
             ...state,
@@ -64,15 +64,39 @@ export class WarehouseService {
 
   update(id: number, warehouse: WarehousePayload): Observable<void> {
     return this.http.put<ApiResponse<void>>(`${this.apiUrl}/${id}`, warehouse).pipe(
-      map(() => {
-        this.#warehousesPage.update((state) => {
+      tap(() => this.#updateLocalItem(id, warehouse)),
+      map(() => void 0),
+    );
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => {
+        this.#page.update((state) => {
           if (!state) return null;
           return {
             ...state,
-            content: state.content.map((w) => (w.id === id ? { ...w, ...warehouse } : w)),
+            content: state.content.filter((w) => w.id !== id),
+            totalElements: Math.max(0, state.totalElements - 1),
           };
         });
       }),
+      map(() => void 0),
+    );
+  }
+
+  toggleEnabled(id: number): Observable<void> {
+    return this.http.patch<ApiResponse<void>>(`${this.apiUrl}/${id}`, {}).pipe(
+      tap(() => {
+        this.#page.update((state) => {
+          if (!state) return null;
+          return {
+            ...state,
+            content: state.content.map((w) => (w.id === id ? { ...w, enabled: !w.enabled } : w)),
+          };
+        });
+      }),
+      map(() => void 0),
     );
   }
 
@@ -83,42 +107,19 @@ export class WarehouseService {
     quantity: number;
   }): Observable<void> {
     this.#loading.set(true);
-
     return this.http.post<ApiResponse<void>>(`${this.apiUrl}/transfer`, payload).pipe(
-      map(() => {
-        void 0;
-      }),
+      map(() => void 0),
       finalize(() => this.#loading.set(false)),
     );
   }
 
-  // 7. Eliminación
-  delete(id: number): Observable<void> {
-    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`).pipe(
-      map(() => {
-        this.#warehousesPage.update((state) => {
-          if (!state) return null;
-          return {
-            ...state,
-            content: state.content.filter((w) => w.id !== id),
-            totalElements: Math.max(0, state.totalElements - 1),
-          };
-        });
-      }),
-    );
-  }
-
-  toggleEnabled(id: number): Observable<void> {
-    return this.http.patch<ApiResponse<void>>(`${this.apiUrl}/${id}`, {}).pipe(
-      map(() => {
-        this.#warehousesPage.update((state) => {
-          if (!state) return null;
-          return {
-            ...state,
-            content: state.content.map((w) => (w.id === id ? { ...w, enabled: !w.enabled } : w)),
-          };
-        });
-      }),
-    );
+  #updateLocalItem(id: number, data: Partial<Warehouse>): void {
+    this.#page.update((state) => {
+      if (!state) return null;
+      return {
+        ...state,
+        content: state.content.map((w) => (w.id === id ? { ...w, ...data } : w)),
+      };
+    });
   }
 }

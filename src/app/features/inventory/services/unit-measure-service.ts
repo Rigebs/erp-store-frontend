@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, tap, map, finalize } from 'rxjs';
+import { Observable, tap, map, finalize, switchMap } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
 import { ApiResponse, PageResponse } from '../../../core/models/api.model';
 import { UnitMeasure } from '../../../core/models/catalog.model';
@@ -13,7 +13,7 @@ export class UnitMeasureService {
   private readonly apiUrl = `${environment.apiUrl}/units-measure`;
 
   #page = signal<PageResponse<UnitMeasure> | null>(null);
-  #loading = signal<boolean>(false);
+  #loading = signal(false);
 
   units = computed(() => this.#page()?.content ?? []);
   totalElements = computed(() => this.#page()?.totalElements ?? 0);
@@ -21,10 +21,9 @@ export class UnitMeasureService {
 
   findAll(page = 0, size = 10, searchTerm = ''): Observable<PageResponse<UnitMeasure>> {
     this.#loading.set(true);
-
     let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
 
-    if (searchTerm && searchTerm.trim().length > 0) {
+    if (searchTerm?.trim()) {
       params = params.set('search', searchTerm.trim());
     }
 
@@ -41,54 +40,57 @@ export class UnitMeasureService {
       .pipe(map((res) => res.data));
   }
 
-  save(unit: Partial<UnitMeasure>): Observable<void> {
-    return this.http.post<ApiResponse<void>>(this.apiUrl, unit).pipe(
-      map(() => {
-        this.findAll(this.#page()?.number, this.#page()?.size).subscribe();
-      }),
-    );
+  save(unit: Partial<UnitMeasure>): Observable<PageResponse<UnitMeasure>> {
+    return this.http
+      .post<ApiResponse<void>>(this.apiUrl, unit)
+      .pipe(switchMap(() => this.findAll(this.#page()?.number ?? 0, this.#page()?.size ?? 10)));
   }
 
   update(id: number, unit: Partial<UnitMeasure>): Observable<void> {
     return this.http.put<ApiResponse<void>>(`${this.apiUrl}/${id}`, unit).pipe(
-      map(() => {
-        this.#page.update((state) => {
-          if (!state) return null;
-          return {
-            ...state,
-            content: state.content.map((u) => (u.id === id ? { ...u, ...unit } : u)),
-          };
-        });
-      }),
+      tap(() => this.#updateLocalItem(id, unit)),
+      map(() => void 0),
     );
   }
 
   delete(id: number): Observable<void> {
     return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`).pipe(
-      map(() => {
+      tap(() => {
         this.#page.update((state) => {
           if (!state) return null;
           return {
             ...state,
-            content: state.content.filter((u) => u.id !== id),
-            totalElements: state.totalElements - 1,
+            content: state.content.filter((i) => i.id !== id),
+            totalElements: Math.max(0, state.totalElements - 1),
           };
         });
       }),
+      map(() => void 0),
     );
   }
 
   toggleStatus(id: number): Observable<void> {
     return this.http.patch<ApiResponse<void>>(`${this.apiUrl}/${id}`, {}).pipe(
-      map(() => {
+      tap(() => {
         this.#page.update((state) => {
           if (!state) return null;
           return {
             ...state,
-            content: state.content.map((u) => (u.id === id ? { ...u, enabled: !u.enabled } : u)),
+            content: state.content.map((i) => (i.id === id ? { ...i, enabled: !i.enabled } : i)),
           };
         });
       }),
+      map(() => void 0),
     );
+  }
+
+  #updateLocalItem(id: number, data: Partial<UnitMeasure>): void {
+    this.#page.update((state) => {
+      if (!state) return null;
+      return {
+        ...state,
+        content: state.content.map((i) => (i.id === id ? { ...i, ...data } : i)),
+      };
+    });
   }
 }
