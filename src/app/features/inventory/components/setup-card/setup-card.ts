@@ -11,7 +11,6 @@ export class SetupCard {
   icon = input.required<string>();
   title = input.required<string>();
   description = input.required<string>();
-  stats = input.required<string>();
   link = input.required<string>();
 
   manage = output<string>();

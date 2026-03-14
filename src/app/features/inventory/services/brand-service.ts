@@ -38,10 +38,8 @@ export class BrandService {
     return this.http.get<ApiResponse<Brand>>(`${this.apiUrl}/${id}`).pipe(map((res) => res.data));
   }
 
-  save(brand: Partial<Brand>): Observable<PageResponse<Brand>> {
-    return this.http
-      .post<ApiResponse<void>>(this.apiUrl, brand)
-      .pipe(switchMap(() => this.findAll(this.#page()?.number ?? 0, this.#page()?.size ?? 10)));
+  save(brand: Partial<Brand>): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.apiUrl, brand);
   }
 
   update(id: number, brand: Partial<Brand>): Observable<void> {

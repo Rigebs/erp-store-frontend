@@ -4,10 +4,11 @@ import { CategoryService } from '../../services/category-service';
 import { CategoryFormModal } from '../../components/category-form-modal/category-form-modal';
 import { Category, CategoryPayload, Line } from '../../../../core/models/catalog.model';
 import { LineFormModal } from '../../components/line-form-modal/line-form-modal';
+import { SlideToggle } from '../../../../shared/ui/slide-toggle/slide-toggle';
 
 @Component({
   selector: 'app-category-list-page',
-  imports: [CategoryFormModal, LineFormModal],
+  imports: [CategoryFormModal, LineFormModal, SlideToggle],
   templateUrl: './category-list-page.html',
   styleUrl: './category-list-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -90,6 +91,17 @@ export class CategoryListPage implements OnInit {
     });
   }
 
+  toggleCategoryStatus(category: Category): void {
+    this.categoryService.toggleStatus(category.id).subscribe({
+      next: () => {
+        this.loadInitialData();
+      },
+      error: (err) => {
+        console.error('Error al cambiar el estado de la categoría:', err);
+      },
+    });
+  }
+
   configureLine(id: number): void {
     this.lineService.findById(id).subscribe((line) => {
       this.selectedLine.set(line);
@@ -113,6 +125,14 @@ export class CategoryListPage implements OnInit {
         this.loadInitialData();
       });
     }
+  }
+
+  toggleLineStatus(line: Line): void {
+    this.lineService.toggleStatus(line.id).subscribe({
+      error: (err) => {
+        console.error('Error al cambiar el estado de la línea:', err);
+      },
+    });
   }
 
   closeLineModal() {

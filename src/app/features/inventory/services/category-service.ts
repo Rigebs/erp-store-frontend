@@ -40,10 +40,8 @@ export class CategoryService {
       .pipe(map((res) => res.data));
   }
 
-  save(category: CategoryPayload): Observable<PageResponse<Category>> {
-    return this.http
-      .post<ApiResponse<void>>(this.apiUrl, category)
-      .pipe(switchMap(() => this.findAll(this.#page()?.number ?? 0, this.#page()?.size ?? 10)));
+  save(category: CategoryPayload): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.apiUrl, category);
   }
 
   update(id: number, category: Partial<Category>): Observable<void> {

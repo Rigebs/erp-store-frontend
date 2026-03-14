@@ -34,7 +34,7 @@
                         <th>Abreviatura</th>
                         <th>Descripción</th>
                         <th>Estado</th>
-                        <th class="text-right">Acciones</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,15 +44,12 @@
                         <td><span class="abbr-badge">{{ unit.abbreviation }}</span></td>
                         <td><span class="helper-text">{{ unit.description || '—' }}</span></td>
                         <td>
-                            <span class="status-badge" [class.active]="unit.enabled">
-                                <span class="dot"></span>
-                                {{ unit.enabled ? 'Activo' : 'Inactivo' }}
-                            </span>
+                            <app-slide-toggle [checked]="unit.enabled"
+                                (click)="onToggleStatus(unit.id)"></app-slide-toggle>
                         </td>
                         <td class="text-right">
                             <div class="actions-wrapper">
-                                <app-slide-toggle [checked]="unit.enabled"
-                                    (click)="onToggleStatus(unit.id)"></app-slide-toggle>
+
                                 <button class="action-btn" (click)="onEditUnit(unit)">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

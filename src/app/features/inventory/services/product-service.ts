@@ -116,9 +116,24 @@ export class ProductService {
     );
   }
 
-  exportToExcel(query: string): Observable<Blob> {
+  exportInventory(format: 'excel' | 'pdf', filters: Record<string, any> = {}): Observable<Blob> {
+    let params = new HttpParams().set('format', format);
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        params = params.set(key, value.toString());
+      }
+    });
+
+    const label = format.toUpperCase();
+
     return this.http
-      .get(`${this.apiUrl}/export`, { params: { query }, responseType: 'blob' })
-      .pipe(tap(() => this.toast.info('Exportación', 'Iniciando descarga del archivo Excel...')));
+      .get(`${this.apiUrl}/export`, {
+        params,
+        responseType: 'blob',
+      })
+      .pipe(
+        tap(() => this.toast.info('Exportación', `Iniciando descarga del archivo ${label}...`)),
+      );
   }
 }

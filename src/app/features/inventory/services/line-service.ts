@@ -34,10 +34,8 @@ export class LineService {
     return this.http.get<ApiResponse<Line>>(`${this.apiUrl}/${id}`).pipe(map((res) => res.data));
   }
 
-  save(line: Partial<Line>): Observable<PageResponse<Line>> {
-    return this.http
-      .post<ApiResponse<void>>(this.apiUrl, line)
-      .pipe(switchMap(() => this.findAll(this.#page()?.number ?? 0, this.#page()?.size ?? 10)));
+  save(line: Partial<Line>): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.apiUrl, line);
   }
 
   update(id: number, line: Partial<Line>): Observable<void> {

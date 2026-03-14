@@ -10,7 +10,7 @@
         <div class="setup-grid">
             @for (option of menuOptions(); track option.title) {
             <app-setup-card [icon]="option.icon" [title]="option.title" [description]="option.description"
-                [stats]="option.stats" [link]="option.link" (manage)="navigateTo($event)" />
+                [link]="option.link" (manage)="navigateTo($event)" />
             }
         </div>
     </section>

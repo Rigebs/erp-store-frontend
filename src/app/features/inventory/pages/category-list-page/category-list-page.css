@@ -246,6 +246,36 @@ svg {
   height: 1.1rem;
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.btn-icon.toggle-status {
+  color: var(--text-muted);
+}
+
+.btn-icon.toggle-status.is-active {
+  color: #10b981; /* Color verde cuando está activo */
+}
+
+.btn-icon.toggle-status:not(.is-active):hover {
+  color: #ef4444; /* Rojo al hover si se va a desactivar o está inactivo */
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Opcional: una transición suave para el card cuando cambia de estado */
+.line-card {
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.line-card.inactive {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+  background-color: #f9fafb;
+}
+
 @media (max-width: 600px) {
   .grid-container {
     grid-template-columns: 1fr;

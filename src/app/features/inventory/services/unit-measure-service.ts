@@ -40,10 +40,8 @@ export class UnitMeasureService {
       .pipe(map((res) => res.data));
   }
 
-  save(unit: Partial<UnitMeasure>): Observable<PageResponse<UnitMeasure>> {
-    return this.http
-      .post<ApiResponse<void>>(this.apiUrl, unit)
-      .pipe(switchMap(() => this.findAll(this.#page()?.number ?? 0, this.#page()?.size ?? 10)));
+  save(unit: Partial<UnitMeasure>): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(this.apiUrl, unit);
   }
 
   update(id: number, unit: Partial<UnitMeasure>): Observable<void> {
