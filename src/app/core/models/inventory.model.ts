@@ -1,11 +1,18 @@
 import { Product } from './catalog.model';
 
+export type WarehouseType =
+  | 'CENTRAL'
+  | 'POINT_OF_SALE'
+  | 'TRANSIT'
+  | 'QUARANTINE'
+  | 'INTERNAL_CONSUMPTION';
+
 export interface Warehouse {
   id: number;
   name: string;
   location: string;
   description: string;
-  type: string;
+  type: WarehouseType;
   occupation: number;
   productsCount: number;
   valuation: number;

@@ -10,7 +10,7 @@ import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductService } from '../../services/product-service';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { debounceTime, distinctUntilChanged, finalize, forkJoin, map } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { StockBadge } from '../../components/stock-badge/stock-badge';
 import { ModalService } from '../../../../shared/services/modal-service';
 import { ProductFilterDialog } from '../../components/product-filter-dialog/product-filter-dialog';

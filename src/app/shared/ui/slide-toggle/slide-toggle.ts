@@ -27,7 +27,7 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 })
 export class SlideToggle implements ControlValueAccessor {
   checked = model<boolean>(false);
-  disabled = signal<boolean>(false);
+  disabled = input<boolean>(false);
   label = input<string>('');
 
   onChange: (value: boolean) => void = () => {};
@@ -53,7 +53,5 @@ export class SlideToggle implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled.set(isDisabled);
-  }
+  setDisabledState(isDisabled: boolean): void {}
 }

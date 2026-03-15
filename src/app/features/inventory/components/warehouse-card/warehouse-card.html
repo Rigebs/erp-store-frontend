@@ -1,7 +1,10 @@
 <div class="card-top">
-    <span class="status-pill" [class.active]="warehouse().enabled">
+    <span class="status-pill" [class.active]="warehouse().enabled" [class.inactive]="!warehouse().enabled">
         <span class="status-dot"></span>
-        {{ warehouse().type }}
+        {{ displayType() }}
+        @if (!warehouse().enabled) {
+        <span class="state-text">(Inactivo)</span>
+        }
     </span>
 
     <div class="top-actions">
@@ -20,7 +23,9 @@
             @if (isMenuOpen()) {
             <div class="dropdown-floating">
                 <button (click)="edit.emit()">Editar Detalles</button>
-                <button (click)="toggleStatus.emit()">{{ warehouse().enabled ? 'Desactivar' : 'Activar' }}</button>
+                <button (click)="onToggleStatus()" [class.activate-action]="!warehouse().enabled">
+                    {{ warehouse().enabled ? 'Desactivar' : 'Activar' }}
+                </button>
                 <div class="dropdown-divider"></div>
                 <button class="danger" (click)="delete.emit()">Eliminar Almacén</button>
             </div>
@@ -40,18 +45,6 @@
     </p>
 </div>
 
-<div class="capacity-section">
-    <div class="capacity-label">
-        <span>Ocupación</span>
-        <strong>{{ warehouse().occupation }}%</strong>
-    </div>
-    <div class="progress-bar">
-        <div class="progress-fill" [class.warning]="occupationStatus().warning"
-            [class.danger]="occupationStatus().danger" [style.width.%]="warehouse().occupation">
-        </div>
-    </div>
-</div>
-
 <div class="metrics-grid">
     <div class="metric-item">
         <span class="label">SKUs en Stock</span>
@@ -64,13 +57,13 @@
 </div>
 
 <div class="card-footer-actions">
-    <button class="btn-card-outline" (click)="viewInventory.emit()">
+    <button class="btn-card-outline" (click)="viewInventory.emit()" [disabled]="!warehouse().enabled">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 8V21H3V8M1 3H23V8H1V3ZM10 12H14" />
         </svg>
         Inventario
     </button>
-    <button class="btn-card-outline" (click)="transferStock.emit()">
+    <button class="btn-card-outline" (click)="transferStock.emit()" [disabled]="!warehouse().enabled">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="16 3 21 3 21 8" />
             <line x1="4" y1="20" x2="21" y2="3" />

@@ -1,0 +1,23 @@
+<app-modal-container (close)="modalService.close()">
+    <h2 modal-header>{{ brand() ? 'Editar Marca' : 'Nueva Marca' }}</h2>
+    <form [formGroup]="brandForm" (ngSubmit)="submit()">
+        <div class="form-group">
+            <label for="name">Nombre</label>
+            <input id="name" type="text" formControlName="name"
+                [class.invalid]="brandForm.get('name')?.invalid && brandForm.get('name')?.touched">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Descripción</label>
+            <textarea id="description" formControlName="description" rows="3"
+                [class.invalid]="brandForm.get('description')?.invalid && brandForm.get('description')?.touched"></textarea>
+        </div>
+    </form>
+
+    <div modal-footer class="actions">
+        <button type="button" class="btn-secondary" (click)="modalService.close()">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="brandForm.invalid" (click)="submit()">
+            Guardar Marca
+        </button>
+    </div>
+</app-modal-container>

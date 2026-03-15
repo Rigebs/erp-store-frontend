@@ -10,7 +10,9 @@ export interface Toast {
   duration?: number;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class ToastService {
   // Estado privado con un signal de array de Toasts
   private toastsSignal = signal<Toast[]>([]);

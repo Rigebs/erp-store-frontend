@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
 import { DecimalPipe, CurrencyPipe } from '@angular/common';
+import { Warehouse, WarehouseType } from '../../../../core/models/inventory.model';
 
 @Component({
   selector: 'app-warehouse-card',
@@ -10,10 +11,12 @@ import { DecimalPipe, CurrencyPipe } from '@angular/common';
   host: {
     class: 'card',
     '[class.main-warehouse]': 'warehouse().main',
+    '[class.disabled-card]': '!warehouse().enabled',
   },
 })
 export class WarehouseCard {
-  warehouse = input.required<any>();
+  // Cambiamos any por el tipo real Warehouse
+  warehouse = input.required<Warehouse>();
   isMenuOpen = input<boolean>(false);
 
   toggleMenu = output<MouseEvent>();
@@ -23,6 +26,18 @@ export class WarehouseCard {
   viewInventory = output<void>();
   transferStock = output<void>();
 
+  // Mapeo de valores de Enum a etiquetas en español
+  private readonly typeLabels: Record<WarehouseType, string> = {
+    CENTRAL: 'Central',
+    POINT_OF_SALE: 'Punto de Venta',
+    TRANSIT: 'Tránsito',
+    QUARANTINE: 'Cuarentena',
+    INTERNAL_CONSUMPTION: 'Consumo Interno',
+  };
+
+  // Computed para obtener la etiqueta traducida
+  displayType = computed(() => this.typeLabels[this.warehouse().type] || this.warehouse().type);
+
   occupationStatus = computed(() => {
     const val = this.warehouse().occupation;
     return {
@@ -30,4 +45,8 @@ export class WarehouseCard {
       danger: val > 90,
     };
   });
+
+  onToggleStatus(): void {
+    this.toggleStatus.emit();
+  }
 }

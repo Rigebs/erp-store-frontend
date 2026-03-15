@@ -5,6 +5,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ModalService } from '../../../../shared/services/modal-service';
 import { WarehouseCard } from '../../components/warehouse-card/warehouse-card';
 import { StockTransferModal } from '../../components/stock-transfer-modal/stock-transfer-modal';
+import { WarehouseFormModal } from '../../components/warehouse-form-modal/warehouse-form-modal';
 
 @Component({
   selector: 'app-warehouse-list-page',
@@ -44,6 +45,22 @@ export class WarehouseListPage implements OnInit {
     this.openMenuId.update((prev) => (prev === id ? null : id));
   }
 
+  onOpenWarehouseForm(warehouse?: any): void {
+    this.openMenuId.set(null);
+
+    this.modal.open(WarehouseFormModal, { warehouse }).subscribe((result) => {
+      if (!result) return;
+
+      const refresh = () => this.loadWarehouses(this.searchControl.value);
+
+      if (warehouse?.id) {
+        this.warehouseService.update(warehouse.id, result).subscribe(refresh);
+      } else {
+        this.warehouseService.save(result).subscribe(refresh);
+      }
+    });
+  }
+
   openTransferModal(warehouse: any): void {
     this.openMenuId.set(null);
     this.modal.open(StockTransferModal, { originWarehouse: warehouse }).subscribe((payload) => {
@@ -66,11 +83,15 @@ export class WarehouseListPage implements OnInit {
     }
   }
 
-  goToInventory(warehouse: any): void {
-    console.log(`Navegando al inventario de: ${warehouse.name}`);
+  onToggleWarehouseStatus(warehouse: any): void {
+    this.openMenuId.set(null);
+
+    this.warehouseService.toggleEnabled(warehouse.id).subscribe({
+      error: (err) => console.error('Error al cambiar el estado del almacén', err),
+    });
   }
 
-  onCreateWarehouse(): void {
-    console.log('Navegando a formulario de creación...');
+  goToInventory(warehouse: any): void {
+    console.log(`Navegando al inventario de: ${warehouse.name}`);
   }
 }

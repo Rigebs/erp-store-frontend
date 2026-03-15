@@ -10,7 +10,9 @@ import {
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class ModalService {
   private appRef = inject(ApplicationRef);
   private injector = inject(EnvironmentInjector);

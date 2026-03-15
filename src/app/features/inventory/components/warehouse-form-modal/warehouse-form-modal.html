@@ -1,0 +1,52 @@
+<app-modal-container (close)="handleClose()">
+    <h2 modal-header [style.margin]="'0'">
+        {{ warehouse() ? 'Editar Almacén' : 'Registrar Almacén' }}
+    </h2>
+
+    <form [formGroup]="warehouseForm" (ngSubmit)="handleSubmit()" id="warehouseForm" class="warehouse-form">
+        <div class="form-grid">
+            <div class="field-group full-width">
+                <label for="name">Nombre</label>
+                <input id="name" type="text" formControlName="name" placeholder="Ej. Almacén Central">
+            </div>
+
+            <div class="field-group">
+                <label for="type">Tipo</label>
+                <select id="type" formControlName="type">
+                    <option value="" disabled selected>Seleccione un tipo</option>
+                    @for (item of warehouseTypes; track item.value) {
+                    <option [value]="item.value">{{ item.label }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="field-group checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" formControlName="main">
+                    ¿Es Almacén Principal?
+                </label>
+            </div>
+
+            <div class="field-group full-width">
+                <label for="location">Ubicación / Dirección</label>
+                <input id="location" type="text" formControlName="location" placeholder="Ciudad, Calle, Número">
+            </div>
+
+            <div class="field-group full-width">
+                <label for="description">Descripción</label>
+                <textarea id="description" formControlName="description" rows="3"
+                    placeholder="Detalles adicionales..."></textarea>
+            </div>
+        </div>
+    </form>
+
+    <div modal-footer class="form-actions">
+        <button type="button" class="btn-secondary" (click)="handleClose()">
+            Cancelar
+        </button>
+        <button type="submit" form="warehouseForm" class="btn-primary"
+            [disabled]="this.warehouseForm.invalid || this.isSubmitting()">
+            {{ isSubmitting() ? 'Guardando...' : 'Guardar Almacén' }}
+        </button>
+    </div>
+</app-modal-container>

@@ -6,7 +6,7 @@
         </div>
 
         <div class="page-header-actions">
-            <button class="btn-header-action" (click)="onCreateWarehouse()">
+            <button class="btn-header-action" (click)="onOpenWarehouseForm()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 5v14M5 12h14" />
                 </svg>
@@ -40,9 +40,9 @@
             <div class="warehouse-grid">
                 @for (warehouse of warehouses(); track warehouse.id) {
                 <app-warehouse-card [warehouse]="warehouse" [isMenuOpen]="openMenuId() === warehouse.id"
-                    (toggleMenu)="toggleMenu(warehouse.id, $event)" (edit)="onCreateWarehouse()"
-                    (delete)="onDeleteWarehouse(warehouse.id)" (viewInventory)="goToInventory(warehouse)"
-                    (transferStock)="openTransferModal(warehouse)" />
+                    (toggleMenu)="toggleMenu(warehouse.id, $event)" (edit)="onOpenWarehouseForm(warehouse)"
+                    (toggleStatus)="onToggleWarehouseStatus(warehouse)" (delete)="onDeleteWarehouse(warehouse.id)"
+                    (viewInventory)="goToInventory(warehouse)" (transferStock)="openTransferModal(warehouse)" />
                 }
             </div>
             }

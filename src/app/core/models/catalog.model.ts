@@ -2,6 +2,7 @@ export interface Brand {
   id: number;
   name: string;
   description: string;
+  productCount: number;
   enabled: boolean;
 }
 

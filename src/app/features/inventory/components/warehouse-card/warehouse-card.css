@@ -21,6 +21,20 @@
   box-shadow: 0 0 0 1px var(--primary-color);
 }
 
+:host.disabled-card {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+}
+
+:host.disabled-card .card-info,
+:host.disabled-card .metrics-grid,
+:host.disabled-card .card-footer-actions,
+:host.disabled-card .status-pill {
+  opacity: 0.4;
+  filter: grayscale(1);
+  pointer-events: none;
+}
+
 .card-top {
   display: flex;
   justify-content: space-between;
@@ -32,6 +46,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  position: relative;
+  z-index: 10;
 }
 
 .status-pill {
@@ -53,12 +69,23 @@
   border-color: #10b98133;
 }
 
+.status-pill.inactive {
+  background: #f3f4f6;
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
 .status-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: currentColor;
   margin-right: 0.5rem;
+}
+
+.state-text {
+  margin-left: 4px;
+  text-transform: none;
 }
 
 .badge-main {
@@ -82,38 +109,7 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-}
-
-.capacity-section {
-  margin: 1.5rem 0;
-}
-
-.capacity-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  margin-bottom: 0.5rem;
-}
-
-.progress-bar {
-  height: 8px;
-  background: var(--bg-color);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--primary-color);
-  transition: width 0.5s ease;
-}
-
-.progress-fill.warning {
-  background: var(--warning);
-}
-
-.progress-fill.danger {
-  background: var(--error);
+  margin-bottom: 1.5rem;
 }
 
 .metrics-grid {
@@ -171,9 +167,15 @@
   transition: all 0.2s;
 }
 
-.btn-card-outline:hover {
+.btn-card-outline:hover:not(:disabled) {
   background: var(--bg-color);
   border-color: var(--text-muted);
+}
+
+.btn-card-outline:disabled {
+  cursor: not-allowed;
+  background: #f3f4f6;
+  color: #9ca3af;
 }
 
 .menu-container {
@@ -200,13 +202,15 @@
   position: absolute;
   right: 0;
   top: calc(100% + 8px);
-  background: white;
+  background: white !important;
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  z-index: 100;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  z-index: 999;
   min-width: 170px;
   padding: 0.5rem;
+  opacity: 1 !important;
+  filter: none !important;
 }
 
 .dropdown-floating button {
@@ -218,15 +222,21 @@
   font-size: 0.85rem;
   border-radius: 4px;
   cursor: pointer;
-  color: var(--text-main);
+  color: var(--text-main) !important;
+  opacity: 1 !important;
 }
 
 .dropdown-floating button:hover {
   background: var(--bg-color);
 }
 
+.dropdown-floating button.activate-action {
+  color: var(--primary-color) !important;
+  font-weight: 700;
+}
+
 .dropdown-floating button.danger {
-  color: var(--error);
+  color: var(--error) !important;
 }
 
 .dropdown-divider {
