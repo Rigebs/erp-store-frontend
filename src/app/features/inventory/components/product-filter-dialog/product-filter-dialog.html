@@ -25,6 +25,13 @@
             </div>
 
             <div class="form-group">
+                <label>Almacén</label>
+                <app-select-searchable formControlName="warehouse" [options]="warehouses()" labelKey="name"
+                    (onSearch)="handleSearchWarehouses($event)" (onNextPage)="handleNextWarehouses()"
+                    placeholder="Seleccionar almacén" />
+            </div>
+
+            <div class="form-group">
                 <label>Estado</label>
                 <select formControlName="enabled" class="filter-input">
                     <option [ngValue]="null">Todos los estados</option>

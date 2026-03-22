@@ -7,10 +7,10 @@ import {
   signal,
 } from '@angular/core';
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../../services/product-service';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { StockBadge } from '../../components/stock-badge/stock-badge';
 import { ModalService } from '../../../../shared/services/modal-service';
 import { ProductFilterDialog } from '../../components/product-filter-dialog/product-filter-dialog';
@@ -28,6 +28,7 @@ export class ProductListPage {
   private readonly productService = inject(ProductService);
   private readonly modalService = inject(ModalService);
   private readonly toast = inject(ToastService);
+  private readonly route = inject(ActivatedRoute);
 
   searchTerm = signal('');
   currentPage = signal(0);
@@ -56,7 +57,18 @@ export class ProductListPage {
   totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
 
   constructor() {
-    this.debouncedSearch.subscribe(() => {
+    this.route.queryParams.subscribe((params) => {
+      const id = params['warehouseId'];
+      this.currentFilters.update((filters) => ({
+        ...filters,
+        warehouseId: id || null,
+      }));
+
+      this.currentPage.set(0);
+      this.fetchProducts();
+    });
+
+    this.debouncedSearch.pipe(skip(1)).subscribe(() => {
       this.currentPage.set(0);
       this.fetchProducts();
     });

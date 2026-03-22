@@ -1,0 +1,39 @@
+<article class="card" [class.disabled]="!product.enabled || product.stock <= 0" (click)="addToCart()">
+    <div class="image-container">
+        @if (product.imageUrl) {
+        <img [src]="product.imageUrl" [alt]="product.name" loading="lazy">
+        } @else {
+        <div class="placeholder-img">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="m21 8-9-4-9 4v8l9 4 9-4V8z"></path>
+                <path d="M12 22V12"></path>
+                <path d="m21 8-9 4-9-4"></path>
+            </svg>
+        </div>
+        }
+
+        @if (product.stock <= product.minStock && product.stock> 0) {
+            <span class="badge warning">Bajo Stock</span>
+            }
+            @if (product.stock <= 0) { <span class="badge danger">Agotado</span>
+                }
+    </div>
+
+    <div class="content">
+        <div class="meta-row">
+            <span class="sku">{{ product.sku }}</span>
+            @if (product.category) {
+            <span class="category-tag">{{ product.category.name }}</span>
+            }
+        </div>
+
+        <h3 [title]="product.name">{{ product.name }}</h3>
+
+        <div class="footer">
+            <span class="price">{{ product.salePrice | currency }}</span>
+            <span class="stock" [class.danger]="product.stock <= product.minStock">
+                {{ product.stock }} {{ product.unitMeasure?.name || 'uds' }}
+            </span>
+        </div>
+    </div>
+</article>

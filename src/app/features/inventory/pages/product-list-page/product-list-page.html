@@ -113,17 +113,13 @@
                             </td>
                             <td class="price-cell">{{ product.salePrice | currency }}</td>
                             <td>
-                                <div class="status-badge" [class.active]="product.enabled">
-                                    <span class="status-dot"></span>
-                                    {{ product.enabled ? 'Activo' : 'Inactivo' }}
-                                </div>
+                                <app-slide-toggle [checked]="product.enabled"
+                                    (checkedChange)="toggleStatus(product.id)" />
+
                             </td>
                             <td>
                                 <div class="action-buttons-end">
-                                    <app-slide-toggle [checked]="product.enabled"
-                                        (checkedChange)="toggleStatus(product.id)" />
 
-                                    <div class="divider-actions"></div>
 
                                     <button class="btn-icon-action"
                                         [routerLink]="['/inventory/products', product.id, 'edit']" title="Editar">

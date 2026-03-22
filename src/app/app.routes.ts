@@ -15,6 +15,11 @@ export const routes: Routes = [
       import('./features/inventory/inventory.routes').then((m) => m.INVENTORY_ROUTES),
   },
   {
+    path: 'sales',
+    component: MainLayout,
+    loadChildren: () => import('./features/sales/sales.routes').then((m) => m.SALES_ROUTES),
+  },
+  {
     path: '',
     redirectTo: 'auth',
     pathMatch: 'full',

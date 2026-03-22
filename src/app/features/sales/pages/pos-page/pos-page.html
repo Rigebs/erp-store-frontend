@@ -1,0 +1,75 @@
+<div class="pos-container">
+    <main class="catalog-layout">
+        <header class="top-bar">
+            <app-product-search (onSearch)="handleSearch($event)"></app-product-search>
+        </header>
+
+        <div class="scrollable-grid" #scrollContainer (scroll)="onScroll($event)">
+            <div class="products-grid">
+                @for (product of products(); track product.id) {
+                <app-product-card [product]="product" (onAdd)="addToCart($event)">
+                </app-product-card>
+                }
+            </div>
+
+            @if (isLoading()) {
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <span>Cargando productos...</span>
+            </div>
+            }
+
+            @if (products().length === 0 && !isLoading()) {
+            <div class="empty-results">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                </svg>
+                <p>No se encontraron productos</p>
+            </div>
+            }
+        </div>
+    </main>
+
+    <aside class="cart-sidebar">
+        <div class="customer-preview">
+            <div class="avatar">CF</div>
+            <div class="info">
+                <strong>Consumidor Final</strong>
+                <span>ID: 0000000000</span>
+            </div>
+        </div>
+
+        <app-cart-summary [items]="cart()" (onRemove)="removeFromCart($event)" (onClear)="clearCart()"
+            (onCheckout)="togglePaymentModal(true)">
+        </app-cart-summary>
+    </aside>
+</div>
+
+@if (isPaymentModalOpen()) {
+<div class="modal-overlay">
+    <div class="modal-card">
+        <header>
+            <h2>Finalizar Venta</h2>
+            <button class="close-btn" (click)="togglePaymentModal(false)">✕</button>
+        </header>
+
+        <div class="payment-body">
+            <div class="amount-display">
+                <label>Total a Pagar</label>
+                <div class="val">{{ totalCart() | currency }}</div>
+            </div>
+
+            <div class="method-selector">
+                <button class="m-btn active">Efectivo</button>
+                <button class="m-btn">Tarjeta</button>
+                <button class="m-btn">Transferencia</button>
+            </div>
+        </div>
+
+        <footer>
+            <button class="confirm-btn" (click)="processSale()">CONFIRMAR VENTA</button>
+        </footer>
+    </div>
+</div>
+}

@@ -6,6 +6,7 @@ import { ModalService } from '../../../../shared/services/modal-service';
 import { WarehouseCard } from '../../components/warehouse-card/warehouse-card';
 import { StockTransferModal } from '../../components/stock-transfer-modal/stock-transfer-modal';
 import { WarehouseFormModal } from '../../components/warehouse-form-modal/warehouse-form-modal';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-warehouse-list-page',
@@ -17,6 +18,7 @@ import { WarehouseFormModal } from '../../components/warehouse-form-modal/wareho
 export class WarehouseListPage implements OnInit {
   private readonly warehouseService = inject(WarehouseService);
   private readonly modal = inject(ModalService);
+  private router = inject(Router);
 
   searchControl = new FormControl('', { nonNullable: true });
 
@@ -92,6 +94,10 @@ export class WarehouseListPage implements OnInit {
   }
 
   goToInventory(warehouse: any): void {
-    console.log(`Navegando al inventario de: ${warehouse.name}`);
+    if (warehouse && warehouse.id) {
+      this.router.navigate(['/inventory/products'], {
+        queryParams: { warehouseId: warehouse.id },
+      });
+    }
   }
 }
