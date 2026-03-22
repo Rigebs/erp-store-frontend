@@ -22,8 +22,9 @@ export class MainLayout {
     },
     {
       label: 'Inventario',
+      // Icono de caja isométrica (basado en tu referencia)
       iconSvgPath:
-        'M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 5h4v2h-4V5zm10 15H4V9h16v11z',
+        'M21 16.5c0 .38-.21.71-.53.88l-7.97 4.43c-.16.09-.33.14-.5.14s-.34-.05-.5-.14l-7.97-4.43A.997.997 0 013 16.5v-9c0-.38.21-.71.53-.88l7.97-4.43c.16-.09.33-.14.5-.14s.34.05.5.14l7.97 4.43c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.33v-6.71l-6-3.33v6.71z',
       route: '/inventory',
       children: [
         { label: 'Maestro de Artículos', route: '/inventory/products' },

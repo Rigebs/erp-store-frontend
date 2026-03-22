@@ -44,7 +44,6 @@ export const INVENTORY_ROUTES: Routes = [
           import('./pages/product-form-page/product-form-page').then((m) => m.ProductFormPage),
       },
       {
-        // Cambiamos 'products/edit/:id' por 'products/:id/edit'
         path: 'products/:id/edit',
         loadComponent: () =>
           import('./pages/product-form-page/product-form-page').then((m) => m.ProductFormPage),
@@ -69,6 +68,11 @@ export const INVENTORY_ROUTES: Routes = [
           import('./pages/inventory-reports-page/inventory-reports-page').then(
             (m) => m.InventoryReportsPage,
           ),
+      },
+      {
+        path: 'alerts',
+        loadComponent: () =>
+          import('./pages/stock-alerts-page/stock-alerts-page').then((m) => m.StockAlertsPage),
       },
     ],
   },

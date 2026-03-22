@@ -1,0 +1,125 @@
+<div class="container">
+    <header class="header">
+        <div>
+            <h1>Alertas de Stock Crítico</h1>
+            <p class="description">Productos por debajo del nivel mínimo establecido.</p>
+        </div>
+        <button class="btn-refresh" [disabled]="isLoading()" (click)="refreshData()">
+            <svg [class.spin]="isLoading()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+            </svg>
+            {{ isLoading() ? 'Cargando...' : 'Actualizar' }}
+        </button>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <span>Stock Crítico</span>
+                <svg class="text-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+            </div>
+            <strong class="text-danger">{{ criticalCount() | number:'2.0' }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span>Stock Bajo</span>
+                <svg class="text-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+            </div>
+            <strong class="text-warning">{{ lowStockCount() | number:'2.0' }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span>Órdenes Pendientes</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="8.5" cy="7" r="4" />
+                    <polyline points="17 11 19 13 23 9" />
+                </svg>
+            </div>
+            <strong>{{ pendingOrders() | number:'2.0' }}</strong>
+        </div>
+    </div>
+
+    <div class="card-table">
+        @if (isLoading()) {
+        <div class="loading-overlay">
+            <svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                    d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+            </svg>
+            Cargando alertas...
+        </div>
+        }
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto / SKU</th>
+                        <th>Estado</th>
+                        <th>Stock Actual</th>
+                        <th>Mín. Requerido</th>
+                        <th>Categoría</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (product of products(); track product.id) {
+                    <tr>
+                        <td>
+                            <div class="product-info">
+                                <div>
+                                    <div class="product-name">{{ product.name }}</div>
+                                    <span class="sku">{{ product.sku }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge" [class.badge-danger]="product.stock === 0"
+                                [class.badge-warning]="product.stock > 0">
+                                {{ product.stock === 0 ? 'Crítico' : 'Bajo' }}
+                            </span>
+                        </td>
+                        <td [style.font-weight]="700" [class.text-danger]="product.stock === 0">
+                            {{ product.stock }} {{ product.unitMeasure?.name ?? 'unidades' }}
+                        </td>
+                        <td>{{ product.minStock }} {{ product.unitMeasure?.name ?? 'unidades' }}</td>
+                        <td>{{ product.category?.name ?? 'N/A' }}</td>
+                        <td class="actions">
+                            <button class="btn-order" (click)="generateOrder(product)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="9" cy="21" r="1" />
+                                    <circle cx="20" cy="21" r="1" />
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                                </svg>
+                                Comprar
+                            </button>
+                        </td>
+                    </tr>
+                    } @empty {
+                    @if (!isLoading()) {
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <p>No se encontraron productos con stock bajo.</p>
+                        </td>
+                    </tr>
+                    }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
