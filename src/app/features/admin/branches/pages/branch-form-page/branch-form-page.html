@@ -1,0 +1,84 @@
+<main class="page-container">
+    <header class="page-header">
+        <h1>{{ isEditMode ? 'Editar Sucursal' : 'Nueva Sucursal' }}</h1>
+        <p class="subtitle">
+            {{ isEditMode ? 'Actualice los detalles físicos de la sede.' : 'Registre la información legal y física.' }}
+        </p>
+    </header>
+
+    <form [formGroup]="branchForm" (ngSubmit)="onSubmit()" class="standard-form">
+
+        <section class="form-section" formGroupName="company">
+            <h2 class="section-title">Información de la Empresa (Solo lectura)</h2>
+            <div class="grid">
+                <label>
+                    Tax ID
+                    <input type="text" formControlName="taxId" [class.invalid]="isInvalid('taxId', 'company')">
+                </label>
+
+                <label>
+                    Razón Social
+                    <input type="text" formControlName="name">
+                </label>
+
+                <label>
+                    Correo Electrónico
+                    <input type="email" formControlName="email">
+                </label>
+            </div>
+        </section>
+
+        <section class="form-section" formGroupName="branch">
+            <h2 class="section-title">Detalles de la Sede / Sucursal</h2>
+            <div class="grid">
+                <label>
+                    Nombre de la Sucursal
+                    <input type="text" formControlName="name" placeholder="Ej. Sede Central"
+                        [class.invalid]="isInvalid('name', 'branch')">
+                    @if (isInvalid('name', 'branch')) {
+                    <span class="error-message">El nombre es requerido.</span>
+                    }
+                </label>
+
+                <label>
+                    Ciudad
+                    <input type="text" formControlName="city" placeholder="Ej. Lima"
+                        [class.invalid]="isInvalid('city', 'branch')">
+                    @if (isInvalid('city', 'branch')) {
+                    <span class="error-message">La ciudad es requerida.</span>
+                    }
+                </label>
+
+                <label>
+                    Dirección Física
+                    <input type="text" formControlName="address" placeholder="Av. Principal 123"
+                        [class.invalid]="isInvalid('address', 'branch')">
+                    @if (isInvalid('address', 'branch')) {
+                    <span class="error-message">La dirección es requerida.</span>
+                    }
+                </label>
+
+                <label>
+                    Teléfono de Contacto
+                    <input type="text" formControlName="phone">
+                </label>
+            </div>
+
+            <div class="status-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" formControlName="main">
+                    <span>Sede Principal</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()" [disabled]="isLoading()">
+                Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
+                {{ isLoading() ? 'Procesando...' : (isEditMode ? 'Actualizar Cambios' : 'Guardar Sucursal') }}
+            </button>
+        </div>
+    </form>
+</main>

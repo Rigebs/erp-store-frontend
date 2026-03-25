@@ -1,0 +1,124 @@
+@import url('../../../../../shared/styles/page-layout.css');
+
+:host {
+  display: block;
+}
+
+.card {
+  background: var(--surface-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.table-container {
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+table.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+thead th {
+  background: #fcfcfd;
+  padding: 1rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+}
+
+tbody td {
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.font-bold {
+  font-weight: 600;
+}
+
+.text-primary {
+  color: var(--primary-color);
+  font-weight: 400;
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+}
+
+.badge-success {
+  background: #ecfdf5;
+  color: var(--success);
+}
+
+.badge-error {
+  background: #fef2f2;
+  color: var(--error);
+}
+
+.action-buttons-end {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.btn-icon-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  background: white;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon-action:hover {
+  background: var(--bg-color);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.empty-state-cell {
+  padding: 4rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.text-right {
+  text-align: right;
+}

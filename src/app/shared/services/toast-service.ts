@@ -14,17 +14,14 @@ export interface Toast {
   providedIn: 'root',
 })
 export class ToastService {
-  // Estado privado con un signal de array de Toasts
   private toastsSignal = signal<Toast[]>([]);
 
-  // Exposición pública del signal (read-only por convención)
   toasts = this.toastsSignal.asReadonly();
 
   show(type: ToastType, title: string, message: string, duration = 5000) {
     const id = Date.now();
     const newToast: Toast = { id, type, title, message, duration };
 
-    // Update del signal (reemplaza a mutate)
     this.toastsSignal.update((all) => [...all, newToast]);
 
     if (duration > 0) {
@@ -36,7 +33,6 @@ export class ToastService {
     this.toastsSignal.update((all) => all.filter((t) => t.id !== id));
   }
 
-  // Métodos de conveniencia para el ERP
   success(title: string, message: string) {
     this.show('success', title, message);
   }

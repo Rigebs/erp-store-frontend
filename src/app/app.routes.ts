@@ -20,6 +20,12 @@ export const routes: Routes = [
     loadChildren: () => import('./features/sales/sales.routes').then((m) => m.SALES_ROUTES),
   },
   {
+    path: 'admin',
+    component: MainLayout,
+    loadChildren: () =>
+      import('./features/admin/branches/branches.routes').then((m) => m.BRANCHES_ROUTES),
+  },
+  {
     path: '',
     redirectTo: 'auth',
     pathMatch: 'full',

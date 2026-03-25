@@ -21,15 +21,35 @@ export class MainLayout {
       route: '/dashboard',
     },
     {
+      label: 'Empresa y Sedes',
+      iconSvgPath:
+        'M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z',
+      route: '/admin/organization',
+      children: [
+        { label: 'Gestión de Sucursales', route: '/admin/branches' },
+        { label: 'Datos de Empresa', route: '/admin/company-profile' },
+      ],
+    },
+    {
+      label: 'Personal y Accesos',
+      iconSvgPath:
+        'M16.5 13c-1.2 0-2.25.45-3.08 1.22l-3.73-2.18c.2-.6.31-1.24.31-1.91s-.11-1.31-.31-1.91l3.73-2.18C14.25 6.8 15.3 7.25 16.5 7.25c1.8 0 3.25-1.45 3.25-3.25S18.3 0.75 16.5 0.75 13.25 2.2 13.25 4c0 .67.21 1.29.56 1.81L10.12 8c-.85-.79-1.99-1.28-3.25-1.28C4.18 6.72 2 8.9 2 11.5S4.18 16.28 6.88 16.28c1.26 0 2.4-.49 3.25-1.28l3.69 2.16c-.35.51-.56 1.14-.56 1.81 0 1.8 1.45 3.25 3.25 3.25s3.25-1.45 3.25-3.25-1.45-3.25-3.25-3.25z',
+      route: '/admin/users-control',
+      children: [
+        { label: 'Usuarios del Sistema', route: '/admin/users' },
+        { label: 'Colaboradores', route: '/admin/employees' },
+        { label: 'Roles y Permisos', route: '/admin/roles' },
+      ],
+    },
+    {
       label: 'Inventario',
-      // Icono de caja isométrica (basado en tu referencia)
       iconSvgPath:
         'M21 16.5c0 .38-.21.71-.53.88l-7.97 4.43c-.16.09-.33.14-.5.14s-.34-.05-.5-.14l-7.97-4.43A.997.997 0 013 16.5v-9c0-.38.21-.71.53-.88l7.97-4.43c.16-.09.33-.14.5-.14s.34.05.5.14l7.97 4.43c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.33v-6.71l-6-3.33v6.71z',
       route: '/inventory',
       children: [
         { label: 'Maestro de Artículos', route: '/inventory/products' },
         { label: 'Clasificación', route: '/inventory/setup' },
-        { label: 'Almacenes (Multialmacén)', route: '/inventory/warehouses' },
+        { label: 'Almacenes', route: '/inventory/warehouses' },
         { label: 'Movimientos de Stock', route: '/inventory/movements' },
         { label: 'Alertas de Stock', route: '/inventory/alerts' },
       ],
@@ -40,7 +60,7 @@ export class MainLayout {
         'M11.5 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6.5-6V9c0-3.07-1.63-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 3.36 6 5.92 6 9v7l-2 2v1h16v-1l-2-2z',
       route: '/sales',
       children: [
-        { label: 'Terminal POS', route: '/sales/pos' }, // Interfaz rápida
+        { label: 'Terminal POS', route: '/sales/pos' },
         { label: 'Cotizaciones', route: '/sales/quotes' },
         { label: 'Facturación Electrónica', route: '/sales/invoices' },
         { label: 'Devoluciones', route: '/sales/returns' },
