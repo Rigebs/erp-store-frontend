@@ -1,27 +1,30 @@
-import { Component, Input, Output, EventEmitter, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
+import { DiscountInput } from '../discount-input/discount-input';
+import { QuantitySelector } from '../quantity-selector/quantity-selector';
 
 @Component({
   selector: 'app-cart-summary',
-  standalone: true,
-  imports: [CommonModule, CurrencyPipe],
+  imports: [CommonModule, CurrencyPipe, QuantitySelector, DiscountInput],
   templateUrl: './cart-summary.html',
   styleUrl: './cart-summary.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartSummary {
-  @Input({ required: true }) items: any[] = [];
-  @Output() onRemove = new EventEmitter<number>();
-  @Output() onClear = new EventEmitter<void>();
-  @Output() onCheckout = new EventEmitter<void>();
+  items = input.required<any[]>();
+  totals = input.required<any>();
 
-  calculateSubtotal() {
-    return this.items.reduce((acc, item) => acc + item.salePrice * item.quantity, 0);
+  onRemove = output<number>();
+  onUpdateQuantity = output<{ index: number; val: number }>();
+  onUpdateDiscount = output<{ index: number; val: number }>();
+  onClear = output<void>();
+  onCheckout = output<void>();
+
+  updateQuantity(index: number, val: number) {
+    this.onUpdateQuantity.emit({ index, val });
   }
 
-  get tax() {
-    return this.calculateSubtotal() * 0.16;
-  }
-  get total() {
-    return this.calculateSubtotal() + this.tax;
+  updateDiscount(index: number, val: number) {
+    this.onUpdateDiscount.emit({ index, val });
   }
 }

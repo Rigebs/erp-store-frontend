@@ -1,13 +1,24 @@
 <div class="summary-wrapper">
     <div class="cart-items">
-        @for (item of items; track item.id; let i = $index) {
-        <div class="item-row">
-            <div class="info">
+        @for (item of items(); track item.id; let i = $index) {
+        <div class="item-row" [class.low-stock]="item.quantity >= item.stock">
+            <div class="info-col">
                 <span class="name">{{ item.name }}</span>
-                <span class="meta">{{ item.quantity }} x {{ item.salePrice | currency }}</span>
+                <div class="item-controls">
+                    <app-quantity-selector [value]="item.quantity" [stock]="item.stock"
+                        (changed)="updateQuantity(i, $event)" />
+
+                    <app-discount-input [value]="item.discount" (changed)="updateDiscount(i, $event)" />
+                </div>
             </div>
-            <div class="actions">
-                <span class="row-total">{{ (item.quantity * item.salePrice) | currency }}</span>
+
+            <div class="price-col">
+                <div class="price-info">
+                    <span class="unit-price">{{ item.salePrice | currency }}</span>
+                    <span class="row-total">
+                        {{ (item.salePrice * (1 - item.discount / 100)) * item.quantity | currency }}
+                    </span>
+                </div>
                 <button class="remove-btn" (click)="onRemove.emit(i)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 6 6 18M6 6l12 12"></path>
@@ -31,20 +42,29 @@
 
     <div class="totals-section">
         <div class="line">
-            <span>Subtotal</span>
-            <span>{{ calculateSubtotal() | currency }}</span>
+            <span>Subtotal Items</span>
+            <span>{{ totals().subtotal | currency }}</span>
         </div>
+        @if (totals().discount > 0) {
+        <div class="line discount-line">
+            <span>Descuentos</span>
+            <span>- {{ totals().discount | currency }}</span>
+        </div>
+        }
         <div class="line">
             <span>IVA (16%)</span>
-            <span>{{ tax | currency }}</span>
+            <span>{{ totals().tax | currency }}</span>
         </div>
-        <div class="line total">
+        <div class="line total-row">
             <span>TOTAL</span>
-            <span>{{ total | currency }}</span>
+            <span>{{ totals().total | currency }}</span>
         </div>
+
         <div class="buttons">
             <button class="btn-cancel" (click)="onClear.emit()">Anular</button>
-            <button class="btn-pay" [disabled]="items.length === 0" (click)="onCheckout.emit()">Pagar</button>
+            <button class="btn-pay" [disabled]="items().length === 0" (click)="onCheckout.emit()">
+                PAGAR (F10)
+            </button>
         </div>
     </div>
 </div>

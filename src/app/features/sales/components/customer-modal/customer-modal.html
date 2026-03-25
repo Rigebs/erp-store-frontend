@@ -1,0 +1,58 @@
+<app-modal-container (close)="close()">
+    <h2 modal-header>{{ isCreatingCustomer() ? 'Nuevo Cliente' : 'Seleccionar Cliente' }}</h2>
+
+    <div class="modal-inner-content">
+        @if (!isCreatingCustomer()) {
+        <div class="quick-search">
+            <input type="text" placeholder="Buscar por nombre o ID..." class="search-input" [value]="searchQuery()"
+                (input)="searchQuery.set($any($event.target).value)">
+            <button class="add-btn" (click)="toggleCreateCustomer()" title="Nuevo Cliente">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div class="selection-list">
+            @for (customer of customers(); track customer.id) {
+            <div class="list-item" (click)="selectCustomer(customer)">
+                <div class="item-avatar">{{ customer.initials }}</div>
+                <div class="item-info">
+                    <strong>{{ customer.displayName }}</strong>
+                    <span>Teléfono: {{ customer.person?.phone || customer.company?.phone || 'S/N' }}</span>
+                </div>
+            </div>
+            } @empty {
+            <div class="empty-state">No se encontraron clientes</div>
+            }
+        </div>
+        } @else {
+        <form [formGroup]="customerForm" class="customer-form">
+            <div class="form-group">
+                <label>Identificación (DNI/RUC) *</label>
+                <input type="text" formControlName="identifier" class="styled-input">
+            </div>
+            <div class="form-group">
+                <label>Nombre / Razón Social *</label>
+                <input type="text" formControlName="name" class="styled-input">
+            </div>
+            <div class="form-group">
+                <label>Teléfono (Opcional)</label>
+                <input type="text" formControlName="phone" class="styled-input">
+            </div>
+        </form>
+        }
+    </div>
+
+    @if (isCreatingCustomer()) {
+    <div modal-footer>
+        <div class="footer-actions">
+            <button type="button" class="btn-secondary" (click)="toggleCreateCustomer()">Cancelar</button>
+            <button type="button" class="btn-primary" [disabled]="customerForm.invalid" (click)="saveNewCustomer()">
+                Registrar y Seleccionar
+            </button>
+        </div>
+    </div>
+    }
+</app-modal-container>

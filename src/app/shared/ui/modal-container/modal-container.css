@@ -12,17 +12,17 @@
 .modal-content {
   background: var(--surface-color);
   border-radius: var(--radius);
-  min-width: 400px;
-  max-width: 90vw;
-  box-shadow: var(--shadow);
 
-  /* Flexbox para que el body crezca y el scroll funcione */
+  /* CAMBIO AQUÍ: */
+  width: 100%; /* Ocupa el ancho disponible */
+  min-width: auto; /* Quitamos el mínimo fijo */
+  max-width: 450px; /* Evitamos que sea gigante en desktop */
+
+  box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-
-  /* Altura máxima para no salirse de la pantalla */
   max-height: 85vh;
-  overflow: hidden; /* Evita que el contenido desborde los bordes redondeados */
+  overflow: hidden;
 }
 
 .modal-header {

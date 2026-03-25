@@ -27,7 +27,6 @@ export class ModalService {
     if (this.modalRef) this.close();
 
     this.renderer.setStyle(document.body, 'overflow', 'hidden');
-    this.renderer.setStyle(document.body, 'padding-right', '15px');
 
     this.modalRef = createComponent(component, {
       environmentInjector: this.injector,

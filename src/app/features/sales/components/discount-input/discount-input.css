@@ -1,0 +1,32 @@
+.discount-box {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-color);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+input {
+  width: 20px;
+  border: none;
+  background: transparent;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--success);
+  outline: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
