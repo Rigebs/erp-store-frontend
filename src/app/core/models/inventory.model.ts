@@ -1,3 +1,4 @@
+import { Branch } from './branch.model';
 import { Product } from './catalog.model';
 
 export type WarehouseType =
@@ -18,6 +19,7 @@ export interface Warehouse {
   valuation: number;
   main: boolean;
   enabled: boolean;
+  branch: Branch;
 }
 
 export type WarehousePayload = Omit<Warehouse, 'id' | 'occupation' | 'productsCount' | 'valuation'>;

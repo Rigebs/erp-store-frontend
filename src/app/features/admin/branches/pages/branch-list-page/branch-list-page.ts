@@ -1,13 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { BranchService } from '../../services/branch-service';
-import { BranchPayload } from '../../../../../core/models/branch.model';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-branch-list-page',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule],
   templateUrl: './branch-list-page.html',
   styleUrl: './branch-list-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

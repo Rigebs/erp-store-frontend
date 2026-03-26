@@ -6,7 +6,7 @@ import { ModalService } from '../../../../shared/services/modal-service';
 import { WarehouseCard } from '../../components/warehouse-card/warehouse-card';
 import { StockTransferModal } from '../../components/stock-transfer-modal/stock-transfer-modal';
 import { WarehouseFormModal } from '../../components/warehouse-form-modal/warehouse-form-modal';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-warehouse-list-page',
@@ -18,9 +18,11 @@ import { Router } from '@angular/router';
 export class WarehouseListPage implements OnInit {
   private readonly warehouseService = inject(WarehouseService);
   private readonly modal = inject(ModalService);
-  private router = inject(Router);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   searchControl = new FormControl('', { nonNullable: true });
+  branchId = signal<number | null>(null);
 
   warehouses = this.warehouseService.warehouses;
   isLoading = this.warehouseService.isLoading;
@@ -29,6 +31,9 @@ export class WarehouseListPage implements OnInit {
   openMenuId = signal<number | null>(null);
 
   ngOnInit(): void {
+    const bId = this.route.snapshot.queryParams['branchId'];
+    if (bId) this.branchId.set(Number(bId));
+
     this.loadWarehouses();
 
     this.searchControl.valueChanges
@@ -39,7 +44,12 @@ export class WarehouseListPage implements OnInit {
   }
 
   loadWarehouses(query?: string): void {
-    this.warehouseService.findAll({ query }).subscribe();
+    this.warehouseService
+      .findAll({
+        query: query || this.searchControl.value,
+        branchId: this.branchId(),
+      })
+      .subscribe();
   }
 
   toggleMenu(id: number, event: Event): void {
@@ -50,17 +60,22 @@ export class WarehouseListPage implements OnInit {
   onOpenWarehouseForm(warehouse?: any): void {
     this.openMenuId.set(null);
 
-    this.modal.open(WarehouseFormModal, { warehouse }).subscribe((result) => {
-      if (!result) return;
+    this.modal
+      .open(WarehouseFormModal, {
+        warehouse,
+        defaultBranchId: this.branchId(),
+      })
+      .subscribe((result) => {
+        if (!result) return;
 
-      const refresh = () => this.loadWarehouses(this.searchControl.value);
+        const refresh = () => this.loadWarehouses(this.searchControl.value);
 
-      if (warehouse?.id) {
-        this.warehouseService.update(warehouse.id, result).subscribe(refresh);
-      } else {
-        this.warehouseService.save(result).subscribe(refresh);
-      }
-    });
+        if (warehouse?.id) {
+          this.warehouseService.update(warehouse.id, result).subscribe(refresh);
+        } else {
+          this.warehouseService.save(result).subscribe(refresh);
+        }
+      });
   }
 
   openTransferModal(warehouse: any): void {
@@ -87,14 +102,11 @@ export class WarehouseListPage implements OnInit {
 
   onToggleWarehouseStatus(warehouse: any): void {
     this.openMenuId.set(null);
-
-    this.warehouseService.toggleEnabled(warehouse.id).subscribe({
-      error: (err) => console.error('Error al cambiar el estado del almacén', err),
-    });
+    this.warehouseService.toggleEnabled(warehouse.id).subscribe();
   }
 
   goToInventory(warehouse: any): void {
-    if (warehouse && warehouse.id) {
+    if (warehouse?.id) {
       this.router.navigate(['/inventory/products'], {
         queryParams: { warehouseId: warehouse.id },
       });
