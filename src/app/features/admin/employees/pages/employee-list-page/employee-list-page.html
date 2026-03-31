@@ -1,0 +1,145 @@
+<div class="page-container">
+    <header class="page-header">
+        <div class="page-header-titles">
+            <h1>Gestión de Personal</h1>
+            <p>Administra los datos de tus empleados y sus permisos de acceso al sistema en un solo lugar.</p>
+        </div>
+        <div class="page-header-actions">
+            <button class="btn-header-action" (click)="goToForm()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <line x1="19" y1="8" x2="19" y2="14" />
+                    <line x1="16" y1="11" x2="22" y2="11" />
+                </svg>
+                Nuevo Empleado
+            </button>
+        </div>
+    </header>
+
+    <div class="page-content">
+        <div class="search-filter-bar">
+            <div class="search-input-group">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input type="text" [formControl]="searchControl" placeholder="Buscar por nombre, cargo, email o rol...">
+            </div>
+            @if (isLoading()) {
+            <div class="loading-indicator">
+                <span class="spinner"></span>
+            </div>
+            }
+        </div>
+
+        <div class="table-container card">
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Información del Personal</th>
+                            <th>Cargo y Contrato</th>
+                            <th>Estado</th>
+                            <th>Acceso al Sistema</th>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (emp of filteredEmployees(); track emp.id) {
+                        <tr>
+                            <td>
+                                <div class="emp-info-cell">
+                                    <span class="emp-name">{{ emp.person.name }} {{ emp.person.paternalName }}</span>
+                                    <span class="emp-email">{{ emp.person.email }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="job-info">
+                                    <span class="job-title">{{ emp.jobTitle }}</span>
+                                    <span class="sub-text">{{ emp.employmentType }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" [class.badge-success]="emp.employmentStatus === 'ACTIVE'"
+                                    [class.badge-warning]="emp.employmentStatus === 'ON_LEAVE'"
+                                    [class.badge-error]="emp.employmentStatus === 'TERMINATED'">
+                                    {{ getStatusLabel(emp.employmentStatus) }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="access-cell">
+                                    @if (emp.user) {
+                                    <div class="access-indicator">
+                                        <span class="dot active"></span>
+                                        <span class="role-badge">{{ emp.user.role }}</span>
+                                    </div>
+                                    } @else {
+                                    <div class="access-indicator muted">
+                                        <button class="btn-create-user" (click)="createUser(emp)"
+                                            title="Crear acceso de usuario">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                                <circle cx="9" cy="7" r="4" />
+                                                <line x1="19" y1="8" x2="19" y2="14" />
+                                                <line x1="16" y1="11" x2="22" y2="11" />
+                                            </svg>
+                                            Habilitar Acceso
+                                        </button>
+                                    </div>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <div class="action-buttons-end">
+                                    <button class="btn-icon-action" title="Editar empleado y acceso"
+                                        (click)="goToForm(emp.id)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            <path d="m15 5 4 4" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon-action delete" (click)="deleteEmployee(emp.id)"
+                                        title="Eliminar">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 6h18" />
+                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        } @empty {
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <p>{{ isLoading() ? 'Sincronizando...' : 'No se encontraron registros.' }}</p>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer class="pagination-footer">
+            <span class="results-count">Mostrando {{ filteredEmployees().length }} de {{ totalElements() }}
+                empleados</span>
+            <div class="pagination-nav">
+                <button class="btn-nav" disabled>Anterior</button>
+                <button class="btn-nav active">1</button>
+                <button class="btn-nav" disabled>Siguiente</button>
+            </div>
+        </footer>
+    </div>
+</div>

@@ -22,8 +22,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: MainLayout,
-    loadChildren: () =>
-      import('./features/admin/branches/branches.routes').then((m) => m.BRANCHES_ROUTES),
+    loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
   {
     path: '',

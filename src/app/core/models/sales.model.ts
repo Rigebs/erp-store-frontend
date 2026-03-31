@@ -1,14 +1,5 @@
 import { Product } from './catalog.model';
-
-export interface Person {
-  id: number;
-  name: string;
-  paternalName: string;
-  maternalName: string;
-  email: string;
-  phone: string;
-  address: string;
-}
+import { Person } from './user.model';
 
 export interface Company {
   id: number;

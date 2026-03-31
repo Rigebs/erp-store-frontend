@@ -1,0 +1,47 @@
+<app-modal-container (close)="close()">
+    <h2 modal-header>Habilitar Acceso al Sistema</h2>
+
+    <form [formGroup]="form" class="user-form">
+        <p class="form-description">
+            Estás a punto de crear una cuenta de acceso para
+            <strong>{{ employee().person.name }} {{ employee().person.paternalName }}</strong>.
+        </p>
+
+        <div class="field-group">
+            <label for="email">Correo Electrónico de Acceso</label>
+            <input id="email" type="email" formControlName="email" placeholder="ejemplo@correo.com"
+                [class.invalid]="form.get('email')?.touched && form.get('email')?.invalid">
+            @if (form.get('email')?.touched && form.get('email')?.invalid) {
+            <span class="error-text">Ingresa un correo válido</span>
+            }
+        </div>
+
+        <div class="field-group">
+            <label for="role">Rol de Usuario</label>
+            <select id="role" formControlName="role">
+                <option value="EMPLOYEE">Empleado</option>
+                <option value="ADMIN">Administrador</option>
+                <option value="MANAGER">Gestor</option>
+            </select>
+        </div>
+
+        <div class="info-banner">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+            <div>
+                <p><strong>Nota de seguridad:</strong></p>
+                <p>La contraseña inicial será el <strong>Documento de Identidad</strong> del empleado. El sistema
+                    obligará al usuario a cambiarla en su primer inicio de sesión.</p>
+            </div>
+        </div>
+    </form>
+
+    <div modal-footer class="footer-actions">
+        <button class="btn-secondary" (click)="close()">Cancelar</button>
+        <button class="btn-primary" (click)="confirm()">Crear Usuario</button>
+    </div>
+</app-modal-container>

@@ -35,11 +35,7 @@ export class MainLayout {
       iconSvgPath:
         'M16.5 13c-1.2 0-2.25.45-3.08 1.22l-3.73-2.18c.2-.6.31-1.24.31-1.91s-.11-1.31-.31-1.91l3.73-2.18C14.25 6.8 15.3 7.25 16.5 7.25c1.8 0 3.25-1.45 3.25-3.25S18.3 0.75 16.5 0.75 13.25 2.2 13.25 4c0 .67.21 1.29.56 1.81L10.12 8c-.85-.79-1.99-1.28-3.25-1.28C4.18 6.72 2 8.9 2 11.5S4.18 16.28 6.88 16.28c1.26 0 2.4-.49 3.25-1.28l3.69 2.16c-.35.51-.56 1.14-.56 1.81 0 1.8 1.45 3.25 3.25 3.25s3.25-1.45 3.25-3.25-1.45-3.25-3.25-3.25z',
       route: '/admin/users-control',
-      children: [
-        { label: 'Usuarios del Sistema', route: '/admin/users' },
-        { label: 'Colaboradores', route: '/admin/employees' },
-        { label: 'Roles y Permisos', route: '/admin/roles' },
-      ],
+      children: [{ label: 'Empleados', route: '/admin/employees' }],
     },
     {
       label: 'Inventario',

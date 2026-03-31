@@ -1,0 +1,93 @@
+<div class="page-container">
+    <header class="page-header">
+        <h1>{{ isEditMode ? 'Editar Empleado' : 'Nuevo Empleado' }}</h1>
+        <p class="subtitle">Complete los campos para gestionar la ficha laboral del personal.</p>
+    </header>
+
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="standard-form">
+
+        <section class="form-section" formGroupName="person">
+            <h2 class="section-title">Información Personal</h2>
+            <div class="grid">
+                <label>
+                    Nombre(s)
+                    <input type="text" formControlName="name" [class.invalid]="isInvalid('person.name')"
+                        placeholder="Ej. Juan">
+                    @if (isInvalid('person.name')) { <span class="error-message">El nombre es obligatorio.</span> }
+                </label>
+
+                <label>
+                    Apellido Paterno
+                    <input type="text" formControlName="paternalName" [class.invalid]="isInvalid('person.paternalName')"
+                        placeholder="Ej. Pérez">
+                    @if (isInvalid('person.paternalName')) { <span class="error-message">El apellido es
+                        obligatorio.</span> }
+                </label>
+
+                <label>
+                    Apellido Materno
+                    <input type="text" formControlName="maternalName" placeholder="Ej. García">
+                </label>
+            </div>
+
+            <div class="grid">
+                <label>
+                    Correo Electrónico
+                    <input type="email" formControlName="email" [class.invalid]="isInvalid('person.email')"
+                        placeholder="juan.perez@empresa.com">
+                    @if (isInvalid('person.email')) { <span class="error-message">Ingrese un email válido.</span> }
+                </label>
+
+                <label>
+                    Teléfono / Celular
+                    <input type="text" formControlName="phone" [class.invalid]="isInvalid('person.phone')"
+                        placeholder="999888777">
+                </label>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2 class="section-title">Detalles del Puesto</h2>
+            <div class="grid">
+                <label>
+                    Cargo u Ocupación
+                    <input type="text" formControlName="jobTitle" [class.invalid]="isInvalid('jobTitle')"
+                        placeholder="Ej. Analista Senior">
+                    @if (isInvalid('jobTitle')) { <span class="error-message">El cargo es obligatorio.</span> }
+                </label>
+
+                <label>
+                    Tipo de Contrato
+                    <select formControlName="employmentType">
+                        <option value="FULL_TIME">Tiempo Completo</option>
+                        <option value="PART_TIME">Medio Tiempo</option>
+                        <option value="CONTRACT">Por Contrato</option>
+                        <option value="INTERN">Pasante / Practicante</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="grid">
+                <label>
+                    Salario Mensual
+                    <input type="number" formControlName="salary" [class.invalid]="isInvalid('salary')">
+                    @if (isInvalid('salary')) { <span class="error-message">Ingrese un monto válido.</span> }
+                </label>
+
+                <label>
+                    Fecha de Ingreso
+                    <input type="date" formControlName="hireDate" [class.invalid]="isInvalid('hireDate')">
+                </label>
+            </div>
+        </section>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" routerLink="/employees">
+                Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="employeeForm.pending">
+                {{ isEditMode ? 'Guardar Cambios' : 'Registrar Empleado' }}
+            </button>
+        </div>
+    </form>
+</div>

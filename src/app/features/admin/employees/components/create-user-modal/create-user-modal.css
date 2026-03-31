@@ -1,0 +1,94 @@
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0.5rem 0;
+}
+
+.form-description {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.field-group input,
+.field-group select {
+  padding: 0.65rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  background: white;
+}
+
+.field-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.field-group input.invalid {
+  border-color: var(--error);
+}
+
+.error-text {
+  color: var(--error);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.info-banner {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f0f7ff;
+  border-left: 4px solid var(--primary-color);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #1e3a8a;
+}
+
+.info-banner p {
+  margin: 0;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
